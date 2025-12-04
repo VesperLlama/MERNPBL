@@ -51,7 +51,11 @@
       "executive": 10
     },
     "TotalSeats": 75,
-    "BookedSeats": 0,
+    "BookedSeats": {
+      "economy": 0,
+      "business": 6,
+      "executive": 0
+    },
     "FlightStatus": "Active"
   },
   {
@@ -130,7 +134,11 @@
     "departureTime": "2025-12-05T09:20",
     "arrivalTime": "2025-12-05T11:25",
     "price": 3500,
-    "seats": { "economy": 55, "business": 8, "executive": 2 },
+    "seats": {
+      "economy": 55,
+      "business": 8,
+      "executive": 2
+    },
     "TotalSeats": 65,
     "BookedSeats": 0,
     "FlightStatus": "Active"
@@ -143,7 +151,11 @@
     "departureTime": "2025-12-05T14:40",
     "arrivalTime": "2025-12-05T15:35",
     "price": 1800,
-    "seats": { "economy": 48, "business": 10, "executive": 3 },
+    "seats": {
+      "economy": 48,
+      "business": 10,
+      "executive": 3
+    },
     "TotalSeats": 61,
     "BookedSeats": 0,
     "FlightStatus": "Active"
@@ -156,7 +168,11 @@
     "departureTime": "2025-12-05T18:10",
     "arrivalTime": "2025-12-05T19:35",
     "price": 2500,
-    "seats": { "economy": 52, "business": 12, "executive": 3 },
+    "seats": {
+      "economy": 52,
+      "business": 12,
+      "executive": 3
+    },
     "TotalSeats": 67,
     "BookedSeats": 0,
     "FlightStatus": "Delayed"
@@ -169,7 +185,11 @@
     "departureTime": "2025-12-06T07:15",
     "arrivalTime": "2025-12-06T09:35",
     "price": 4200,
-    "seats": { "economy": 60, "business": 10, "executive": 4 },
+    "seats": {
+      "economy": 60,
+      "business": 10,
+      "executive": 4
+    },
     "TotalSeats": 74,
     "BookedSeats": 0,
     "FlightStatus": "Active"
@@ -182,7 +202,11 @@
     "departureTime": "2025-12-06T12:10",
     "arrivalTime": "2025-12-06T15:50",
     "price": 5800,
-    "seats": { "economy": 70, "business": 14, "executive": 4 },
+    "seats": {
+      "economy": 70,
+      "business": 14,
+      "executive": 4
+    },
     "TotalSeats": 88,
     "BookedSeats": 0,
     "FlightStatus": "Active"
@@ -195,7 +219,11 @@
     "departureTime": "2025-12-06T16:20",
     "arrivalTime": "2025-12-06T17:00",
     "price": 1500,
-    "seats": { "economy": 44, "business": 8, "executive": 2 },
+    "seats": {
+      "economy": 44,
+      "business": 8,
+      "executive": 2
+    },
     "TotalSeats": 54,
     "BookedSeats": 0,
     "FlightStatus": "Active"
@@ -208,7 +236,11 @@
     "departureTime": "2025-12-07T05:40",
     "arrivalTime": "2025-12-07T08:10",
     "price": 3900,
-    "seats": { "economy": 58, "business": 10, "executive": 3 },
+    "seats": {
+      "economy": 58,
+      "business": 10,
+      "executive": 3
+    },
     "TotalSeats": 71,
     "BookedSeats": 0,
     "FlightStatus": "Active"
@@ -221,7 +253,11 @@
     "departureTime": "2025-12-07T09:15",
     "arrivalTime": "2025-12-07T10:30",
     "price": 2400,
-    "seats": { "economy": 50, "business": 9, "executive": 3 },
+    "seats": {
+      "economy": 50,
+      "business": 9,
+      "executive": 3
+    },
     "TotalSeats": 62,
     "BookedSeats": 0,
     "FlightStatus": "Cancelled"
@@ -234,7 +270,11 @@
     "departureTime": "2025-12-07T13:40",
     "arrivalTime": "2025-12-07T17:20",
     "price": 6100,
-    "seats": { "economy": 65, "business": 12, "executive": 4 },
+    "seats": {
+      "economy": 65,
+      "business": 12,
+      "executive": 4
+    },
     "TotalSeats": 81,
     "BookedSeats": 0,
     "FlightStatus": "Active"
@@ -247,7 +287,11 @@
     "departureTime": "2025-12-07T18:40",
     "arrivalTime": "2025-12-07T19:25",
     "price": 1700,
-    "seats": { "economy": 46, "business": 10, "executive": 2 },
+    "seats": {
+      "economy": 46,
+      "business": 10,
+      "executive": 2
+    },
     "TotalSeats": 58,
     "BookedSeats": 0,
     "FlightStatus": "Active"
@@ -260,7 +304,11 @@
     "departureTime": "2025-12-08T06:50",
     "arrivalTime": "2025-12-08T10:10",
     "price": 5600,
-    "seats": { "economy": 68, "business": 14, "executive": 4 },
+    "seats": {
+      "economy": 68,
+      "business": 14,
+      "executive": 4
+    },
     "TotalSeats": 86,
     "BookedSeats": 0,
     "FlightStatus": "Active"
@@ -273,7 +321,11 @@
     "departureTime": "2025-12-08T11:30",
     "arrivalTime": "2025-12-08T13:40",
     "price": 3700,
-    "seats": { "economy": 56, "business": 11, "executive": 3 },
+    "seats": {
+      "economy": 56,
+      "business": 11,
+      "executive": 3
+    },
     "TotalSeats": 70,
     "BookedSeats": 0,
     "FlightStatus": "Delayed"
@@ -286,7 +338,11 @@
     "departureTime": "2025-12-08T15:00",
     "arrivalTime": "2025-12-08T16:25",
     "price": 2100,
-    "seats": { "economy": 54, "business": 10, "executive": 3 },
+    "seats": {
+      "economy": 54,
+      "business": 10,
+      "executive": 3
+    },
     "TotalSeats": 67,
     "BookedSeats": 0,
     "FlightStatus": "Active"
@@ -299,7 +355,11 @@
     "departureTime": "2025-12-08T18:20",
     "arrivalTime": "2025-12-08T22:10",
     "price": 6200,
-    "seats": { "economy": 60, "business": 12, "executive": 4 },
+    "seats": {
+      "economy": 60,
+      "business": 12,
+      "executive": 4
+    },
     "TotalSeats": 76,
     "BookedSeats": 0,
     "FlightStatus": "Active"
@@ -312,7 +372,11 @@
     "departureTime": "2025-12-09T08:10",
     "arrivalTime": "2025-12-09T10:05",
     "price": 3400,
-    "seats": { "economy": 59, "business": 12, "executive": 3 },
+    "seats": {
+      "economy": 59,
+      "business": 12,
+      "executive": 3
+    },
     "TotalSeats": 74,
     "BookedSeats": 0,
     "FlightStatus": "Active"
@@ -325,7 +389,11 @@
     "departureTime": "2025-12-09T12:25",
     "arrivalTime": "2025-12-09T13:45",
     "price": 2000,
-    "seats": { "economy": 50, "business": 9, "executive": 3 },
+    "seats": {
+      "economy": 50,
+      "business": 9,
+      "executive": 3
+    },
     "TotalSeats": 62,
     "BookedSeats": 0,
     "FlightStatus": "Active"
@@ -338,7 +406,11 @@
     "departureTime": "2025-12-09T17:40",
     "arrivalTime": "2025-12-09T21:10",
     "price": 6400,
-    "seats": { "economy": 62, "business": 14, "executive": 4 },
+    "seats": {
+      "economy": 62,
+      "business": 14,
+      "executive": 4
+    },
     "TotalSeats": 80,
     "BookedSeats": 0,
     "FlightStatus": "Delayed"
@@ -351,7 +423,11 @@
     "departureTime": "2025-12-10T06:00",
     "arrivalTime": "2025-12-10T08:10",
     "price": 4100,
-    "seats": { "economy": 70, "business": 14, "executive": 4 },
+    "seats": {
+      "economy": 70,
+      "business": 14,
+      "executive": 4
+    },
     "TotalSeats": 88,
     "BookedSeats": 0,
     "FlightStatus": "Active"
@@ -364,7 +440,11 @@
     "departureTime": "2025-12-10T10:45",
     "arrivalTime": "2025-12-10T11:35",
     "price": 1600,
-    "seats": { "economy": 48, "business": 8, "executive": 3 },
+    "seats": {
+      "economy": 48,
+      "business": 8,
+      "executive": 3
+    },
     "TotalSeats": 59,
     "BookedSeats": 0,
     "FlightStatus": "Active"
@@ -377,7 +457,11 @@
     "departureTime": "2025-12-10T15:30",
     "arrivalTime": "2025-12-10T17:50",
     "price": 4500,
-    "seats": { "economy": 62, "business": 10, "executive": 4 },
+    "seats": {
+      "economy": 62,
+      "business": 10,
+      "executive": 4
+    },
     "TotalSeats": 76,
     "BookedSeats": 0,
     "FlightStatus": "Active"

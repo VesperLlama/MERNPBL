@@ -33,11 +33,11 @@ export default function CustomerNavbar() {
           </button>
         </li>
 
-        <li className="nav-item">
+        {/* <li className="nav-item">
           <button className="nav-link" onClick={() => navigate("/customer/cancelBooking")}>
             Cancel Booking
           </button>
-        </li>
+        </li> */}
 
         
 

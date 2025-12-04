@@ -1,6 +1,6 @@
 // Payment.jsx
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import CustomerNavbar from "../customerNavbar/customerNavbar.jsx";
 import "./payment.css";
 
@@ -9,6 +9,7 @@ const EMPTY = { type: "", message: "" };
 export default function Payment(props) {
   const bp=localStorage.getItem("baseprice")
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   // read live pricing / passengers from query params (sent from booking)
   const flightNumber = searchParams.get("flightId") ?? props.flight.flightId;
@@ -74,7 +75,6 @@ export default function Payment(props) {
         
         const data = await res.json();
         setPriceData(data.data);
-        console.log(data.data);
       } catch(err) { console.log(err.message) }
       finally {
         setPriceLoading(false);
@@ -300,23 +300,24 @@ export default function Payment(props) {
     // Mock submit
     setLoading(true);
     try {
-      const payload = { method };
-      if (method === "card") {
-        payload.cardLast4 = String(cardNumber || "").replace(/\s+/g, "").slice(-4);
-        payload.name = cardName;
-        payload.expiry = expiry;
-      } else if (method === "upi") {
-        payload.upiId = upiId.trim();
-      } else {
-        payload.bank = bank;
-        payload.user = nbUser;
-      }
+      const res = await fetch("http://localhost:4000/api/bookings/book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}` },
+        body: JSON.stringify({
+          flightNumber: flightNumber,
+          type: seatTypeParam.toLowerCase(),
+          quantity: passg
+        })
+      });
+    
+      const data = await res.json();
+      console.log(data);
+      const bookingId = data.booking.BookingId;
+      setSuccess({ bookingId });
 
-      // simulate API call
-      await new Promise((r) => setTimeout(r, 900));
-
-      const bookingId = `BK${Date.now().toString().slice(-7)}`;
-      setSuccess({ bookingId, payload });
+      setTimeout(() => {
+        navigate("/customer/allBookings")
+      }, 1000);
     } catch (err) {
       console.error("payment error", err);
       setGlobalError("Payment failed. Try again.");
@@ -531,26 +532,17 @@ export default function Payment(props) {
                 <hr />
 
                 <div className="summary-row" style={{ fontWeight: 800 }}>
-                  <div>TOTAL PAID</div>
+                  <div>TOTAL COST</div>
                   <div>₹{priceData.finalPrice}</div>
                 </div>
 
                 <hr />
 
-                <div className="summary-row">
-                  <div>Legacy computed total</div>
-                  <div className="muted">₹{fmt(computedTotal)}</div>
-                </div>
-
-                <hr />
-
-                {!success && <div className="small-note">Fill payment details and click Pay Now to complete booking.</div>}
-
                 {success && (
                   <div className="success-box">
                     <div className="success-title">Payment successful</div>
                     <div>Booking ID: <strong>{success.bookingId}</strong></div>
-                    <div className="small-note">Saved payment: {JSON.stringify(success.payload)}</div>
+                    {/* <div className="small-note">Saved payment: {JSON.stringify(success.payload)}</div> */}
                   </div>
                 )}
               </div>
