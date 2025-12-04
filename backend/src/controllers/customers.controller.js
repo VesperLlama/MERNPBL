@@ -20,12 +20,18 @@ exports.registerCustomer = async (req, res, next) => {
     if (!Array.isArray(customers)) customers = [];
 
     // Duplicate email check
-    const exists = customers.find(
-      c => c.EmailId && c.EmailId.toLowerCase() === payload.EmailId.toLowerCase()
+    const emailExists = customers.find(
+      c => c.EmailId && c.EmailId.toLowerCase() === String(payload.EmailId).toLowerCase()
+    );
+    const phoneExists = customers.find(
+      c => c.Phone && String(c.Phone) === String(payload.Phone)
     );
 
-    if (exists) {
-      return res.status(400).json({ message: 'Email already registered' });
+    if (emailExists || phoneExists) {
+      const parts = [];
+      if (emailExists) parts.push('Email');
+      if (phoneExists) parts.push('Phone');
+      return res.status(400).json({ message: parts.join(' and ') + ' already registered' });
     }
 
     // Get next ID (simple version)

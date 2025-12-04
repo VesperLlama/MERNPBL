@@ -32,22 +32,32 @@ export default function AdminDashboard() {
       try {
         const res = await fetch("http://localhost:4000/api/admins/dashboard");
         if (!res.ok) throw new Error("Network response was not ok");
-        const json = res.json();
-        const data = json.json();
+        const data = await res.json();
+        // API returns { data: { ... } }
+        const payload = data && data.data ? data.data : {};
 
         if (!mounted) return;
 
-        setStats({
-          totalFlights: data.totalFlights ?? 0,
-          totalCarriers: data.totalCarriers ?? 0,
-          totalRevenue: data.totalRevenue ?? 0,
-          totalBookings: data.totalBookings ?? 0,
-          upcomingBookings: data.upcomingBookings ?? 0,
-          totalCustomers: data.totalCustomers ?? 0,
+        // Try to get admin info from localStorage (login stores `user`)
+        const storedUser = (() => {
+          try {
+            return JSON.parse(localStorage.getItem('user') || 'null');
+          } catch (e) {
+            return null;
+          }
+        })();
 
-          // NEW — pulling admin info
-          adminName: data.FullName ?? "",
-          adminId: data.AdminId ?? "",
+        setStats({
+          totalFlights: payload.totalFlights ?? 0,
+          totalCarriers: payload.totalCarriers ?? 0,
+          totalRevenue: payload.totalRevenue ?? 0,
+          totalBookings: payload.totalBookings ?? 0,
+          upcomingBookings: payload.upcomingBookings ?? 0,
+          totalCustomers: payload.totalCustomers ?? 0,
+
+          // Pull admin info from stored user if available
+          adminName: storedUser?.FullName || storedUser?.name || '',
+          adminId: storedUser?.AdminId || storedUser?.id || '',
         });
       } catch (err) {
         console.error("Failed to load admin stats:", err);
