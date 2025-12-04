@@ -1,5 +1,12 @@
 // Bookings.jsx
-import React, { useEffect, useState } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import CustomerNavbar from "../customerNavbar/customerNavbar";
 import "./bookings.css";
@@ -69,34 +76,24 @@ export default function Bookings() {
   /**
    * Robust helper to determine seat info for a given flight and category.
    * Returns an object: { available: number|null, capacity: number|null, booked: number|null }
-   *
-   * Accepts several possible shapes:
-   * - f.seats = { economy: 12 } -> available = 12
-   * - f.seats = { economy: { capacity: 100, booked: 20 } } -> compute available = capacity - booked
-   * - f.seats = { economy: { available: 80, booked: 20 } } -> available = 80
-   * - f.seats = { economy: { total: 100, booked: 20 } } -> available = 80
    */
   function getSeatInfo(flight, category) {
     if (!flight || !flight.seats) return { available: null, capacity: null, booked: null };
 
-    // normalize category key (lowercase)
     const key = (category || "").trim().toLowerCase();
-    // try some common keys
     const candidates = [];
     if (key) candidates.push(key);
-    candidates.push("economy", "business", "executive", "first", "premium"); // common fallbacks
+    candidates.push("economy", "business", "executive", "first", "premium");
 
     for (const k of candidates) {
       if (!k) continue;
       const val = flight.seats[k] ?? flight.seats[k.charAt(0).toUpperCase() + k.slice(1)];
       if (val == null) continue;
 
-      // numeric means "available" number
       if (typeof val === "number") {
         return { available: val, capacity: val, booked: null };
       }
 
-      // object shape
       if (typeof val === "object") {
         const capacity = (val.capacity ?? val.total ?? val.max ?? null);
         const booked = (val.booked ?? val.allocated ?? val.reserved ?? null);
@@ -109,7 +106,6 @@ export default function Bookings() {
       }
     }
 
-    // fallback: if flight.seats contains simple numbers under other keys, try any numeric value as available
     const seatKeys = Object.keys(flight.seats || {});
     for (const k of seatKeys) {
       const v = flight.seats[k];
@@ -135,18 +131,15 @@ export default function Bookings() {
     const dt = (dateParam || "").trim();
 
     const out = list.filter((f) => {
-      // Accept common field names
       const flightOrigin = normalize(f.source || f.from || f.departure || f.departureAirport || f.Origin);
       const flightDest = normalize(f.destination || f.to || f.arrival || f.arrivalAirport || f.Destination);
 
-      // basic route match
       const routeOk =
         (!o || flightOrigin.includes(o) || flightOrigin === o) &&
         (!d || flightDest.includes(d) || flightDest === d);
 
       if (!routeOk) return false;
 
-      // date match if provided (compare YYYY-MM-DD)
       let dateOk = true;
       if (dt) {
         const cand = f.departureTime || f.dep || f.date || f.travelDate || f.departure_date || f.departure;
@@ -167,20 +160,15 @@ export default function Bookings() {
       }
       if (!dateOk) return false;
 
-      // ---------- Seat-capacity checks ----------
-      // If a seatParam is selected, ensure the flight has sufficient seats in that category
       if (seatParam) {
         const seatInfo = getSeatInfo(f, seatParam);
-        // If we have a concrete available number, require requestedSeats <= available
         if (seatInfo.available != null) {
-          if (requestedSeats > seatInfo.available) return false; // not enough seats for requested passengers
+          if (requestedSeats > seatInfo.available) return false;
         }
-        // If capacity/booked both exist, exclude flights where booked > capacity (invalid data)
         if (seatInfo.capacity != null && seatInfo.booked != null) {
-          if (seatInfo.booked > seatInfo.capacity) return false; // invalid flight data
+          if (seatInfo.booked > seatInfo.capacity) return false;
         }
       } else {
-        // No seatParam selected: still exclude any flight that has a category with booked > capacity (invalid)
         if (f.seats && typeof f.seats === "object") {
           for (const k of Object.keys(f.seats)) {
             const s = f.seats[k];
@@ -199,8 +187,213 @@ export default function Bookings() {
     setFiltered(out);
   }
 
+  // ---- booking flow additions ----
+  const [selectedFlight, setSelectedFlight] = useState(null);
+  const [showPassengerForm, setShowPassengerForm] = useState(false);
+  const passengerRef = useRef();
+
+  // seat multiplier (if seat types like Business/Executive should affect price)
+  const seatMultiplier = useCallback((type) => {
+    if (!type) return 1;
+    if (String(type).toLowerCase() === "business") return 1.5;
+    if (String(type).toLowerCase() === "executive") return 2.25;
+    return 1; // Economy or default
+  }, []);
+
+  // Embedded PassengerForm (minimal, local to this file)
+  const PassengerForm = forwardRef(({ adults = 1, children = 0 }, ref) => {
+    const totalSeats = Number(adults || 0) + Number(children || 0);
+    const [passengers, setPassengers] = useState(() => {
+      const arr = [];
+      for (let i = 0; i < totalSeats; i++) {
+        arr.push({ name: "", age: "", gender: i < Number(adults) ? "Adult" : "Child" });
+      }
+      return arr;
+    });
+    const [fieldErrors, setFieldErrors] = useState({});
+
+    useEffect(() => {
+      setPassengers((prev) => {
+        const next = [];
+        for (let i = 0; i < totalSeats; i++) {
+          next[i] = {
+            name: (prev[i] && prev[i].name) || "",
+            age: (prev[i] && prev[i].age) || "",
+            gender: (prev[i] && prev[i].gender) || (i < Number(adults) ? "Adult" : "Child"),
+          };
+        }
+        return next;
+      });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [adults, children, totalSeats]);
+
+    const updateField = (index, field, value) => {
+      setPassengers((prev) => {
+        const copy = prev.map((p) => ({ ...p }));
+        copy[index][field] = value;
+        return copy;
+      });
+      setFieldErrors((prev) => {
+        const copy = { ...prev };
+        delete copy[`${index}.${field}`];
+        return copy;
+      });
+    };
+
+    const validate = () => {
+      const errors = [];
+      const newFieldErrors = {};
+      passengers.forEach((p, i) => {
+        const name = (p.name || "").toString().trim();
+        const ageRaw = (p.age || "").toString().trim();
+        if (!name) {
+          errors.push({ index: i, field: "name", message: "Name is required" });
+          newFieldErrors[`${i}.name`] = "Name is required";
+        }
+        if (!ageRaw) {
+          errors.push({ index: i, field: "age", message: "Age is required" });
+          newFieldErrors[`${i}.age`] = "Age is required";
+        } else {
+          if (!/^\d+$/.test(ageRaw)) {
+            errors.push({ index: i, field: "age", message: "Age must be a positive integer" });
+            newFieldErrors[`${i}.age`] = "Age must be a positive integer";
+          } else {
+            const ageNum = Number(ageRaw);
+            if (ageNum <= 0 || ageNum > 120) {
+              errors.push({ index: i, field: "age", message: "Enter a realistic age (1-120)" });
+              newFieldErrors[`${i}.age`] = "Enter a realistic age (1-120)";
+            }
+          }
+        }
+        if (!p.gender) {
+          errors.push({ index: i, field: "gender", message: "Gender is required" });
+          newFieldErrors[`${i}.gender`] = "Gender is required";
+        }
+      });
+
+      setFieldErrors(newFieldErrors);
+      if (errors.length === 0) return { ok: true, passengers };
+      return { ok: false, errors };
+    };
+
+    useImperativeHandle(ref, () => ({
+      validate,
+      getPassengers: () => passengers.map((p) => ({ ...p })),
+    }));
+
+    return (
+      
+      <div style={{"padding-top": "15px"}} className="passenger-form-root">
+        <h3>Passenger Details ({passengers.length})</h3>
+        {passengers.map((p, i) => (
+          
+          <div key={i} className="passenger-row">
+            <div style={{"padding-top": "20px"}} className="passenger-header">
+              <strong>Passenger {i+1}</strong>
+            </div>
+
+            <div className="passenger-fields">
+              <label className="field">
+                <input
+                  type="text"
+                  value={p.name}
+                  onChange={(e) => updateField(i, "name", e.target.value)}
+                  placeholder="Entry your name"
+                />
+                {fieldErrors[`${i}.name`] && <div className="input-err">{fieldErrors[`${i}.name`]}</div>}
+              </label>
+
+              <label className="field">
+                <input
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={p.age}
+                  onChange={(e) => updateField(i, "age", e.target.value.replace(/[^\d]/g, ""))}
+                  placeholder="Enter your age"
+                />
+                {fieldErrors[`${i}.age`] && <div className="input-err">{fieldErrors[`${i}.age`]}</div>}
+              </label>
+
+              <label className="field">
+                <select value={p.gender} onChange={(e) => updateField(i, "gender", e.target.value)}>
+                  <option disabled selected value="">Select your gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+                {fieldErrors[`${i}.gender`] && <div className="input-err">{fieldErrors[`${i}.gender`]}</div>}
+              </label>
+            </div>
+
+            <hr />
+          </div>
+        ))}
+      </div>
+    );
+  });
+
+  // When user clicks Book — show passenger form for that flight
+  function handleBookClick(flight) {
+    setSelectedFlight(flight);
+    setShowPassengerForm(true);
+    // optional: scroll into view
+    setTimeout(() => {
+      const el = document.querySelector(".passenger-form-root");
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 60);
+  }
+
+  function handleCancelBooking() {
+    setSelectedFlight(null);
+    setShowPassengerForm(false);
+  }
+
+  function handleCompleteBooking() {
+    if (!selectedFlight) return;
+    if (passengerRef.current) {
+      const res = passengerRef.current.validate();
+      if (!res.ok) {
+        // scroll to passenger form errors
+        window.scrollTo({ top: document.querySelector(".passenger-form-root")?.getBoundingClientRect().top + window.scrollY - 80 || 0, behavior: "smooth" });
+        return;
+      }
+    }
+
+    // compute price and totals
+    const basePrice = Number(selectedFlight.price ?? selectedFlight.fare ?? selectedFlight.airFare ?? selectedFlight.pricePerSeat ?? 0);
+    const mult = seatMultiplier(seatParam || "Economy");
+    const pricePerSeat = Math.round(basePrice * mult);
+    const totalPassengers = Math.max(1, Number(adultsParam || 0) + Number(childrenParam || 0));
+    const totalPrice = pricePerSeat * totalPassengers;
+
+    // gather flight info to pass along
+    const fid = selectedFlight._id || selectedFlight.flightId || selectedFlight.id || "";
+    const from = selectedFlight.origin || selectedFlight.from || selectedFlight.source || "";
+    const to = selectedFlight.destination || selectedFlight.to || selectedFlight.arrival || "";
+    const dep = selectedFlight.departureTime || selectedFlight.dep || selectedFlight.departure || "";
+    const arr = selectedFlight.arrivalTime || selectedFlight.arr || selectedFlight.arrival || "";
+    const airline = selectedFlight.carrierName || selectedFlight.airline || selectedFlight.CarrierName || "";
+
+    const params = new URLSearchParams({
+      flightId: fid,
+      pricePerSeat: String(pricePerSeat),
+      totalPrice: String(totalPrice),
+      from,
+      to,
+      dep,
+      arr,
+      airline,
+      adults: String(adultsParam || 1),
+      children: String(childrenParam || 0),
+      seatType: seatParam || "Economy",
+    });
+
+    // navigate to payment page (keeps previous behavior of redirecting to payment)
+    navigate(`/payment?${params.toString()}`);
+  }
+
+  // existing onBook left intact for compatibility (not used by new flow)
   const onBook = (flight) => {
-    // Build price and routing info to send to payment page
     const fid = flight._id || flight.flightId || flight.id || "";
     const pricePerSeat = flight.price || flight.fare || flight.airFare || flight.airfare || flight.pricePerSeat || 0;
     const adults = adultsParam || 1;
@@ -208,7 +401,6 @@ export default function Bookings() {
     const totalPassengers = adults + children;
     const totalPrice = Number(pricePerSeat) * Number(totalPassengers);
 
-    // gather basic flight fields
     const from = flight.origin || flight.from || flight.source || "";
     const to = flight.destination || flight.to || flight.arrival || "";
     const dep = flight.departureTime || flight.dep || flight.departure || "";
@@ -228,7 +420,6 @@ export default function Bookings() {
       children: String(children)
     });
 
-    // Redirect to payment page (so payment can use the passed live price)
     navigate(`/payment?${params.toString()}`);
   };
 
@@ -263,15 +454,15 @@ export default function Bookings() {
           {!error && !loading && filtered.length > 0 && (
             <div className="bk-grid">
               {filtered.map((f, idx) => {
-                const id = f._id || f.flightId || f.id || `f-${idx}`;
+                const id = f._id || f.flightNumber || f.id || `f-${idx}`;
                 const airline = f.carrierName || f.airline || f.CarrierName || "Unknown";
                 const origin = f.source || f.from || f.departureAirport || "-";
                 const destination = f.destination || f.to || f.arrivalAirport || "-";
                 const depart = f.departureTime || f.dep || f.departure || f.departure_time || "";
                 const arrive = f.arrivalTime || f.arr || f.arrival || f.arrival_time || "";
-                const price = f.price || f.fare || f.airFare || f.airfare || f.pricePerSeat || 0;
+                const priceRaw = f.price || f.fare || f.airFare || f.airfare || f.pricePerSeat || 0;
+                const price = Math.round(Number(priceRaw) * seatMultiplier(seatParam || "Economy"));
 
-                // seat info for the selected seat category
                 const seatInfo = getSeatInfo(f, seatParam);
                 const seatsLabel =
                   seatInfo.available != null
@@ -279,6 +470,11 @@ export default function Bookings() {
                     : f.seats && typeof f.seats === "object"
                     ? "Seats info"
                     : "Seats info";
+
+                // if passenger form is active, hide other flights
+                if (showPassengerForm && selectedFlight && (selectedFlight._id || selectedFlight.flightId || selectedFlight.id || selectedFlight) !== (f._id || f.flightId || f.id || f)) {
+                  return null;
+                }
 
                 return (
                   <div className="bk-card" key={id}>
@@ -297,7 +493,7 @@ export default function Bookings() {
                       <div className="bk-actions">
                         <button
                           className="bk-book"
-                          onClick={() => onBook(f)}
+                          onClick={() => handleBookClick(f)}
                         >
                           Book
                         </button>
@@ -306,6 +502,35 @@ export default function Bookings() {
                   </div>
                 );
               })}
+            </div>
+          )}
+
+          {/* Booking panel - shown when a flight is selected for booking */}
+          {showPassengerForm && selectedFlight && (
+            <div className="booking-panel" style={{ marginTop: 18 }}>
+              <div className="selected-flight-card">
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>
+                    
+                    <div>Flight ID: <p style={{"font-weight": "500", "display": "inline"}}>{selectedFlight.flightNumber || ""}</p></div> 
+                    <div>Seat: <p style={{"font-weight": "500", "display": "inline"}}>{seatParam || ""}</p></div> 
+                  </div>
+
+                  <div style={{ textAlign: "right" }}>
+                    <div>Price/seat: <p style={{"font-weight": "500", "display": "inline"}}>₹{Math.round(Number(selectedFlight.price ?? selectedFlight.fare ?? selectedFlight.airFare ?? selectedFlight.pricePerSeat ?? 0) * seatMultiplier(seatParam || "Economy")).toLocaleString()}</p></div>
+                    <div>Total (x {adultsParam + childrenParam}): <p style={{"font-weight": "500", "display": "inline"}}>₹{(Math.round(Number(selectedFlight.price ?? selectedFlight.fare ?? selectedFlight.airFare ?? selectedFlight.pricePerSeat ?? 0) * seatMultiplier(seatParam || "Economy")) * (adultsParam + childrenParam)).toLocaleString()}</p></div>
+                  </div>
+                </div>
+
+                <div style={{ marginTop: 12 }}>
+                  <PassengerForm ref={passengerRef} adults={adultsParam} children={childrenParam} />
+                </div>
+
+                <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
+                  <button className="bk-submit" onClick={handleCompleteBooking}>Complete Booking</button>
+                  <button className="bk-cancel" onClick={handleCancelBooking}>Cancel</button>
+                </div>
+              </div>
             </div>
           )}
         </div>

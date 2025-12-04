@@ -1,214 +1,19 @@
 // Payment.jsx
-import React, {
-  useEffect,
-  useState,
-  forwardRef,
-  useImperativeHandle,
-  useRef,
-  useCallback,
-} from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import CustomerNavbar from "../customerNavbar/customerNavbar.jsx";
 import "./payment.css";
 
 /**
  * Payment Component (improved)
- * - PassengerForm is embedded in this file (no extra files required)
- * - PassengerForm renders NAME / AGE / GENDER inputs for each passenger
- * - handlePay validates passenger form first, then payment fields
+ * - Live validation on input change (errors appear while typing)
+ * - Card number & CVV accept digits only (card allows spaces for readability)
+ * - Card name accepts letters, spaces, hyphen and apostrophe only
+ * - Reads price/adults/children/seatType from query params and shows live summary
  */
 
 const EMPTY = { type: "", message: "" };
 
-/* ---------------- PassengerForm (embedded) ----------------
-   Props:
-    - adults: number
-    - children: number
-    - onChange: fn(passengers)
-    - initialPassengers: optional
-   Exposed via ref:
-    - validate() -> { ok: true } | { ok:false, errors: [...] }
-    - getPassengers() -> array
-*/
-const PassengerForm = forwardRef(
-  ({ adults = 1, children = 0, onChange, initialPassengers = [] }, ref) => {
-    const totalSeats = Number(adults || 0) + Number(children || 0);
-
-    const buildInitial = useCallback(() => {
-      const arr = [];
-      for (let i = 0; i < totalSeats; i++) {
-        const seed = initialPassengers[i] || {};
-        arr.push({
-          name: seed.name || "",
-          age: seed.age || "",
-          gender: seed.gender || "",
-          type: "Passenger",
-        });
-      }
-      return arr;
-    }, [totalSeats, adults, initialPassengers]);
-
-    const [passengers, setPassengers] = useState(buildInitial);
-    const [fieldErrors, setFieldErrors] = useState({}); // keyed by `${index}.${field}`
-
-    useEffect(() => {
-      // sync when counts change; preserve previous values where possible
-      setPassengers((prev) => {
-        const next = buildInitial();
-        for (let i = 0; i < Math.min(prev.length, next.length); i++) {
-          next[i] = { ...next[i], ...prev[i] };
-          next[i].type = "Passenger";
-        }
-        return next;
-      });
-    }, [adults, children, buildInitial]);
-
-    useEffect(() => {
-      if (typeof onChange === "function") onChange(passengers);
-    }, [passengers, onChange]);
-
-    const updateField = (index, field, value) => {
-      setPassengers((prev) => {
-        const copy = prev.map((p) => ({ ...p }));
-        copy[index][field] = value;
-        return copy;
-      });
-
-      // live-clear single-field error when user types
-      setFieldErrors((prev) => {
-        const key = `${index}.${field}`;
-        if (!prev[key]) return prev;
-        const copy = { ...prev };
-        delete copy[key];
-        return copy;
-      });
-    };
-
-    // validation (digit-by-digit for ages)
-    const validate = () => {
-      const errors = [];
-      const newFieldErrors = {};
-      passengers.forEach((p, i) => {
-        const name = (p.name || "").toString().trim();
-        const ageRaw = (p.age || "").toString().trim();
-        if (!name) {
-          errors.push({ index: i, field: "name", message: "Name is required" });
-          newFieldErrors[`${i}.name`] = "Name is required";
-        }
-
-        if (!ageRaw) {
-          errors.push({ index: i, field: "age", message: "Age is required" });
-          newFieldErrors[`${i}.age`] = "Age is required";
-        } else {
-          if (!/^\d+$/.test(ageRaw)) {
-            errors.push({
-              index: i,
-              field: "age",
-              message: "Age must be a positive integer",
-            });
-            newFieldErrors[`${i}.age`] = "Age must be a positive integer";
-          } else {
-            const ageNum = Number(ageRaw);
-            if (ageNum <= 0 || ageNum > 120) {
-              errors.push({
-                index: i,
-                field: "age",
-                message: "Enter a realistic age (1-120)",
-              });
-              newFieldErrors[`${i}.age`] = "Enter a realistic age (1-120)";
-            }
-          }
-        }
-
-        if (!p.gender) {
-          errors.push({
-            index: i,
-            field: "gender",
-            message: "Gender is required",
-          });
-          newFieldErrors[`${i}.gender`] = "Gender is required";
-        }
-      });
-
-      setFieldErrors(newFieldErrors);
-      if (errors.length === 0) return { ok: true };
-      return { ok: false, errors };
-    };
-
-    useImperativeHandle(ref, () => ({
-      getPassengers: () => passengers.map((p) => ({ ...p })),
-      validate: () => validate(),
-    }));
-
-    return (
-      <div className="passenger-form-root">
-        <h3>Passenger Details ({passengers.length})</h3>
-        {passengers.map((p, i) => (
-          <div key={i} className="passenger-row">
-            <div className="passenger-header">
-              <strong>
-                {i + 1}. {p.type}
-              </strong>
-            </div>
-
-            <div className="passenger-fields">
-              <label className="field">
-                <span className="label-text">Name</span>
-                <input
-                  type="text"
-                  value={p.name}
-                  onChange={(e) => updateField(i, "name", e.target.value)}
-                  placeholder="Full name"
-                />
-                {fieldErrors[`${i}.name`] && (
-                  <div className="input-err">{fieldErrors[`${i}.name`]}</div>
-                )}
-              </label>
-
-              <label className="field">
-                <span className="label-text">Age</span>
-                <input
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  value={p.age}
-                  onChange={(e) => {
-                    // keep digits only
-                    const filtered = e.target.value.replace(/[^\d]/g, "");
-                    updateField(i, "age", filtered);
-                  }}
-                  placeholder="e.g. 34"
-                />
-                {fieldErrors[`${i}.age`] && (
-                  <div className="input-err">{fieldErrors[`${i}.age`]}</div>
-                )}
-              </label>
-
-              <label className="field">
-                <span className="label-text">Gender</span>
-                <select
-                  value={p.gender}
-                  onChange={(e) => updateField(i, "gender", e.target.value)}
-                >
-                  <option value="">Select</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                </select>
-                {fieldErrors[`${i}.gender`] && (
-                  <div className="input-err">{fieldErrors[`${i}.gender`]}</div>
-                )}
-              </label>
-            </div>
-
-            <hr />
-          </div>
-        ))}
-      </div>
-    );
-  }
-);
-
-/* ---------------- Payment Component ---------------- */
 export default function Payment() {
   const [searchParams] = useSearchParams();
 
@@ -218,8 +23,6 @@ export default function Payment() {
   const adultsParam = Number(searchParams.get("adults") ?? 0);
   const childrenParam = Number(searchParams.get("children") ?? 0);
   const seatTypeParam = searchParams.get("seatType") || searchParams.get("seat") || "";
-
-  const passengerRef = useRef();
 
   const [method, setMethod] = useState("card"); // card | upi | netbank
   const [loading, setLoading] = useState(false);
@@ -247,10 +50,12 @@ export default function Payment() {
   const onlyDigits = (s) => /^\d+$/.test(s);
 
   function validateCardNumberRaw(raw) {
+    // strip spaces
     const n = String(raw || "").replace(/\s+/g, "");
     if (!n) return "Card number required.";
     if (n.length !== 16) return "Card number must be 16 digits.";
     if (!onlyDigits(n)) return "Card number must contain digits only.";
+    // disallow all identical digits (e.g., 1111111111111111)
     if (/^(\d)\1{15}$/.test(n)) return "Enter a valid card number.";
     return "";
   }
@@ -280,11 +85,13 @@ export default function Payment() {
     const v = String(value || "").trim();
     if (!v) return "Expiry required.";
 
+    // YYYY-MM (from <input type="month">)
     if (/^\d{4}-\d{2}$/.test(v)) {
       const [y, m] = v.split("-");
       return expiryNotPast(m, y.slice(-2));
     }
 
+    // MM/YY or MM/YYYY
     if (/^\d{2}\/\d{2,4}$/.test(v)) {
       const parts = v.split("/");
       let mm = parts[0];
@@ -303,6 +110,7 @@ export default function Payment() {
     const [left, right] = trimmed.split("@");
     if (!left || left.length === 0) return "Invalid UPI ID.";
     if (!right || right.length === 0) return "Invalid UPI ID.";
+    // characters after '@' must be letters only (no digits)
     if (!/^[A-Za-z]+$/.test(right)) return "UPI domain must contain only letters after '@'.";
     if (!/^[A-Za-z0-9._\-]+$/.test(left)) return "UPI ID contains invalid characters.";
     return "";
@@ -317,6 +125,7 @@ export default function Payment() {
 
   function validateCardNameRaw(name) {
     if (!name || !String(name).trim()) return "Cardholder name required.";
+    // allow letters, spaces, hyphen, apostrophe, dot
     if (!/^[A-Za-z\s\-'.]+$/.test(name)) return "Name must contain letters only (no digits or symbols).";
     return "";
   }
@@ -328,15 +137,19 @@ export default function Payment() {
 
   // live validators - called on change
   function setCardNumberLive(raw) {
+    // allow digits and spaces only as user types; sanitize out anything else
     const sanitized = raw.replace(/[^\d\s]/g, "");
-    const collapsed = sanitized.replace(/\s+/g, " ").slice(0, 23);
+    // also collapse multiple spaces to single space for readability
+    const collapsed = sanitized.replace(/\s+/g, " ").slice(0, 23); // limit length (16 digits + spaces)
     setCardNumber(collapsed);
 
+    // live validate
     const err = validateCardNumberRaw(collapsed);
     setErrors((prev) => ({ ...prev, cardNumber: err }));
   }
 
   function setCardNameLive(raw) {
+    // allow letters, spaces, hyphen, apostrophe, dot only
     const sanitized = raw.replace(/[^A-Za-z\s\-'.]/g, "");
     setCardName(sanitized);
     const err = validateCardNameRaw(sanitized);
@@ -351,6 +164,7 @@ export default function Payment() {
   }
 
   function setCvvLive(raw) {
+    // only digits allowed
     const digits = String(raw).replace(/\D+/g, "").slice(0, 3);
     setCvv(digits);
     const err = validateCvvRaw(digits);
@@ -373,7 +187,7 @@ export default function Payment() {
 
   // ensure summary shows query param values when component mounts or params change
   useEffect(() => {
-    // no-op: summary reads derived values directly
+    // no-op here — state derived directly from query params
   }, [pricePerSeatParam, totalPriceParam, adultsParam, childrenParam, seatTypeParam]);
 
   async function handlePay(e) {
@@ -382,19 +196,6 @@ export default function Payment() {
     setSuccess(null);
     setGlobalError("");
 
-    // 1) Validate passengers first
-    if (passengerRef && passengerRef.current) {
-      const pRes = passengerRef.current.validate();
-      if (!pRes.ok) {
-        // set global error and stop
-        setGlobalError("Fix passenger details before proceeding to payment.");
-        // also mark an errors flag so UI can highlight
-        setErrors((prev) => ({ ...prev, passengers: "Passenger details invalid" }));
-        return;
-      }
-    }
-
-    // 2) Validate payment fields as before
     const nextErrors = {};
 
     if (method === "card") {
@@ -426,10 +227,6 @@ export default function Payment() {
     setLoading(true);
     try {
       const payload = { method };
-
-      // include passengers in payload (for demo)
-      const passengers = passengerRef.current ? passengerRef.current.getPassengers() : [];
-
       if (method === "card") {
         payload.cardLast4 = String(cardNumber || "").replace(/\s+/g, "").slice(-4);
         payload.name = cardName;
@@ -440,7 +237,6 @@ export default function Payment() {
         payload.bank = bank;
         payload.user = nbUser;
       }
-      payload.passengers = passengers;
 
       // simulate API call
       await new Promise((r) => setTimeout(r, 900));
@@ -455,7 +251,7 @@ export default function Payment() {
     }
   }
 
-  // Reset function - clears form and errors (also instruct PassengerForm to reset by re-mount)
+  // Reset function - clears form and errors
   function handleReset() {
     setCardNumber("");
     setCardName("");
@@ -467,8 +263,6 @@ export default function Payment() {
     setNbPass("");
     clearErrors();
     setSuccess(null);
-    // reset passenger form by forcing a remount: (simple approach — replace ref usage by reloading via key)
-    // easiest in this single-file approach: reload the page? but we won't reload; user can re-enter.
   }
 
   // derived values for UI
@@ -487,158 +281,144 @@ export default function Payment() {
           <h2>Complete Payment</h2>
 
           <div className="pay-grid">
-            {/* Left: passenger form + payment form */}
-            <div style={{ flex: 1 }}>
-              {/* Passenger form appears first */}
-              <PassengerForm
-                ref={passengerRef}
-                adults={adults}
-                children={children}
-                onChange={(data) => {
-                  // optional: you can persist to localStorage here
-                  // console.log("passengers changed", data);
-                }}
-              />
+            {/* Left: payment form */}
+            <form className="pay-form" onSubmit={handlePay} noValidate>
+              <div className="pay-section">
+                <label className="pay-label">Payment Method</label>
+                <div className="pay-methods">
+                  <label className={`method ${method === "card" ? "active" : ""}`}>
+                    <input type="radio" name="method" value="card" checked={method === "card"} onChange={() => setMethod("card")} />
+                    Card
+                  </label>
 
-              <form className="pay-form" onSubmit={handlePay} noValidate>
+                  <label className={`method ${method === "upi" ? "active" : ""}`}>
+                    <input type="radio" name="method" value="upi" checked={method === "upi"} onChange={() => setMethod("upi")} />
+                    UPI
+                  </label>
+
+                  <label className={`method ${method === "netbank" ? "active" : ""}`}>
+                    <input type="radio" name="method" value="netbank" checked={method === "netbank"} onChange={() => setMethod("netbank")} />
+                    Netbanking
+                  </label>
+                </div>
+              </div>
+
+              {method === "card" && (
+                <div className="pay-section card-section">
+                  <label className="pay-label">Card Number</label>
+                  <input
+                    className={`pay-input ${errors.cardNumber ? "err" : ""}`}
+                    placeholder="1234 5678 9012 3456"
+                    value={cardNumber}
+                    onChange={(e) => setCardNumberLive(e.target.value)}
+                    maxLength={16}
+                    inputMode="numeric"
+                  />
+                  {errors.cardNumber && <div className="pay-error">{errors.cardNumber}</div>}
+
+                  <label className="pay-label">Name on Card</label>
+                  <input
+                    className={`pay-input ${errors.cardName ? "err" : ""}`}
+                    placeholder="Full name as on card"
+                    value={cardName}
+                    onChange={(e) => setCardNameLive(e.target.value)}
+                  />
+                  {errors.cardName && <div className="pay-error">{errors.cardName}</div>}
+
+                  <div className="pay-row">
+                    <div style={{ flex: 1 }}>
+                      <label className="pay-label">Expiry (MM/YY)</label>
+                      <input
+                        className={`pay-input ${errors.expiry ? "err" : ""}`}
+                        placeholder="MM/YY"
+                        value={expiry}
+                        onChange={(e) => setExpiryLive(e.target.value)}
+                        maxLength={7}
+                      />
+                      {errors.expiry && <div className="pay-error">{errors.expiry}</div>}
+                    </div>
+
+                    <div style={{ width: 140 }}>
+                      <label className="pay-label">CVV</label>
+                      <input
+                        className={`pay-input ${errors.cvv ? "err" : ""}`}
+                        placeholder="123"
+                        value={cvv}
+                        onChange={(e) => setCvvLive(e.target.value)}
+                        maxLength={3}
+                        inputMode="numeric"
+                      />
+                      {errors.cvv && <div className="pay-error">{errors.cvv}</div>}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {method === "upi" && (
                 <div className="pay-section">
-                  <label className="pay-label">Payment Method</label>
-                  <div className="pay-methods">
-                    <label className={`method ${method === "card" ? "active" : ""}`}>
-                      <input type="radio" name="method" value="card" checked={method === "card"} onChange={() => setMethod("card")} />
-                      Card
-                    </label>
-
-                    <label className={`method ${method === "upi" ? "active" : ""}`}>
-                      <input type="radio" name="method" value="upi" checked={method === "upi"} onChange={() => setMethod("upi")} />
-                      UPI
-                    </label>
-
-                    <label className={`method ${method === "netbank" ? "active" : ""}`}>
-                      <input type="radio" name="method" value="netbank" checked={method === "netbank"} onChange={() => setMethod("netbank")} />
-                      Netbanking
-                    </label>
-                  </div>
+                  <label className="pay-label">UPI ID</label>
+                  <input
+                    className={`pay-input ${errors.upiId ? "err" : ""}`}
+                    placeholder="example@bank"
+                    value={upiId}
+                    onChange={(e) => setUpiLive(e.target.value)}
+                  />
+                  {errors.upiId && <div className="pay-error">{errors.upiId}</div>}
+                  <div className="small-note">Format: name@bank — letters only after '@'</div>
                 </div>
+              )}
 
-                {method === "card" && (
-                  <div className="pay-section card-section">
-                    <label className="pay-label">Card Number</label>
-                    <input
-                      className={`pay-input ${errors.cardNumber ? "err" : ""}`}
-                      placeholder="1234 5678 9012 3456"
-                      value={cardNumber}
-                      onChange={(e) => setCardNumberLive(e.target.value)}
-                      maxLength={23}
-                      inputMode="numeric"
-                    />
-                    {errors.cardNumber && <div className="pay-error">{errors.cardNumber}</div>}
-
-                    <label className="pay-label">Name on Card</label>
-                    <input
-                      className={`pay-input ${errors.cardName ? "err" : ""}`}
-                      placeholder="Full name as on card"
-                      value={cardName}
-                      onChange={(e) => setCardNameLive(e.target.value)}
-                    />
-                    {errors.cardName && <div className="pay-error">{errors.cardName}</div>}
-
-                    <div className="pay-row">
-                      <div style={{ flex: 1 }}>
-                        <label className="pay-label">Expiry (MM/YY)</label>
-                        <input
-                          className={`pay-input ${errors.expiry ? "err" : ""}`}
-                          placeholder="MM/YY"
-                          value={expiry}
-                          onChange={(e) => setExpiryLive(e.target.value)}
-                          maxLength={7}
-                        />
-                        {errors.expiry && <div className="pay-error">{errors.expiry}</div>}
-                      </div>
-
-                      <div style={{ width: 140 }}>
-                        <label className="pay-label">CVV</label>
-                        <input
-                          className={`pay-input ${errors.cvv ? "err" : ""}`}
-                          placeholder="123"
-                          value={cvv}
-                          onChange={(e) => setCvvLive(e.target.value)}
-                          maxLength={3}
-                          inputMode="numeric"
-                        />
-                        {errors.cvv && <div className="pay-error">{errors.cvv}</div>}
-                      </div>
+              {method === "netbank" && (
+                <div className="pay-section">
+                  <label className="pay-label">Select Bank</label>
+                  <select
+                    className={`pay-input ${errors.netbank ? "err" : ""}`}
+                    value={bank}
+                    onChange={(e) => setNetbankLive(e.target.value, nbUser, nbPass)}
+                  >
+                    <option value="">Choose bank</option>
+                    <option>HDFC</option>
+                    <option>ICICI</option>
+                    <option>SBI</option>
+                    <option>Axis</option>
+                    <option>Kotak</option>
+                    <option>Others</option>
+                  </select>
+                  <div className="pay-row" style={{ marginTop: 10 }}>
+                    <div style={{ flex: 1 }}>
+                      <label className="pay-label">Netbanking User ID</label>
+                      <input
+                        className="pay-input"
+                        value={nbUser}
+                        onChange={(e) => setNetbankLive(bank, e.target.value, nbPass)}
+                      />
+                    </div>
+                    <div style={{ width: 160 }}>
+                      <label className="pay-label">Password</label>
+                      <input
+                        className="pay-input"
+                        type="password"
+                        value={nbPass}
+                        onChange={(e) => setNetbankLive(bank, nbUser, e.target.value)}
+                      />
                     </div>
                   </div>
-                )}
-
-                {method === "upi" && (
-                  <div className="pay-section">
-                    <label className="pay-label">UPI ID</label>
-                    <input
-                      className={`pay-input ${errors.upiId ? "err" : ""}`}
-                      placeholder="example@bank"
-                      value={upiId}
-                      onChange={(e) => setUpiLive(e.target.value)}
-                    />
-                    {errors.upiId && <div className="pay-error">{errors.upiId}</div>}
-                    <div className="small-note">Format: name@bank — letters only after '@'</div>
-                  </div>
-                )}
-
-                {method === "netbank" && (
-                  <div className="pay-section">
-                    <label className="pay-label">Select Bank</label>
-                    <select
-                      className={`pay-input ${errors.netbank ? "err" : ""}`}
-                      value={bank}
-                      onChange={(e) => setNetbankLive(e.target.value, nbUser, nbPass)}
-                    >
-                      <option value="">Choose bank</option>
-                      <option>HDFC</option>
-                      <option>ICICI</option>
-                      <option>SBI</option>
-                      <option>Axis</option>
-                      <option>Kotak</option>
-                      <option>Others</option>
-                    </select>
-                    <div className="pay-row" style={{ marginTop: 10 }}>
-                      <div style={{ flex: 1 }}>
-                        <label className="pay-label">Netbanking User ID</label>
-                        <input
-                          className="pay-input"
-                          value={nbUser}
-                          onChange={(e) => setNetbankLive(bank, e.target.value, nbPass)}
-                        />
-                      </div>
-                      <div style={{ width: 160 }}>
-                        <label className="pay-label">Password</label>
-                        <input
-                          className="pay-input"
-                          type="password"
-                          value={nbPass}
-                          onChange={(e) => setNetbankLive(bank, nbUser, e.target.value)}
-                        />
-                      </div>
-                    </div>
-                    {errors.netbank && <div className="pay-error">{errors.netbank}</div>}
-                  </div>
-                )}
-
-                {errors.passengers && <div className="pay-global-error">{errors.passengers}</div>}
-                {globalError && <div className="pay-global-error">{globalError}</div>}
-
-                <div style={{ marginTop: 12, display: "flex", gap: 10 }}>
-                  <button className="pay-submit" type="submit" disabled={loading}>
-                    {loading ? "Processing..." : "Pay Now"}
-                  </button>
-
-                  <button type="button" className="pay-cancel" onClick={handleReset}>
-                    Reset
-                  </button>
+                  {errors.netbank && <div className="pay-error">{errors.netbank}</div>}
                 </div>
-              </form>
-            </div>
+              )}
+
+              {globalError && <div className="pay-global-error">{globalError}</div>}
+
+              <div style={{ marginTop: 12, display: "flex", gap: 10 }}>
+                <button className="pay-submit" type="submit" disabled={loading}>
+                  {loading ? "Processing..." : "Pay Now"}
+                </button>
+
+                <button type="button" className="pay-cancel" onClick={handleReset}>
+                  Reset
+                </button>
+              </div>
+            </form>
 
             {/* Right: summary / result card */}
             <aside className="pay-summary">
@@ -652,10 +432,7 @@ export default function Payment() {
 
                 <div className="summary-row">
                   <div>Passengers</div>
-                  <div className="muted">
-                    {adults} Passengers {adults !== 1 ? "s" : ""} {children} Child
-                    {children !== 1 ? "ren" : ""}
-                  </div>
+                  <div className="muted">{adults} Adult{adults !== 1 ? "s" : ""} {children} Child{children !== 1 ? "ren" : ""}</div>
                 </div>
 
                 <div className="summary-row">
@@ -672,13 +449,13 @@ export default function Payment() {
 
                 <hr />
 
-                {!success && <div className="small-note">Fill passenger & payment details and click Pay Now to complete booking.</div>}
+                {!success && <div className="small-note">Fill payment details and click Pay Now to complete booking.</div>}
 
                 {success && (
                   <div className="success-box">
                     <div className="success-title">Payment successful</div>
                     <div>Booking ID: <strong>{success.bookingId}</strong></div>
-                    <div className="small-note">Saved payload: <pre style={{ whiteSpace: "pre-wrap" }}>{JSON.stringify(success.payload, null, 2)}</pre></div>
+                    <div className="small-note">Saved payment: {JSON.stringify(success.payload)}</div>
                   </div>
                 )}
               </div>
