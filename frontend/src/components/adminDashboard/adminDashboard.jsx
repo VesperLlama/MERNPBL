@@ -90,12 +90,12 @@ export default function AdminDashboard() {
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
           <h2 style={{ margin: 0 }}>Admin Dashboard</h2>
-          <button
+          {/* <button
             onClick={handleLogout}
             style={{ background: "#e53e3e", color: "#fff", border: "none", padding: "8px 12px", borderRadius: 8, fontWeight: 600 }}
           >
             Logout
-          </button>
+          </button> */}
         </div>
 
         {/* UPDATED TEXT */}
