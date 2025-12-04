@@ -110,21 +110,30 @@ export default function UpdateCarrier() {
       const data = await res.json();
       console.log(data);
       if (res.ok) {
-        const c = data.data && data.data.carrier ? data.data.carrier : data.data;
-        // Map possible backend keys to our fields (accept various casing)
-        const map = (k) => c[k] ?? c[k.toLowerCase()] ?? c[k.replace(/\d+/g, (d) => d)];
+        // carrier may be at data.data.carrier or data.data or data.carrier or data
+        const c = data.data && (data.data.carrier || data.data) ? (data.data.carrier || data.data) : (data.carrier || data);
+
+        // discounts/refunds may be nested
+        const discounts = c.discounts || c.Discounts || c || {};
+        const refunds = c.refunds || c.Refunds || c || {};
+
+        const getVal = (obj, keys) => {
+          for (const k of keys) if (obj?.[k] !== undefined && obj?.[k] !== null) return obj[k];
+          return "";
+        };
+
         setCarrier({
-          carrierName: c.carrierName || c.CarrierName || "",
-          "30DaysAdvanceBooking": c["30DaysAdvanceBooking"] ?? c["30daysAdvanceBooking"] ?? c["30days"] ?? c["30Days"] ?? "",
-          "60DaysAdvanceBooking": c["60DaysAdvanceBooking"] ?? c["60daysAdvanceBooking"] ?? c["60Days"] ?? "",
-          "90DaysAdvanceBooking": c["90DaysAdvanceBooking"] ?? c["90daysAdvanceBooking"] ?? c["90Days"] ?? "",
-          BulkBooking: c.BulkBooking ?? c.bulkBooking ?? c.bulk ?? "",
-          SilverUser: c.SilverUser ?? c.silverUser ?? c.silver ?? "",
-          GoldUser: c.GoldUser ?? c.goldUser ?? c.gold ?? "",
-          PlatinumUser: c.PlatinumUser ?? c.platinumUser ?? c.platinum ?? "",
-          "2DaysBeforeTravelDate": c["2DaysBeforeTravelDate"] ?? c["2daysBeforeTravelDate"] ?? "",
-          "10DaysBeforeTravelDate": c["10DaysBeforeTravelDate"] ?? c["10daysBeforeTravelDate"] ?? "",
-          "20DaysOrMoreBeforeTravelDate": c["20DaysOrMoreBeforeTravelDate"] ?? c["20daysOrMoreBeforeTravelDate"] ?? "",
+          carrierName: c.carrierName || c.CarrierName || c.name || "",
+          "30DaysAdvanceBooking": getVal(discounts, ["30DaysAdvanceBooking", "30daysAdvanceBooking", "30Days", "30days"]),
+          "60DaysAdvanceBooking": getVal(discounts, ["60DaysAdvanceBooking", "60daysAdvanceBooking", "60Days", "60days"]),
+          "90DaysAdvanceBooking": getVal(discounts, ["90DaysAdvanceBooking", "90daysAdvanceBooking", "90Days", "90days"]),
+          BulkBooking: getVal(discounts, ["BulkBooking", "bulkBooking", "bulk"]),
+          SilverUser: getVal(discounts, ["SilverUser", "silverUser", "silver"]),
+          GoldUser: getVal(discounts, ["GoldUser", "goldUser", "gold"]),
+          PlatinumUser: getVal(discounts, ["PlatinumUser", "platinumUser", "platinum"]),
+          "2DaysBeforeTravelDate": getVal(refunds, ["2DaysBeforeTravelDate", "2daysBeforeTravelDate"]),
+          "10DaysBeforeTravelDate": getVal(refunds, ["10DaysBeforeTravelDate", "10daysBeforeTravelDate"]),
+          "20DaysOrMoreBeforeTravelDate": getVal(refunds, ["20DaysOrMoreBeforeTravelDate", "20daysOrMoreBeforeTravelDate"]),
         });
         setStatus("Loaded carrier details. Edit and click Update.");
         setTouched({});
@@ -171,17 +180,18 @@ export default function UpdateCarrier() {
         },
       };
 
-      let res = await fetch(`/api/carriers/${encodeURIComponent(carrierId)}`, {
+      const token = localStorage.getItem('token');
+      let res = await fetch(`http://localhost:4000/api/carriers/${encodeURIComponent(carrierId)}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
         // Fallback endpoint
-        res = await fetch(`/api/carriers/update`, {
+        res = await fetch(`http://localhost:4000/api/carriers/update`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
           body: JSON.stringify({ carrierId, ...payload }),
         });
       }
