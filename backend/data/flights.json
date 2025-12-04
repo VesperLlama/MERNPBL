@@ -1,0 +1,125 @@
+[
+  {
+    "flightNumber": "S411",
+    "carrierName": "Air Air",
+    "source": "BOM (Mumbai)",
+    "destination": "TRV (Trivandrum)",
+    "departureTime": "2025-12-06 11:50",
+    "arrivalTime": "2025-12-06 15:00",
+    "price": 5000,
+    "seats": {
+      "economy": 50,
+      "business": 15,
+      "executive": 10
+    },
+    "TotalSeats": 75,
+    "BookedSeats": {
+      "economy": 16,
+      "business": 0,
+      "executive": 7
+    },
+    "FlightStatus": "Active"
+  },
+  {
+    "flightNumber": "E425",
+    "carrierName": "Akasa Air",
+    "source": "BOM (Mumbai)",
+    "destination": "TRV (Trivandrum)",
+    "departureTime": "2026-02-03 11:50",
+    "arrivalTime": "2025-12-02 15:00",
+    "price": 6000,
+    "seats": {
+      "economy": 50,
+      "business": 15,
+      "executive": 10
+    },
+    "TotalSeats": 75,
+    "BookedSeats": 0,
+    "FlightStatus": "Active"
+  },
+  {
+    "flightNumber": "R519",
+    "carrierName": "IndiGo",
+    "source": "LKO",
+    "destination": "DEL",
+    "departureTime": "2025-12-07 11:50",
+    "arrivalTime": "2025-12-07 14:50",
+    "price": 5000,
+    "seats": {
+      "economy": 50,
+      "business": 15,
+      "executive": 10
+    },
+    "TotalSeats": 75,
+    "BookedSeats": 0,
+    "FlightStatus": "Active"
+  },
+  {
+    "flightNumber": "X639",
+    "carrierName": "Akasa Air",
+    "source": "DEL (Delhi)",
+    "destination": "VNS (Varanasi)",
+    "departureTime": "2025-12-06T17:01",
+    "arrivalTime": "2025-12-06T21:01",
+    "price": 2005,
+    "seats": {
+      "economy": 66,
+      "business": 22,
+      "executive": 3
+    },
+    "TotalSeats": 91,
+    "BookedSeats": 0,
+    "FlightStatus": "Active"
+  },
+  {
+    "flightNumber": "P861",
+    "carrierName": "IndiGo",
+    "source": "LKO (Lucknow)",
+    "destination": "VNS (Varanasi)",
+    "departureTime": "2025-12-05T17:03",
+    "arrivalTime": "2025-12-05T19:03",
+    "price": 3333,
+    "seats": {
+      "economy": 66,
+      "business": 22,
+      "executive": 5
+    },
+    "TotalSeats": 93,
+    "BookedSeats": 0,
+    "FlightStatus": "Active"
+  },
+  {
+    "flightNumber": "S719",
+    "carrierName": "IndiGo",
+    "source": "DEL (Delhi)",
+    "destination": "VNS (Varanasi)",
+    "departureTime": "2025-12-06T17:03",
+    "arrivalTime": "2025-12-06T19:03",
+    "price": 2000,
+    "seats": {
+      "economy": 50,
+      "business": 10,
+      "executive": 3
+    },
+    "TotalSeats": 63,
+    "BookedSeats": 0,
+    "FlightStatus": "Active"
+  },
+  {
+    "flightNumber": "E684",
+    "carrierName": "IndiGo",
+    "source": "DEL (Delhi)",
+    "destination": "VNS (Varanasi)",
+    "departureTime": "2025-12-06T17:04",
+    "arrivalTime": "2025-12-06T19:04",
+    "price": 2000,
+    "seats": {
+      "economy": 50,
+      "business": 10,
+      "executive": 3
+    },
+    "TotalSeats": 63,
+    "BookedSeats": 0,
+    "FlightStatus": "Active"
+  }
+]

@@ -1,0 +1,51 @@
+[
+  {
+    "CustomerId": 1002,
+    "FullName": "Aaditya Singh",
+    "PasswordHash": "$2b$10$lzt8boEFASmsrDaVI/PYT.v7xZCFcCKnogJtAswbgqLNY2wJV9gp.",
+    "Role": "customer",
+    "CustomerCategory": "Silver",
+    "Phone": "9876543210",
+    "EmailId": "aaditya@example.com",
+    "AddressLine1": "House 12, MG Road",
+    "AddressLine2": "",
+    "City": "Lucknow",
+    "State": "UP",
+    "ZipCode": "226001",
+    "DOB": "1998-06-15",
+    "CreatedAt": "2025-12-02T20:58:01.737Z"
+  },
+  {
+    "CustomerId": 1003,
+    "FullName": "Aaditya Chouhan",
+    "PasswordHash": "$2b$10$JeZglF1SAV.4CLnPyRTDsON9jwl.ODqSfjSHP5lfh7Gpe34GKABbq",
+    "Role": "customer",
+    "CustomerCategory": "Silver",
+    "Phone": "9866543210",
+    "EmailId": "aaditya34@example.com",
+    "AddressLine1": "House 12, MG Road",
+    "AddressLine2": "",
+    "City": "Lucknow",
+    "State": "UP",
+    "ZipCode": "226001",
+    "DOB": "1998-06-15",
+    "CreatedAt": "2025-12-03T04:58:15.744Z"
+  },
+  {
+    "CustomerId": 1004,
+    "FullName": "Aaditya Singh",
+    "PasswordHash": "$2b$10$uZ/NF9eb.6mrnP.jzkv9/.DthzmxQn8mGBVhffyM5kPqT0a3tK4fm",
+    "Role": "customer",
+    "CustomerCategory": "Silver",
+    "Phone": "9876543210",
+    "EmailId": "aaditya2@example.com",
+    "AddressLine1": "House 12",
+    "AddressLine2": "",
+    "City": "Lucknow",
+    "State": "UP",
+    "ZipCode": "226001",
+    "DOB": "1998-06-15",
+    "CreatedAt": "2025-12-03T05:31:04.580Z",
+    "UpdatedAt": "2025-12-04T07:12:05.997Z"
+  }
+]

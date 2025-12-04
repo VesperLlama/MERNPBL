@@ -1,0 +1,221 @@
+:root{
+  --bg: #f5f7fb;
+  --card: #fff;
+  --muted: #6b7280;
+  --accent: #06b6d4;
+  --accent-2: #0891b2;
+  --border: #e6e6e6;
+
+  /* sizing tokens */
+  --container-max: 1000px;
+  --card-pad: 18px;
+  --radius-lg: 12px;
+  --radius-sm: 8px;
+  --gap: 12px;
+  --shadow-1: 0 8px 22px rgba(12,18,26,0.06);
+  --shadow-soft: 0 6px 20px rgba(16,24,40,0.08);
+}
+
+/* -------------------------
+   Page + container
+   ------------------------- */
+.pr-root{
+  background: var(--bg);
+  min-height: calc(100vh - 70px);
+  padding: 22px;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.pr-container{
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* -------------------------
+   Card
+   ------------------------- */
+.pr-card{
+  display: flex;
+  gap: 18px;
+  background: var(--card);
+  padding: var(--card-pad);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-1);
+  align-items: flex-start;
+}
+
+/* Left column (avatar + meta) */
+.pr-left{
+  width: 220px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.avatar{
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, var(--accent) 0%, var(--accent-2) 100%);
+  color: #fff;
+  font-size: 28px;
+  font-weight: 800;
+  box-shadow: var(--shadow-soft);
+}
+
+.pr-basic{ flex: 1; }
+.pr-name{ font-weight: 800; font-size: 18px; line-height: 1; }
+.pr-email, .pr-id{ color: var(--muted); font-size: 13px; margin-top: 6px; }
+
+/* -------------------------
+   Right column
+   ------------------------- */
+.pr-right{ flex: 1; }
+
+/* actions */
+.pr-actions{ display:flex; gap:10px; justify-content:flex-end; margin-bottom:8px; }
+
+.btn{
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  border: 1px solid var(--border);
+  background: #fff;
+  transition: transform .12s ease, box-shadow .12s ease, opacity .12s;
+}
+.btn:active{ transform: translateY(1px); }
+.btn[disabled]{ opacity: .6; cursor: not-allowed; transform: none; }
+
+/* semantic button variants */
+/*.btn.edit{  default white  }*/
+.btn.logout{ color: #b91c1c; border-color: #f4caca; background:#fff; }
+.btn.save, .btn.save:enabled{ background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn.cancel{ background: #fff; }
+
+/* -------------------------
+   Messages
+   ------------------------- */
+.pr-msg{ margin-bottom: 10px; font-weight: 700; color: green; }
+
+/* -------------------------
+   Form primitives
+   ------------------------- */
+.pr-form{ display:flex; flex-direction:column; gap:10px; }
+.pr-label{ display:flex; flex-direction:column; font-size:13px; color:#374151; }
+.pr-input{
+  margin-top:8px;
+  padding:10px 12px;
+  border-radius: var(--radius-sm);
+  border:1px solid var(--border);
+  background:#fff;
+  outline:none;
+  font-size:14px;
+}
+.pr-input:focus{
+  box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.08);
+  border-color: var(--accent);
+}
+
+.pr-row{ display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap; }
+.pr-row .half{ flex:1; min-width: 180px; }
+
+/* small helper text */
+.small-note{ font-size:12px; color:var(--muted); margin-top:6px; }
+.pr-link{ color:var(--accent); font-weight:700; text-decoration:none; }
+
+/* -------------------------
+   Category badge (hero)
+   ------------------------- */
+.profile-heading{ display:flex; align-items:center; gap:12px; font-size:1.5rem; line-height:1; margin-bottom:8px; }
+
+/* badge base */
+.category-badge-hero{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 12px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:0.875rem;
+  letter-spacing:.6px;
+  box-shadow: var(--shadow-soft);
+  transform: translateY(-1px);
+  transition: transform 150ms ease, box-shadow 150ms ease, opacity .12s;
+  user-select:none;
+}
+
+/* icon inside badge */
+.category-badge-hero .category-icon{
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  display:block;
+  fill: currentColor;
+  opacity: .96;
+}
+
+/* hover */
+.category-badge-hero:hover{ transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 30px rgba(16,24,40,0.12); }
+
+/* tier themes */
+.category-badge-hero.silver{ background: linear-gradient(180deg,#f3f4f6 0%,#e5e7eb 100%); color:#111827; border:1px solid rgba(16,24,40,0.06); }
+.category-badge-hero.gold{ background: linear-gradient(180deg,#fff6d6 0%,#ffecb3 100%); color:#5a3b00; border:1px solid rgba(90,59,0,0.08); box-shadow: 0 8px 30px rgba(255,193,7,0.08); }
+.category-badge-hero.platinum{ background: linear-gradient(180deg,#e6f0fb 0%,#cfe4f8 100%); color:#022f5b; border:1px solid rgba(2,47,91,0.06); box-shadow: 0 8px 30px rgba(2,47,91,0.06); }
+
+/* -------------------------
+   Utility / error
+   ------------------------- */
+.error{ color: #b91c1c; font-size: 13px; margin-top:6px; }
+
+/* -------------------------
+   Responsive breakpoints
+   - consolidated and improved:
+     * small: <= 576px
+     * tablet: <= 820px
+     * very-small: <= 420px (tight devices)
+   ------------------------- */
+
+/* Tablet & below: stack card */
+@media (max-width: 820px){
+  .pr-card{ flex-direction: column; padding: 16px; }
+  .pr-left{ width: auto; align-items:flex-start; }
+  .pr-actions{ justify-content:flex-start; }
+}
+
+/* Small devices: tighten spacing and scale down badge / inputs */
+@media (max-width: 576px){
+  .pr-container{ padding: 0 12px; }
+  .pr-card{ gap: 12px; padding: 14px; border-radius: 10px; }
+  .avatar{ width: 56px; height:56px; font-size:24px; }
+  .profile-heading{ font-size: 1.25rem; }
+  .category-badge-hero{ padding:5px 8px; font-size:0.78rem; gap:6px; }
+  .category-badge-hero .category-icon{ width:14px; height:14px; flex:0 0 14px; }
+  .pr-row .half{ min-width: 140px; }
+  .btn{ padding: 8px 10px; font-size: 0.92rem; }
+  .pr-input{ font-size: 13px; padding: 9px 10px; }
+  .small-note{ font-size: 11px; }
+  /* keep fetch button compact */
+  .fetch-zip{ padding: 8px 10px; font-size: 0.92rem; }
+}
+
+/* Very small / narrow devices */
+@media (max-width: 420px){
+  .pr-row{ gap:8px; }
+  .pr-row .half{ min-width: 120px; }
+  .pr-actions{ gap:8px; }
+  .btn{ padding: 7px 10px; font-size: 0.9rem; }
+}
+
+/* small improvement: ensure primary buttons full-width on narrow screens */
+@media (max-width: 480px){
+  .btn.save, .primary { width: 100%; display: block; text-align:center; }
+}

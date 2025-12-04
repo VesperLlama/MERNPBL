@@ -1,0 +1,162 @@
+
+
+/* Remove arrows on number inputs (Chrome, Edge, Safari) */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove arrows on number inputs — Chrome, Safari, Edge */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove arrows — Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+
+
+:root {
+  --bg: #f5f7fb;
+  --card: #fff;
+  --muted: #6b7280;
+  --accent: #06b6d4;
+  --accent-2: #0891b2;
+  --border: #e6e6e6;
+}
+
+.bk-root {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: var(--bg);
+  min-height: calc(100vh - 70px);
+  padding: 28px 18px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.bk-container {
+  width: 100%;
+  max-width: 900px;
+  background: var(--card);
+  border-radius: 12px;
+  padding: 26px;
+  box-shadow: 0 8px 24px rgba(12, 18, 26, 0.06);
+}
+
+.bk-container h2 {
+  margin: 0 0 6px 0;
+  font-size: 22px;
+  color: #0b1b26;
+}
+.bk-sub {
+  margin: 0 0 18px 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.bk-form {
+  display: grid;
+  gap: 12px;
+}
+
+/* Two columns per row */
+.bk-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* For the adults/children pair, we render nested bk-row; ensure they look good */
+.bk-row > .bk-row {
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* labels and inputs */
+.bk-label {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  color: #374151;
+}
+
+.bk-inline { margin-bottom: 0; }
+
+.bk-input, .bk-input-small {
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #fff;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.bk-input:focus, .bk-input-small:focus {
+  box-shadow: 0 0 0 3px rgba(6,182,212,0.12);
+  border-color: var(--accent);
+}
+
+.bk-input-small {
+  width: 64px;
+  text-align: center;
+}
+
+.bk-passenger {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bk-num-btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #fff;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.bk-submit {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+
+.bk-submit:hover { background: var(--accent-2); transform: translateY(-1px); }
+
+.bk-error {
+  background: #fff6f6;
+  color: #b91c1c;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #f5d6d6;
+  margin-top: 6px;
+}
+
+.bk-hint {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* responsive */
+@media (max-width:900px) {
+  .bk-row { grid-template-columns: 1fr; }
+  .bk-row > .bk-row { grid-template-columns: 1fr; }
+  .bk-input-small { width: 100%; }
+}

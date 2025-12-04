@@ -1,0 +1,65 @@
+[
+  {
+    "CarrierId": 210,
+    "CarrierName": "Akasa Air",
+    "Discounts": {
+      "30DaysAdvanceBooking": 2.5,
+      "60DaysAdvanceBooking": 5.1,
+      "90DaysAdvanceBooking": 7.6,
+      "BulkBooking": 3
+    },
+    "userDiscounts": {
+      "Silver": 2.5,
+      "Gold": 5.1,
+      "Platinum": 7.6
+    },
+    "Refunds": {
+      "2DaysBeforeTravelDate": 0.1,
+      "10DaysBeforeTravelDate": 20,
+      "20DaysOrMoreBeforeTravelDate": 50
+    },
+    "CreatedAt": "2025-12-03T10:41:55.566Z"
+  },
+  {
+    "CarrierId": 212,
+    "CarrierName": "Air Air",
+    "Discounts": {
+      "30DaysAdvanceBooking": 2.5,
+      "60DaysAdvanceBooking": 5.1,
+      "90DaysAdvanceBooking": 7.6,
+      "BulkBooking": 3
+    },
+    "userDiscounts": {
+      "Silver": 2.5,
+      "Gold": 5.1,
+      "Platinum": 7.6
+    },
+    "Refunds": {
+      "2DaysBeforeTravelDate": 0.1,
+      "10DaysBeforeTravelDate": 20,
+      "20DaysOrMoreBeforeTravelDate": 50
+    },
+    "CreatedAt": "2025-12-04T03:34:56.308Z"
+  },
+  {
+    "CarrierId": 213,
+    "CarrierName": "IndiGo",
+    "Discounts": {
+      "30DaysAdvanceBooking": 2.9,
+      "60DaysAdvanceBooking": 5.5,
+      "90DaysAdvanceBooking": 8,
+      "BulkBooking": 3.2
+    },
+    "userDiscounts": {
+      "Silver": 2.7,
+      "Gold": 5.3,
+      "Platinum": 7.8
+    },
+    "Refunds": {
+      "2DaysBeforeTravelDate": 0.3,
+      "10DaysBeforeTravelDate": 20.5,
+      "20DaysOrMoreBeforeTravelDate": 55
+    },
+    "CreatedAt": "2025-12-04T11:29:15.584Z"
+  }
+]

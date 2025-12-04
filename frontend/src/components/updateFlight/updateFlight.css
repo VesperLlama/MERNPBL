@@ -1,0 +1,29 @@
+.uf-root { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: #f6f8fb; min-height: calc(100vh - 0px); }
+.uf-card { max-width:860px; margin:24px auto; background:#fff; padding:18px; border-radius:8px; box-shadow:0 8px 24px rgba(16,24,40,0.06); }
+.uf-card h2 { margin:0 0 12px 0; }
+.uf-form { display:flex; flex-direction:column; gap:10px; }
+.uf-row { display:flex; gap:12px; align-items:center; }
+.uf-row span { display:inline-block; width:170px; font-weight:600; }
+.uf-row input { flex:1; padding:8px 10px; border:1px solid #e6e9ef; border-radius:6px; }
+.uf-load { margin-left:8px; padding:8px 10px; background:#2563eb; color:#fff; border:none; border-radius:6px; cursor:pointer; }
+.uf-actions { display:flex; gap:8px; margin-top:8px; }
+.uf-update { padding:8px 14px; background:linear-gradient(90deg,#10b981,#059669); color:#fff; border:none; border-radius:8px; cursor:pointer; }
+.uf-clear { padding:8px 14px; background:#fff; border:1px solid #e6e9ef; border-radius:8px; cursor:pointer; }
+.uf-err { color:#b91c1c; font-size:12px; margin-left:180px; }
+.uf-status { margin-top:12px; padding:10px; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:6px; color:#0f172a; }
+
+/* Additional form polish */
+.uf-required { color:#dc2626; margin-left:6px; font-weight:700; }
+.uf-row select { flex:1; padding:8px 10px; border:1px solid #e6e9ef; border-radius:6px; background:#fff; }
+.uf-row input:focus, .uf-row select:focus { outline:none; box-shadow:0 6px 18px rgba(37,99,235,0.08); border-color:#2563eb; }
+.uf-row input:invalid, .uf-row select:invalid { border-color:#f87171; }
+.uf-row input[required], .uf-row select[required] { background:#fff; }
+.uf-err { color:#b91c1c; font-size:12px; margin-left:180px; }
+.uf-actions .uf-update:disabled { opacity:0.6; cursor:not-allowed; }
+
+
+@media (max-width:760px) {
+  .uf-row { flex-direction:column; align-items:flex-start; }
+  .uf-row span { width:100%; }
+  .uf-err { margin-left:0; }
+}

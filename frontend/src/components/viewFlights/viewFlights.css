@@ -1,0 +1,51 @@
+/* Minimal table styles for Flights list */
+
+:root{
+  --vf-bg: #f5f7fb;
+  --card-bg: #fff;
+  --muted: #6b7280;
+  --accent: #2563eb;
+  --border: #e6e6e6;
+}
+.vf-root { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: var(--vf-bg); min-height:100vh; }
+.vf-container { padding: 20px; max-width: 1100px; margin: 20px auto; background: var(--card-bg); border-radius:8px; box-shadow: 0 6px 18px rgba(16,24,40,0.06); }
+.vf-container h2 { margin: 0 0 12px 0; font-size:20px; }
+.vf-controls { display:flex; gap:12px; align-items:center; margin-bottom:12px; }
+.vf-filter select { margin-left:8px; padding:6px 10px; border:1px solid var(--border); border-radius:6px; }
+.vf-refresh { padding:7px 12px; background:var(--accent); color:#fff; border:none; border-radius:6px; cursor:pointer; }
+.vf-refresh[disabled]{ opacity:0.6; cursor:not-allowed; }
+.vf-table-wrap { overflow-x:auto; margin-top:6px; }
+.vf-table { width:100%; border-collapse:collapse; font-size:14px; }
+.vf-table th, .vf-table td { border:1px solid var(--border); padding:12px 10px; text-align:left; vertical-align:middle; }
+.vf-table th { background:#fbfcfe; color:#111827; font-weight:600; }
+.vf-empty { padding:18px 8px; color:var(--muted); }
+
+/* Zebra rows and subtle hover */
+.vf-table tbody tr:nth-child(odd) { background: #fff; }
+.vf-table tbody tr:nth-child(even) { background: #fbfbfc; }
+.vf-row { cursor: pointer; outline: none; }
+.vf-row:hover { background: #eef2ff; }
+.vf-row:focus { box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
+
+/* Back button style for details */
+.vf-back { padding:7px 12px; margin-bottom:12px; background:#fff; border:1px solid var(--border); border-radius:6px; cursor:pointer; }
+.vf-back:hover { background:#fbfbff; }
+
+/* Detail table tweaks */
+.vf-table tbody th { background: transparent; text-align:left; font-weight:600; width:260px; padding-right:18px; }
+.vf-table tbody td { white-space:pre-wrap; }
+
+@media (max-width:900px) {
+  .vf-container { padding:14px; margin:12px; }
+  .vf-table tbody th { width:180px; }
+}
+
+@media (max-width:600px) {
+  .vf-table th, .vf-table td { padding:8px 6px; font-size:13px; }
+  .vf-controls { flex-direction:column; align-items:flex-start; }
+}
+
+@media (max-width:600px) {
+  .vf-table th, .vf-table td { padding:8px 6px; font-size:13px; }
+  .vf-controls { flex-direction:column; align-items:flex-start; }
+}

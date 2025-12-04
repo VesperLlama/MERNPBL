@@ -1,0 +1,12 @@
+[
+  {
+    "AdminId": 2,
+    "FullName": "Super Admin",
+    "EmailId": "admin@example.com",
+    "PasswordHash": "$2b$10$WC1G.J8VfiTzpb8UOoCD5eDsSrKg0DLYl6AlpXJUg.ilSzZzjyCgC",
+    "CreatedAt": "2025-12-02T20:56:31.413Z"
+  }
+]
+
+
+

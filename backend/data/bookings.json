@@ -1,0 +1,15 @@
+[
+  {
+    "BookingId": 5040,
+    "CustomerId": 1004,
+    "flightNumber": "S411",
+    "PNR": "JBMREU",
+    "BookingStatus": "Booked",
+    "BookedAt": "2025-12-04T11:11:00.543Z",
+    "PricePaid": 65812.5,
+    "CancelledAt": null,
+    "RefundAmount": null,
+    "type": "executive",
+    "quantity": 6
+  }
+]

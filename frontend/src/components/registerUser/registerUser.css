@@ -1,0 +1,149 @@
+/* Import bootstrap utilities (optional but useful) */
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+/* Root Theme */
+:root {
+  --bg: #b67070;
+  --text: #0b1b26;
+  --muted: #6b7280;
+  --accent: #0ea5a4;
+  --border: #dbe1e8;
+}
+
+/* Page Container */
+.register-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg);
+  padding: 30px 15px;
+}
+
+/* Card Wrapper */
+.register-card {
+  width: 100%;
+  max-width: 860px;
+  background: rgba(161, 57, 57, 0.35);  /* transparent glass look */
+  border-radius: 14px;
+  padding: 30px 34px;
+  box-shadow: 0 12px 40px rgba(8, 25, 35, 0.12);
+
+  /* Glassmorphism blur */
+  backdrop-filter: blur(100px) saturate(160%);
+  -webkit-backdrop-filter: blur(100px) saturate(160%);
+
+  /* Optional glass border */
+  border: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+
+/* Headings */
+.register-card h2 {
+  font-weight: 700;
+  font-size: 1.7rem;
+  color: var(--text);
+}
+
+.required-note {
+  margin-top: 6px;
+  color: var(--muted);
+}
+.required-note .req {
+  color: #ef4444;
+  font-weight: bold;
+}
+
+/* Labels */
+label {
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+label.required::after {
+  content: " *";
+  color: #ef4444;
+}
+
+/* Inputs + Select */
+.register-card input,
+.register-card select {
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  font-size: 1rem;
+}
+
+.register-card input:focus,
+.register-card select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 0.15rem rgba(14, 165, 164, 0.3);
+}
+
+/* Small text */
+.small-text {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-top: 5px;
+}
+
+/* Error text */
+.error {
+  color: #b91c1c;
+  margin-top: 4px;
+  font-size: 0.85rem;
+}
+
+/* Button */
+.primary {
+  background: linear-gradient(90deg, var(--accent), #06c1da);
+  border: none;
+  padding: 12px 20px;
+  font-size: 1.05rem;
+  border-radius: 10px;
+  font-weight: 700;
+  color: white;
+  box-shadow: 0 10px 30px rgba(6, 182, 212, 0.18);
+  transition: 0.25s;
+}
+.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(6, 182, 212, 0.26);
+}
+
+/* Fetch button style: match primary but with a lighter blue gradient and smaller padding */
+.fetch-zip {
+  background: linear-gradient(90deg, #a8def8, #67c9f2);
+  border: none;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  border-radius: 10px;
+  font-weight: 700;
+  color: white;
+  box-shadow: 0 8px 22px rgba(103, 201, 242, 0.14);
+  transition: 0.18s;
+  cursor: pointer;
+}
+.fetch-zip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px rgba(103, 201, 242, 0.2);
+}
+
+/* Ensure button stays compact on small screens */
+@media (max-width: 576px) {
+  .fetch-zip {
+    padding: 10px 12px;
+    font-size: 0.95rem;
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 576px) {
+  .register-card {
+    padding: 22px 20px;
+  }
+  .primary {
+    width: 100%;
+  }
+}

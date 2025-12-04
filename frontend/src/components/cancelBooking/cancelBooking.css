@@ -1,0 +1,88 @@
+
+
+
+
+
+:root {
+  --bg: #f5f7fb;
+  --card: #fff;
+  --muted: #6b7280;
+  --accent: #06b6d4;
+  --border: #e6e6e6;
+}
+
+.cb-root {
+  background: var(--bg);
+  min-height: calc(100vh - 70px);
+  padding: 20px;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+.cb-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: var(--card);
+  padding: 18px;
+  border-radius: 10px;
+  box-shadow: 0 8px 22px rgba(12,18,26,0.06);
+}
+
+.cb-container h2 { margin-top:0; }
+.cb-sub { color: var(--muted); margin-top:4px; margin-bottom:12px; }
+
+/* messages */
+.cb-empty { padding: 18px; text-align:center; color: var(--muted); }
+.cb-error { background: #fff6f6; color: #b91c1c; padding:10px; border-radius:8px; margin-bottom:12px; }
+
+/* list */
+.cb-list { display: grid; gap: 12px; margin-top: 10px; }
+
+/* item */
+.cb-item {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:12px;
+  border-radius:10px;
+  background: #fff;
+  border:1px solid var(--border);
+}
+
+.cb-main { flex:1; min-width: 0; }
+.cb-line { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:8px; }
+.cb-flight { font-weight:800; }
+.cb-status { padding:6px 10px; border-radius:8px; font-weight:700; font-size:13px; text-transform:capitalize; }
+.cb-status.confirmed { color: green; background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.12); }
+.cb-status.pending { color: #d97706; background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.12); }
+.cb-status.cancelled { color: #b91c1c; background: rgba(249,231,235,0.7); border: 1px solid rgba(220,38,38,0.08); }
+
+.cb-meta { display:flex; gap:16px; color: var(--muted); font-size:14px; flex-wrap:wrap; }
+.cb-route { font-weight:600; }
+.cb-date {}
+.cb-passenger {}
+
+.cb-actions { display:flex; gap:8px; align-items:center; }
+.cb-view, .cb-cancel {
+  padding:8px 12px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:white;
+  cursor:pointer;
+  font-weight:700;
+}
+.cb-cancel {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.cb-cancel[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* responsive */
+@media (max-width: 720px) {
+  .cb-item { flex-direction: column; align-items:flex-start; }
+  .cb-actions { width:100%; justify-content: flex-end; }
+}

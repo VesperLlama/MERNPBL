@@ -1,0 +1,17 @@
+/* Minimal table layout for carriers */
+.vc-controls{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.vc-filter-label{font-weight:600;color:#475569}
+.vc-filter{padding:6px 8px;border-radius:8px;border:1px solid #e6edf3}
+.vc-empty{padding:18px;color:#6b7280}
+.vc-table-wrap{overflow:auto;margin-top:12px}
+.vc-table{width:100%;border-collapse:collapse;font-size:0.95rem}
+.vc-table th,.vc-table td{padding:10px 12px;border-bottom:1px solid #f1f5f9;text-align:left;color:#0b1b26}
+.vc-table thead th{background:#fbfdff;color:#334155;font-weight:700;border-bottom:2px solid #e6edf3}
+.vc-table tbody tr:hover{background:#f8fbfd}
+
+.vc-btn{background:transparent;border:1px solid #e6edf3;padding:6px 10px;border-radius:6px;cursor:pointer;font-weight:700}
+.vc-btn:hover{background:#fbfdff}
+
+@media(max-width:900px){
+  .vc-table th,.vc-table td{padding:8px}
+}
