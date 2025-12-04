@@ -27,26 +27,33 @@ export default function ViewFlightDetail() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch(`/api/flights/${id}`);
+      const res = await fetch(`http://localhost:4000/api/flights/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
       if (res.ok) {
         const data = await res.json();
-        // If backend returns { flight: {...} }
-        const f = data && data.flight ? data.flight : data;
+        // If backend returns { flight: {...} } or { data: { flight } }
+        const f = data && (data.flight || data.data?.flight) ? (data.flight || data.data.flight) : data;
         setFlight(f);
       } else if (res.status === 404) {
         // fallback: fetch all and find
-        const all = await (await fetch("/api/flights")).json();
-        const list = Array.isArray(all) ? all : all.flights || [];
+        const allRes = await fetch("http://localhost:4000/api/flights/all", {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+        const all = await allRes.json();
+        const list = Array.isArray(all) ? all : all.flights || all.data || [];
         const found = list.find((x) => {
           return ["_id", "flightId", "id"].some((k) => String(x[k]) === String(id));
         });
         if (found) setFlight(found);
         else setError("Flight not found");
       } else {
-        throw new Error("Fetch failed");
+        const body = await res.text().catch(() => '');
+        throw new Error(body || `Fetch failed (${res.status})`);
       }
     } catch (e) {
-      setError("Failed to load flight details");
+      console.error('fetchDetail error:', e);
+      setError(e.message || "Failed to load flight details");
     } finally {
       setLoading(false);
     }
