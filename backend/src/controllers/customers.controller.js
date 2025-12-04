@@ -1,86 +1,3 @@
-// /**
-//  * customers.controller.js
-//  * Customer registration and get-by-id
-//  */
-
-// const bcrypt = require('bcryptjs');
-// const { readJson, atomicUpdate, getNextId } = require('../utils/jsonDb');
-// const { validateCustomerRegister } = require('../utils/validators');
-
-// const CUSTOMERS_FILE = 'customers.json';
-
-// exports.registerCustomer = async (req, res, next) => {
-//   try {
-//     const payload = req.body || {};
-//     const { error } = validateCustomerRegister(payload);
-//     if (error) {
-//       const messages = error.details.map(d => d.message);
-//       return res.status(400).json({ message: 'Validation failed', errors: messages });
-//     }
-
-//     // atomic add
-//     await atomicUpdate(CUSTOMERS_FILE, async (customers) => {
-//       if (!Array.isArray(customers)) customers = [];
-
-//       // duplicate email check
-//       if (customers.find(c => c.EmailId && c.EmailId.toLowerCase() === payload.EmailId.toLowerCase())) {
-//         const err = new Error('Email already registered');
-//         err.status = 400;
-//         throw err;
-//       }
-
-//       const id = await getNextId('customerId');
-//       const passwordHash = await bcrypt.hash(payload.Password, 10);
-
-//       const newCustomer = {
-//         CustomerId: id,
-//         FullName: payload.FullName,
-//         PasswordHash: passwordHash,
-//         Role: 'customer',
-//         CustomerCategory: payload.CustomerCategory || 'Silver',
-//         Phone: payload.Phone,
-//         EmailId: payload.EmailId,
-//         AddressLine1: payload.AddressLine1,
-//         AddressLine2: payload.AddressLine2 || '',
-//         City: payload.City,
-//         State: payload.State,
-//         ZipCode: payload.ZipCode,
-//         DOB: payload.DOB,
-//         CreatedAt: new Date().toISOString()
-//       };
-
-//       customers.push(newCustomer);
-//       return customers;
-//     });
-
-//     // Get new id from meta.json
-//     const meta = readJson('meta.json');
-//     return res.status(201).json({ message: 'Registered', CustomerId: meta.customerId });
-//   } catch (err) {
-//     if (err.status === 400) return res.status(400).json({ message: err.message });
-//     next(err);
-//   }
-// };
-
-// exports.getCustomerById = (req, res, next) => {
-//   try {
-//     const id = Number(req.params.id);
-//     const customers = readJson(CUSTOMERS_FILE);
-//     const cust = customers.find(c => Number(c.CustomerId) === id);
-//     if (!cust) return res.status(404).json({ message: 'Customer not found' });
-//     const { PasswordHash, ...safe } = cust;
-//     return res.json(safe);
-//   } catch (err) {
-//     next(err);
-//   }
-// };
-
-
-/**
- * customers.controller.js
- * Customer registration and get-by-id (SIMPLE VERSION)
- */
-
 const bcrypt = require('bcryptjs');
 const { readJson, writeJson, getNextId } = require('../utils/jsonDb');
 const { validateCustomerRegister } = require('../utils/validators');
@@ -103,12 +20,18 @@ exports.registerCustomer = async (req, res, next) => {
     if (!Array.isArray(customers)) customers = [];
 
     // Duplicate email check
-    const exists = customers.find(
-      c => c.EmailId && c.EmailId.toLowerCase() === payload.EmailId.toLowerCase()
+    const emailExists = customers.find(
+      c => c.EmailId && c.EmailId.toLowerCase() === String(payload.EmailId).toLowerCase()
+    );
+    const phoneExists = customers.find(
+      c => c.Phone && String(c.Phone) === String(payload.Phone)
     );
 
-    if (exists) {
-      return res.status(400).json({ message: 'Email already registered' });
+    if (emailExists || phoneExists) {
+      const parts = [];
+      if (emailExists) parts.push('Email');
+      if (phoneExists) parts.push('Phone');
+      return res.status(400).json({ message: parts.join(' and ') + ' already registered' });
     }
 
     // Get next ID (simple version)

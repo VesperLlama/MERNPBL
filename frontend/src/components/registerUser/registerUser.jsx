@@ -33,6 +33,7 @@ export default function RegisterUser() {
   });
 
   const [errors, setErrors] = useState({});
+  const [serverError, setServerError] = useState("");
   const [role, setRole] = useState("Customer");
   const [customerCategory, setCustomerCategory] = useState("Silver");
   const [submitting, setSubmitting] = useState(false);
@@ -206,13 +207,22 @@ export default function RegisterUser() {
     if (!validate()) return;
 
     setSubmitting(true);
-
+    setServerError("");
     const { confirmPassword, ...payloadData } = form;
 
+    // Map frontend form keys to backend expected keys
     const payload = {
-      ...payloadData,
-      role,
-      customerCategory
+      FullName: payloadData.fullName,
+      Password: payloadData.password,
+      Phone: payloadData.phone,
+      EmailId: payloadData.email,
+      AddressLine1: payloadData.address1,
+      AddressLine2: payloadData.address2 || '',
+      City: payloadData.city,
+      State: payloadData.state,
+      ZipCode: payloadData.zip,
+      DOB: payloadData.dob,
+      CustomerCategory: customerCategory
     };
 
     try {
@@ -222,15 +232,46 @@ export default function RegisterUser() {
         body: JSON.stringify(payload)
       });
 
-      if (!res.ok) throw new Error("Server error");
-
-      const data = await res.json();
-      const id = data.customerId || data.id || data.customerID;
-
-      if (id) alert(`Registration successful! Customer ID: ${id}`);
-      else alert("Registration successful!");
+      const resBody = await res.json().catch(() => null);
+      if (res.ok) {
+        const id = resBody?.CustomerId || resBody?.customerId || resBody?.id || resBody?.CustomerID;
+        // popup with clear message to note the ID
+        if (id) {
+          alert(`Registration successful!\nYour Customer ID: ${id}\nPlease note this ID for future reference.`);
+        } else {
+          alert('Registration successful!');
+        }
+        // optionally reset form
+        setForm({
+          fullName: "",
+          password: "",
+          confirmPassword: "",
+          phone: "",
+          email: "",
+          address1: "",
+          address2: "",
+          city: cities[0].name,
+          state: cities[0].state,
+          zip: cities[0].zip,
+          dob: "",
+          estimatedSpend: ""
+        });
+      } else {
+        // show meaningful server error(s)
+        if (resBody) {
+          if (Array.isArray(resBody.errors) && resBody.errors.length > 0) {
+            setServerError(resBody.errors.join('; '));
+          } else if (resBody.message) {
+            setServerError(resBody.message);
+          } else {
+            setServerError('Registration failed: Server validation error');
+          }
+        } else {
+          setServerError('Registration failed: Server error');
+        }
+      }
     } catch (err) {
-      alert("Registration failed: " + err.message);
+      setServerError('Registration failed: ' + (err.message || 'Network error'));
     } finally {
       setSubmitting(false);
     }
@@ -253,6 +294,12 @@ export default function RegisterUser() {
         <p className="required-note">
           Fields marked <span className="req">*</span> are required
         </p>
+
+        {serverError && (
+          <div className="server-error" style={{ color: 'red', marginBottom: 12 }}>
+            {serverError}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="mt-3">
           <div className="row g-3">

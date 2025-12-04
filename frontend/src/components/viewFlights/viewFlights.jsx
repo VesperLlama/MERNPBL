@@ -6,6 +6,11 @@ import "./viewFlights.css";
 export default function ViewFlights() {
   const [flights, setFlights] = useState([]);
   const [filter, setFilter] = useState("All");
+  const [originFilter, setOriginFilter] = useState("All");
+  const [destFilter, setDestFilter] = useState("All");
+  const [dateFilter, setDateFilter] = useState("");
+  const [searchId, setSearchId] = useState("");
+  const [searchError, setSearchError] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -35,6 +40,9 @@ export default function ViewFlights() {
 
   const carriers = Array.from(new Set(flights.map((f) => f.carrierName || f.CarrierName).filter(Boolean))).sort();
 
+  const origins = Array.from(new Set(flights.map((f) => getField(f, ["source", "Origin"]) ).filter(Boolean))).sort();
+  const destinations = Array.from(new Set(flights.map((f) => getField(f, ["destination", "Destination"]) ).filter(Boolean))).sort();
+
   function getField(f, keys) {
     for (const k of keys) {
       if (f[k] !== undefined && f[k] !== null) return f[k];
@@ -44,7 +52,23 @@ export default function ViewFlights() {
 
   const navigate = useNavigate();
 
-  const displayed = flights.filter((f) => filter === "All" || (f.carrierName || f.CarrierName) === filter);
+  function matchesDate(f) {
+    if (!dateFilter) return true;
+    const raw = getField(f, ["departureTime", "departure", "Departure"]);
+    if (!raw) return false;
+    const d = new Date(String(raw).replace(' ', 'T'));
+    if (isNaN(d.getTime())) return false;
+    const sel = new Date(dateFilter);
+    return d.getFullYear() === sel.getFullYear() && d.getMonth() === sel.getMonth() && d.getDate() === sel.getDate();
+  }
+
+  const displayed = flights.filter((f) => {
+    const carrierMatch = filter === "All" || (f.carrierName || f.CarrierName) === filter;
+    const originMatch = originFilter === "All" || String(getField(f, ["source", "Origin"])) === originFilter;
+    const destMatch = destFilter === "All" || String(getField(f, ["destination", "Destination"])) === destFilter;
+    const dateMatch = matchesDate(f);
+    return carrierMatch && originMatch && destMatch && dateMatch;
+  });
 
   return (
     <div className="vf-root">
@@ -63,6 +87,52 @@ export default function ViewFlights() {
                 </option>
               ))}
             </select>
+          </label>
+
+          <label className="vf-filter">
+            Origin:
+            <select value={originFilter} onChange={(e) => setOriginFilter(e.target.value)}>
+              <option value="All">All</option>
+              {origins.map((o) => (
+                <option key={o} value={o}>{o}</option>
+              ))}
+            </select>
+          </label>
+
+          <label className="vf-filter">
+            Destination:
+            <select value={destFilter} onChange={(e) => setDestFilter(e.target.value)}>
+              <option value="All">All</option>
+              {destinations.map((d) => (
+                <option key={d} value={d}>{d}</option>
+              ))}
+            </select>
+          </label>
+
+          <label className="vf-filter">
+            Date:
+            <input type="date" value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} />
+          </label>
+
+          <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            Flight ID:
+            <input placeholder="search by id" value={searchId} onChange={(e) => { setSearchId(e.target.value); setSearchError(""); }} />
+            <button type="button" onClick={() => {
+              const q = (searchId || "").trim();
+              if (!q) return setSearchError('Enter flight ID to search');
+              const found = flights.find(x => {
+                const id = getField(x, ["_id", "flightNumber", "id", "flightId"]);
+                return String(id) === q;
+              });
+              if (found) {
+                const id = getField(found, ["_id", "flightNumber", "id", "flightId"]);
+                navigate(`/admin/flights/${id}`);
+              } else {
+                setSearchError(`Flight with ID "${q}" not found.`);
+              }
+            }}>
+              Go
+            </button>
           </label>
           <button className="vf-refresh" onClick={fetchFlights} disabled={loading}>
             {loading ? "Loading..." : "Refresh"}
@@ -91,6 +161,9 @@ export default function ViewFlights() {
                   <tr>
                     <td className="vf-empty" colSpan={8}>
                       {loading ? "Loading flights..." : "No flights found."}
+                      {searchError && (
+                        <div style={{ color: 'darkred', marginTop: 8 }}>{searchError}</div>
+                      )}
                     </td>
                   </tr>
                 )}

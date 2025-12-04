@@ -5,6 +5,12 @@ const { readJson, writeJson, getNextId } = require('../utils/jsonDb');
 const ADMINS_FILE = 'admins.json';
 const BACKEND_SECRET = process.env.BACKEND_SECRET || 'dev_backend_secret';
 
+// Data file names used by this controller
+const FLIGHTS_FILE = 'flights.json';
+const CARRIERS_FILE = 'carriers.json';
+const BOOKINGS_FILE = 'bookings.json';
+const CUSTOMERS_FILE = 'customers.json';
+
 exports.createAdmin = async (req, res, next) => {
   try {
     // Require backend secret header
@@ -69,56 +75,77 @@ exports.createAdmin = async (req, res, next) => {
 };
 
 exports.getAdminDashboard = (req, res, next) => {
+  console.log('getAdminDashboard called');
   try {
     // Must be admin (handled by middleware)
 
-    // Read JSON DB
-    const flights = readJson(FLIGHTS_FILE) || [];
-    const carriers = readJson(CARRIERS_FILE) || [];
-    const bookings = readJson(BOOKINGS_FILE) || [];
-    const customers = readJson(CUSTOMERS_FILE) || [];
+    // Read JSON DB (defensive)
+    let flights = [];
+    let carriers = [];
+    let bookings = [];
+    let customers = [];
+    try {
+      flights = readJson(FLIGHTS_FILE) || [];
+      carriers = readJson(CARRIERS_FILE) || [];
+      bookings = readJson(BOOKINGS_FILE) || [];
+      customers = readJson(CUSTOMERS_FILE) || [];
+    } catch (readErr) {
+      console.error('Failed to read data files for admin dashboard:', readErr);
+      return res.status(500).json({ message: 'Failed to read dashboard data', detail: String(readErr.message || readErr) });
+    }
 
-    // 1. Total flights
-    const totalFlights = flights.length;
+    try {
+      // 1. Total flights
+      const totalFlights = Array.isArray(flights) ? flights.length : 0;
 
-    // 2. Total carriers
-    const totalCarriers = carriers.length;
+      // 2. Total carriers
+      const totalCarriers = Array.isArray(carriers) ? carriers.length : 0;
 
-    // 3. Total revenue
-    const totalRevenue = bookings
-      .filter(b => b.BookingStatus === "Booked") // only active bookings
-      .reduce((sum, b) => sum + Number(b.PricePaid || 0), 0);
+      // 3. Total revenue
+      const totalRevenue = (Array.isArray(bookings) ? bookings : [])
+        .filter(b => b.BookingStatus === "Booked") // only active bookings
+        .reduce((sum, b) => sum + Number(b.PricePaid || 0), 0);
 
-    // 4. Total bookings
-    const totalBookings = bookings.length;
+      // 4. Total bookings
+      const totalBookings = Array.isArray(bookings) ? bookings.length : 0;
 
-    // 5. Upcoming bookings
-    const now = new Date();
-    const upcomingBookings = bookings.filter(b => {
-      const flight = flights.find(f => f.flightNumber === b.flightNumber);
-      if (!flight) return false;
+      // 5. Upcoming bookings
+      const now = new Date();
+      const upcomingBookings = (Array.isArray(bookings) ? bookings : []).filter(b => {
+        const flight = (Array.isArray(flights) ? flights : []).find(f => f.flightNumber === b.flightNumber);
+        if (!flight) return false;
 
-      const dep = new Date(String(flight.departureTime).replace(" ", "T"));
-      if (isNaN(dep.getTime())) return false;
+        const dep = new Date(String(flight.departureTime || '').replace(" ", "T"));
+        if (isNaN(dep.getTime())) return false;
 
-      return dep > now && b.BookingStatus === "Booked";
-    }).length;
+        return dep > now && b.BookingStatus === "Booked";
+      }).length;
 
-    // 6. Total customers
-    const totalCustomers = customers.length;
+      // 6. Total customers
+      const totalCustomers = Array.isArray(customers) ? customers.length : 0;
 
-    return res.json({
-      data: {
-        totalFlights,
-        totalCarriers,
-        totalRevenue,
-        totalBookings,
-        upcomingBookings,
-        totalCustomers,
-      }
-    });
+      // include admin info if available on req.user (set by auth middleware)
+      const adminName = (req.user && (req.user.FullName || req.user.name)) || '';
+      const adminId = (req.user && (req.user.AdminId || req.user.id)) || '';
 
+      return res.json({
+        data: {
+          totalFlights,
+          totalCarriers,
+          totalRevenue,
+          totalBookings,
+          upcomingBookings,
+          totalCustomers,
+          adminName,
+          adminId
+        }
+      });
+    } catch (calcErr) {
+      console.error('Error computing dashboard stats:', calcErr);
+      return res.status(500).json({ message: 'Failed to compute dashboard stats', detail: String(calcErr.message || calcErr) });
+    }
   } catch (err) {
-    next(err);
+    console.error('Unexpected error in getAdminDashboard:', err);
+    return res.status(500).json({ message: 'Failed to load dashboard', detail: String(err.message || err) });
   }
 };
