@@ -4,12 +4,26 @@
     "CustomerId": 1004,
     "flightNumber": "S411",
     "PNR": "JBMREU",
-    "BookingStatus": "CancelledByCustomer",
+    "BookingStatus": "BOOKED",
     "BookedAt": "2025-12-04T11:11:00.543Z",
     "PricePaid": 65812.5,
     "CancelledAt": "2025-12-04T18:10:09.319Z",
     "RefundAmount": 65812.5,
     "type": "executive",
     "quantity": 6
+  },
+
+  {
+    "BookingId": 5041,
+    "CustomerId": 1004,
+    "flightNumber": "S411",
+    "PNR": "JBMRFU",
+    "BookingStatus": "BOOKED",
+    "BookedAt": "2025-12-05T11:11:00.543Z",
+    "PricePaid": 5000.0,
+    "CancelledAt": null,
+    "RefundAmount": null,
+    "type": "economy",
+    "quantity": 1
   }
 ]
