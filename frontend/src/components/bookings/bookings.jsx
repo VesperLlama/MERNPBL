@@ -974,7 +974,7 @@ export default function Bookings() {
     const totalPrice = pricePerSeat * totalPassengers;
 
     // gather flight info to pass along
-    const fid = selectedFlight._id || selectedFlight.flightId || selectedFlight.id || "";
+    const fid = selectedFlight.flightNumber || selectedFlight.flightId || selectedFlight.id || "";
     const from = selectedFlight.origin || selectedFlight.from || selectedFlight.source || "";
     const to = selectedFlight.destination || selectedFlight.to || selectedFlight.arrival || "";
     const dep = selectedFlight.departureTime || selectedFlight.dep || selectedFlight.departure || "";

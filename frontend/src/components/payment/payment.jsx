@@ -4,30 +4,39 @@ import { useSearchParams } from "react-router-dom";
 import CustomerNavbar from "../customerNavbar/customerNavbar.jsx";
 import "./payment.css";
 
-/**
- * Payment Component (improved)
- * - Live validation on input change (errors appear while typing)
- * - Card number & CVV accept digits only (card allows spaces for readability)
- * - Card name accepts letters, spaces, hyphen and apostrophe only
- * - Reads price/adults/children/seatType from query params and shows live summary
- */
-
 const EMPTY = { type: "", message: "" };
 
-export default function Payment() {
+export default function Payment(props) {
+  const bp=localStorage.getItem("baseprice")
   const [searchParams] = useSearchParams();
 
   // read live pricing / passengers from query params (sent from booking)
+  const flightNumber = searchParams.get("flightId") ?? props.flight.flightId;
+  const passengers = props.passengers;
   const pricePerSeatParam = Number(searchParams.get("pricePerSeat") ?? 0);
   const totalPriceParam = Number(searchParams.get("totalPrice") ?? 0);
   const adultsParam = Number(searchParams.get("adults") ?? 0);
   const childrenParam = Number(searchParams.get("children") ?? 0);
   const seatTypeParam = searchParams.get("seatType") || searchParams.get("seat") || "";
+  const passg=adultsParam+childrenParam;
+
+  // new: read discounts from query params (support amounts like 500 or percentages like "10%")
+  const rawDiscount = searchParams.get("discount") ?? ""; // generic discount
+  const rawBulkDiscount = searchParams.get("bulkDiscount") ?? searchParams.get("bulk_discount") ?? "";
+  const rawEarlyDiscount = searchParams.get("earlyDiscount") ?? searchParams.get("early_discount") ?? "";
 
   const [method, setMethod] = useState("card"); // card | upi | netbank
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(null);
   const [globalError, setGlobalError] = useState("");
+  const [priceData, setPriceData] = useState({
+    advanceDiscount: 0,
+    basePrice: 0,
+    bulkDiscount: 0,
+    categoryDiscount: 0,
+    finalPrice: 0
+  });
+  const [priceLoading, setPriceLoading] = useState(false);
 
   // Card fields
   const [cardNumber, setCardNumber] = useState("");
@@ -49,13 +58,36 @@ export default function Payment() {
   // helper validations
   const onlyDigits = (s) => /^\d+$/.test(s);
 
+  useEffect(() => {
+    async function loadPaymentStats() {
+      setPriceLoading(true);
+      try {
+        const res = await fetch("http://localhost:4000/api/bookings/calculatePrice", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}` },
+          body: JSON.stringify({
+            flightNumber: flightNumber,
+            type: seatTypeParam.toLowerCase(),
+            quantity: passg
+          })
+        });
+        
+        const data = await res.json();
+        setPriceData(data.data);
+        console.log(data.data);
+      } catch(err) { console.log(err.message) }
+      finally {
+        setPriceLoading(false);
+      }
+    }
+    loadPaymentStats();
+  }, []);
+
   function validateCardNumberRaw(raw) {
-    // strip spaces
     const n = String(raw || "").replace(/\s+/g, "");
     if (!n) return "Card number required.";
     if (n.length !== 16) return "Card number must be 16 digits.";
     if (!onlyDigits(n)) return "Card number must contain digits only.";
-    // disallow all identical digits (e.g., 1111111111111111)
     if (/^(\d)\1{15}$/.test(n)) return "Enter a valid card number.";
     return "";
   }
@@ -85,13 +117,11 @@ export default function Payment() {
     const v = String(value || "").trim();
     if (!v) return "Expiry required.";
 
-    // YYYY-MM (from <input type="month">)
     if (/^\d{4}-\d{2}$/.test(v)) {
       const [y, m] = v.split("-");
       return expiryNotPast(m, y.slice(-2));
     }
 
-    // MM/YY or MM/YYYY
     if (/^\d{2}\/\d{2,4}$/.test(v)) {
       const parts = v.split("/");
       let mm = parts[0];
@@ -110,7 +140,6 @@ export default function Payment() {
     const [left, right] = trimmed.split("@");
     if (!left || left.length === 0) return "Invalid UPI ID.";
     if (!right || right.length === 0) return "Invalid UPI ID.";
-    // characters after '@' must be letters only (no digits)
     if (!/^[A-Za-z]+$/.test(right)) return "UPI domain must contain only letters after '@'.";
     if (!/^[A-Za-z0-9._\-]+$/.test(left)) return "UPI ID contains invalid characters.";
     return "";
@@ -125,7 +154,6 @@ export default function Payment() {
 
   function validateCardNameRaw(name) {
     if (!name || !String(name).trim()) return "Cardholder name required.";
-    // allow letters, spaces, hyphen, apostrophe, dot
     if (!/^[A-Za-z\s\-'.]+$/.test(name)) return "Name must contain letters only (no digits or symbols).";
     return "";
   }
@@ -137,19 +165,14 @@ export default function Payment() {
 
   // live validators - called on change
   function setCardNumberLive(raw) {
-    // allow digits and spaces only as user types; sanitize out anything else
     const sanitized = raw.replace(/[^\d\s]/g, "");
-    // also collapse multiple spaces to single space for readability
-    const collapsed = sanitized.replace(/\s+/g, " ").slice(0, 23); // limit length (16 digits + spaces)
+    const collapsed = sanitized.replace(/\s+/g, " ").slice(0, 23);
     setCardNumber(collapsed);
-
-    // live validate
     const err = validateCardNumberRaw(collapsed);
     setErrors((prev) => ({ ...prev, cardNumber: err }));
   }
 
   function setCardNameLive(raw) {
-    // allow letters, spaces, hyphen, apostrophe, dot only
     const sanitized = raw.replace(/[^A-Za-z\s\-'.]/g, "");
     setCardName(sanitized);
     const err = validateCardNameRaw(sanitized);
@@ -164,7 +187,6 @@ export default function Payment() {
   }
 
   function setCvvLive(raw) {
-    // only digits allowed
     const digits = String(raw).replace(/\D+/g, "").slice(0, 3);
     setCvv(digits);
     const err = validateCvvRaw(digits);
@@ -188,7 +210,59 @@ export default function Payment() {
   // ensure summary shows query param values when component mounts or params change
   useEffect(() => {
     // no-op here — state derived directly from query params
-  }, [pricePerSeatParam, totalPriceParam, adultsParam, childrenParam, seatTypeParam]);
+  }, [pricePerSeatParam, totalPriceParam, adultsParam, childrenParam, seatTypeParam, rawDiscount, rawBulkDiscount, rawEarlyDiscount]);
+
+  // --- Helper: parse discount which can be "100" or "10%" ---
+  function parseDiscountValue(rawValue, baseForPercent = 0) {
+    if (!rawValue && rawValue !== 0) return 0;
+    const s = String(rawValue).trim();
+    if (!s) return 0;
+    if (s.endsWith("%")) {
+      const pct = parseFloat(s.slice(0, -1));
+      if (isNaN(pct)) return 0;
+      return (pct / 100) * baseForPercent;
+    }
+    const n = Number(s);
+    return isNaN(n) ? 0 : n;
+  }
+
+  // --- Pricing multipliers depending on seat type ---
+  function seatMultiplier(seatStr) {
+    const s = String(seatStr || "").trim().toLowerCase();
+    if (s === "executive") return 1.5;
+    if (s === "business") return 2.25;
+    // treat anything else (including "economy") as 1
+    return 1;
+  }
+
+  // derived values for UI
+  const adults = adultsParam || 0;
+  const children = childrenParam || 0;
+  const totalPassengers = adults + children;
+  const basePrice = Number(pricePerSeatParam || 0); // base flight price from API (e.g., 5000)
+  const multiplier = seatMultiplier(seatTypeParam || "");
+  const perSeatPrice = Number((basePrice * multiplier) || 0); // final price per passenger for chosen seat type
+  const baseTotal = basePrice * totalPassengers; // base fare total (basePrice * passengers)
+  const overheadPerSeat = Math.max(0, perSeatPrice - basePrice);
+  const overheadTotal = overheadPerSeat * totalPassengers;
+  const subtotal = baseTotal + overheadTotal;
+
+  // parse discounts: if percentage (eg "10%") it's applied to subtotal; otherwise absolute amount
+  const discountAmount = parseDiscountValue(rawDiscount, subtotal);
+  const bulkDiscountAmount = parseDiscountValue(rawBulkDiscount, subtotal);
+  const earlyDiscountAmount = parseDiscountValue(rawEarlyDiscount, subtotal);
+
+  // clamp discounts so total doesn't go negative
+  const totalDiscounts = Math.max(0, discountAmount + bulkDiscountAmount + earlyDiscountAmount);
+  const totalPaidRaw = Math.max(0, subtotal - totalDiscounts);
+
+  // legacy computedTotal fallback (keeps previous behavior if API provided totalPrice)
+  const computedTotal = Number(totalPriceParam || perSeatPrice * totalPassengers || 0);
+  const seatLabel = seatTypeParam || "Any";
+
+  // formatting helper
+  const fmt = (v) =>
+    typeof v === "number" ? v.toLocaleString(undefined, { maximumFractionDigits: 2 }) : v;
 
   async function handlePay(e) {
     e && e.preventDefault();
@@ -265,14 +339,6 @@ export default function Payment() {
     setSuccess(null);
   }
 
-  // derived values for UI
-  const adults = adultsParam || 0;
-  const children = childrenParam || 0;
-  const totalPassengers = adults + children;
-  const pricePerSeat = Number(pricePerSeatParam || 0);
-  const computedTotal = Number(totalPriceParam || pricePerSeat * totalPassengers || 0);
-  const seatLabel = seatTypeParam || "Any";
-
   return (
     <>
       <CustomerNavbar />
@@ -281,7 +347,7 @@ export default function Payment() {
           <h2>Complete Payment</h2>
 
           <div className="pay-grid">
-            {/* Left: payment form */}
+            {/* Left: payment form */ }
             <form className="pay-form" onSubmit={handlePay} noValidate>
               <div className="pay-section">
                 <label className="pay-label">Payment Method</label>
@@ -421,30 +487,59 @@ export default function Payment() {
             </form>
 
             {/* Right: summary / result card */}
-            <aside className="pay-summary">
+            {!priceLoading && (<aside className="pay-summary">
               <div className="summary-card">
                 <h3>Payment Summary</h3>
 
                 <div className="summary-row">
-                  <div>Price per seat</div>
-                  <div className="muted">₹{pricePerSeat.toLocaleString()}</div>
-                </div>
-
-                <div className="summary-row">
-                  <div>Passengers</div>
-                  <div className="muted">{adults} Adult{adults !== 1 ? "s" : ""} {children} Child{children !== 1 ? "ren" : ""}</div>
+                  <div>Base flight price</div>
+                  <div className="muted">₹{priceData.basePrice/passg}</div>
                 </div>
 
                 <div className="summary-row">
                   <div>Seat Type</div>
-                  <div className="muted">{seatLabel}</div>
+                  <div className="muted">{seatLabel} (×{multiplier})</div>
+                </div>
+
+                <div className="summary-row">
+                  <div>Per-seat price (after multiplier)</div>
+                  <div className="muted">₹{priceData.basePrice}</div>
+                </div>
+
+                <div className="summary-row">
+                  <div>Passengers</div>
+                  <div className="muted">{passg}</div>
+                </div>
+
+                <hr />
+
+                <div className="summary-row">
+                  <div>Category Discount</div>
+                  <div className="muted">- ₹{priceData.categoryDiscount}</div>
+                </div>
+
+                <div className="summary-row">
+                  <div>Bulk Discount</div>
+                  <div className="muted">- ₹{priceData.bulkDiscount}</div>
+                </div>
+
+                <div className="summary-row">
+                  <div>Early Discount</div>
+                  <div className="muted">- ₹{priceData.advanceDiscount}</div>
                 </div>
 
                 <hr />
 
                 <div className="summary-row" style={{ fontWeight: 800 }}>
-                  <div>Total</div>
-                  <div>₹{computedTotal.toLocaleString()}</div>
+                  <div>TOTAL PAID</div>
+                  <div>₹{priceData.finalPrice}</div>
+                </div>
+
+                <hr />
+
+                <div className="summary-row">
+                  <div>Legacy computed total</div>
+                  <div className="muted">₹{fmt(computedTotal)}</div>
                 </div>
 
                 <hr />
@@ -459,7 +554,7 @@ export default function Payment() {
                   </div>
                 )}
               </div>
-            </aside>
+            </aside> )}
           </div>
         </div>
       </div>
