@@ -19,7 +19,7 @@ export default function ViewBookings() {
     setError("");
 
     try {
-      const res = await fetch("http://localhost:4000/api/bookings/list", {
+      const res = await fetch("http://localhost:4000/api/bookings/all", {
         headers: {
           "content-type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -56,68 +56,9 @@ export default function ViewBookings() {
     setTimeout(() => setAlert(""), ms);
   }
 
-  // Optimistic cancel (admin action)
+  // Admin cancel not implemented in backend yet — show informative message
   async function handleCancel(booking) {
-    const id = booking.idKey;
-    if (!id) {
-      showAlert("Booking id missing.", "error");
-      return;
-    }
-
-    // mark cancelling UI
-    setBookings((prev) =>
-      prev.map((b) => (b.idKey === id ? { ...b, cancelling: true } : b))
-    );
-
-    // immediate optimistic cancelled
-    setBookings((prev) =>
-      prev.map((b) =>
-        b.idKey === id ? { ...b, BookingStatus: "Cancelled", cancelled: true } : b
-      )
-    );
-
-    try {
-      const res = await fetch("http://localhost:4000/api/bookings/cancel", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ bookingId: id }),
-      });
-
-      if (!res.ok) {
-        throw new Error("Cancel request failed");
-      }
-
-      const resp = await res.json();
-      showAlert("Booking cancelled.", "success");
-
-      // use server response to normalize state if present
-      setBookings((prev) =>
-        prev.map((b) =>
-          b.idKey === id
-            ? {
-                ...b,
-                cancelling: false,
-                cancelled: true,
-                BookingStatus: resp?.booking?.BookingStatus || "Cancelled",
-              }
-            : b
-        )
-      );
-    } catch (err) {
-      console.error(err);
-      // rollback optimistic change
-      setBookings((prev) =>
-        prev.map((b) =>
-          b.idKey === id
-            ? { ...b, cancelling: false, cancelled: false, BookingStatus: booking.BookingStatus || "Booked" }
-            : b
-        )
-      );
-      showAlert("Failed to cancel booking. Try again.", "error");
-    }
+    showAlert("Admin cancel booking is not implemented on the server.", "error");
   }
 
   // Search & filter

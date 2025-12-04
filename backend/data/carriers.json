@@ -61,26 +61,5 @@
       "20DaysOrMoreBeforeTravelDate": 70
     },
     "CreatedAt": "2025-12-04T19:13:49.559Z"
-  },
-  {
-    "CarrierId": 219,
-    "CarrierName": "Vistara",
-    "Discounts": {
-      "30DaysAdvanceBooking": 5,
-      "60DaysAdvanceBooking": 7.5,
-      "90DaysAdvanceBooking": 11.3,
-      "BulkBooking": 5
-    },
-    "userDiscounts": {
-      "Silver": 5,
-      "Gold": 7.5,
-      "Platinum": 12
-    },
-    "Refunds": {
-      "2DaysBeforeTravelDate": 4.9,
-      "10DaysBeforeTravelDate": 25.1,
-      "20DaysOrMoreBeforeTravelDate": 70
-    },
-    "CreatedAt": "2025-12-04T19:14:14.525Z"
   }
 ]
