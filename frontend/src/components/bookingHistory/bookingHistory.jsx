@@ -121,7 +121,7 @@ export default function BookingHistory() {
                         b.BookingStatus
                       ).toLowerCase()}`}
                     >
-                      {b.BookingStatus}
+                      {b.Bookingtatus}
                     </td>
                   </tr>
                 ))}
@@ -133,4 +133,3 @@ export default function BookingHistory() {
     </div>
   );
 }
-// daroga chutiya
