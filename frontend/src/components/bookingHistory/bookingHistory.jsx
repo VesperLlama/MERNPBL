@@ -199,20 +199,25 @@ export default function BookingHistory() {
     }
   }
 
-  // ⭐ NEW: Handle Cancel Click
-  function handleCancel(id) {
+  async function handleCancel(pnr) {
+
+    const res = await fetch(`http://localhost:4000/api/bookings/cancel/${pnr}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}` },
+    });
     
-    setAlert("Booking cancelled successfully!");
+    const data = await res.json();
+    console.log(data);
+    
+    if (res.ok) { 
+      setAlert("Booking cancelled successfully!");
+      loadBookings();
+    }
+    else {
+      setAlert(data.message);
+    }
 
-    setBookings((prev) =>
-      prev.map((b) =>
-        b.BookingId === id
-          ? { ...b, BookingStatus: "Cancelled", cancelled: true }
-          : b
-      )
-    );
-
-    setTimeout(() => setAlert(""), 3000); // alert auto-hide after 3 sec
+    setTimeout(() => setAlert(""), 3000);
   }
 
   return (
@@ -289,7 +294,7 @@ export default function BookingHistory() {
                       <button
                         className="logout-btn"
                         disabled={b.cancelled || b.BookingStatus === "Cancelled"}
-                        onClick={() => handleCancel(b.BookingId)}
+                        onClick={() => handleCancel(b.PNR)}
                         style={{
                           opacity:
                             b.cancelled || b.BookingStatus === "Cancelled" ? 0.5 : 1,

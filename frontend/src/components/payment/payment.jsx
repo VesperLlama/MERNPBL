@@ -297,7 +297,6 @@ export default function Payment(props) {
       return;
     }
 
-    // Mock submit
     setLoading(true);
     try {
       const res = await fetch("http://localhost:4000/api/bookings/book", {
@@ -311,7 +310,6 @@ export default function Payment(props) {
       });
     
       const data = await res.json();
-      console.log(data);
       const bookingId = data.booking.BookingId;
       setSuccess({ bookingId });
 
