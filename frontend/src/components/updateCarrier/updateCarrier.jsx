@@ -162,39 +162,35 @@ export default function UpdateCarrier() {
     if (!validateAll()) return;
     setLoading(true);
     try {
+      // Map frontend form fields to backend-expected schema keys
       const payload = {
-        carrierName: carrier.carrierName,
-        discounts: {
-          "30DaysAdvanceBooking": Number(carrier["30DaysAdvanceBooking"]),
-          "60DaysAdvanceBooking": Number(carrier["60DaysAdvanceBooking"]),
-          "90DaysAdvanceBooking": Number(carrier["90DaysAdvanceBooking"]),
-          BulkBooking: Number(carrier.BulkBooking),
-          SilverUser: Number(carrier.SilverUser),
-          GoldUser: Number(carrier.GoldUser),
-          PlatinumUser: Number(carrier.PlatinumUser),
+        CarrierName: carrier.carrierName,
+        Discounts: {
+          days30: Number(carrier["30DaysAdvanceBooking"]),
+          days60: Number(carrier["60DaysAdvanceBooking"]),
+          days90: Number(carrier["90DaysAdvanceBooking"]),
+          bulkBookingPercent: Number(carrier.BulkBooking),
+          // keep tier discounts if provided
+          tierDiscounts: {
+            Silver: Number(carrier.SilverUser) || 0,
+            Gold: Number(carrier.GoldUser) || 0,
+            Platinum: Number(carrier.PlatinumUser) || 0,
+          }
         },
-        refunds: {
-          "2DaysBeforeTravelDate": Number(carrier["2DaysBeforeTravelDate"]),
-          "10DaysBeforeTravelDate": Number(carrier["10DaysBeforeTravelDate"]),
-          "20DaysOrMoreBeforeTravelDate": Number(carrier["20DaysOrMoreBeforeTravelDate"]),
-        },
+        Refunds: {
+          days2: Number(carrier["2DaysBeforeTravelDate"]),
+          days10: Number(carrier["10DaysBeforeTravelDate"]),
+          days20plus: Number(carrier["20DaysOrMoreBeforeTravelDate"]),
+        }
       };
 
       const token = localStorage.getItem('token');
-      let res = await fetch(`http://localhost:4000/api/carriers/${encodeURIComponent(carrierId)}`, {
+      // backend defines PUT /api/carriers/update/:id
+      const res = await fetch(`http://localhost:4000/api/carriers/update/${encodeURIComponent(carrierId)}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(payload),
       });
-
-      if (!res.ok) {
-        // Fallback endpoint
-        res = await fetch(`http://localhost:4000/api/carriers/update`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ carrierId, ...payload }),
-        });
-      }
 
       if (res.ok) {
         const data = await res.json();

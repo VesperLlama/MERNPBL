@@ -43,12 +43,21 @@
   },
   {
     "CarrierId": 213,
-    "CarrierName": "IndiGo",
+    "CarrierName": "Air India Express",
     "Discounts": {
       "30DaysAdvanceBooking": 2.9,
       "60DaysAdvanceBooking": 5.5,
       "90DaysAdvanceBooking": 8,
-      "BulkBooking": 3.2
+      "BulkBooking": 3.2,
+      "days30": 5,
+      "days60": 7.5,
+      "days90": 12,
+      "bulkBookingPercent": 5,
+      "tierDiscounts": {
+        "Silver": 5,
+        "Gold": 7.5,
+        "Platinum": 12
+      }
     },
     "userDiscounts": {
       "Silver": 2.7,
@@ -58,8 +67,12 @@
     "Refunds": {
       "2DaysBeforeTravelDate": 0.3,
       "10DaysBeforeTravelDate": 20.5,
-      "20DaysOrMoreBeforeTravelDate": 55
+      "20DaysOrMoreBeforeTravelDate": 55,
+      "days2": 10,
+      "days10": 35,
+      "days20plus": 70
     },
-    "CreatedAt": "2025-12-04T11:29:15.584Z"
+    "CreatedAt": "2025-12-04T11:29:15.584Z",
+    "UpdatedAt": "2025-12-04T18:45:06.815Z"
   }
 ]
