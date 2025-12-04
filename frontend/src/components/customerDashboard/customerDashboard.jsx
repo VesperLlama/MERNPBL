@@ -16,14 +16,16 @@ export default function CustomerDashboard() {
   async function loadUpcomingFlight() {
     setLoading(true);
     try {
-      const res = await fetch("/api/bookings");
+      const res = await fetch("http://localhost:4000/api/bookings/list", {
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}` },
+    });
       if (!res.ok) {
         setLoading(false);
         return;
       }
 
       const data = await res.json();
-      const list = Array.isArray(data) ? data : data.bookings || [];
+      const list = Array.isArray(data.data) ? data.data : data.bookings || [];
 
       const email = (localStorage.getItem("email") || localStorage.getItem("userEmail") || "").toLowerCase();
 
@@ -38,7 +40,7 @@ export default function CustomerDashboard() {
 
       // Keep only future flights
       const future = my.filter((b) => {
-        const d = new Date(b.date || b.travelDate || b.travel_time || b.bookingTime);
+        const d = new Date(b.departure);
         return !isNaN(d) && d >= new Date();
       });
 
@@ -114,29 +116,24 @@ export default function CustomerDashboard() {
                       <div>
                         <div className="meta-label">Date</div>
                         <div className="meta-value">
-                          {new Date(upcoming.date || upcoming.travelDate || upcoming.bookingTime).toLocaleString()}
+                          {new Date(upcoming.departure || upcoming.travelDate || upcoming.bookingTime).toLocaleString()}
                         </div>
                       </div>
 
                       <div>
-                        <div className="meta-label">Passenger</div>
-                        <div className="meta-value">{upcoming.passengerName || upcoming.user?.name || "-"}</div>
-                      </div>
-
-                      <div>
                         <div className="meta-label">Flight ID</div>
-                        <div className="meta-value">{upcoming.flightId || upcoming.id || "-"}</div>
+                        <div className="meta-value">{upcoming.flightNumber || upcoming.id || "-"}</div>
                       </div>
                     </div>
 
-                    <div className="up-actions">
+                    {/* <div className="up-actions">
                       <button className="btn primary" onClick={() => open(`/booking/${upcoming.bookingId || upcoming.id || ""}`)}>
                         View Booking
                       </button>
                       <button className="btn outline" onClick={() => open("/viewFlights")}>
                         Search Flights
                       </button>
-                    </div>
+                    </div> */}
                   </div>
                 )}
               </div>
