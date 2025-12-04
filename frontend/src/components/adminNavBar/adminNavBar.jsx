@@ -76,6 +76,18 @@ export default function AdminNavBar() {
             <button className="dropdown-btn" onClick={() => navigate("/admin/carriers/update")}>Carrier</button>
           </div>
         </li>
+
+        <li className="nav-item dropdown">
+          <button
+            className="nav-link"
+            onClick={() => setOpenMenu(openMenu === "bookings" ? null : "bookings")}
+          >
+            Bookings
+          </button>
+          <div className={`dropdown-menu ${openMenu === "bookings" ? "show" : ""}`}>
+            <button className="dropdown-btn" onClick={() => navigate("/admin/viewbookings")}>View</button>
+          </div>
+        </li>
       </ul>
 
       <div className="nav-right">

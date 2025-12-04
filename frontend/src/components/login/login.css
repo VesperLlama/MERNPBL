@@ -44,6 +44,45 @@ html, body, #root {
   box-sizing: border-box;
 }
 
+.error-text {
+  color: #e11d48; /* red but soft, matches your theme */
+  font-size: 0.85rem;
+  margin: 3px 0 10px 2px;
+}
+
+/* Password wrapper (align icon inside input) */
+.password-wrapper {
+  position: relative;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+/* Input styled same as your original input */
+.password-input {
+  width: 100%;
+  padding: 10px 38px 10px 8px; /* extra space for the icon */
+  border-radius: 6px;
+  border: 1px solid #e6e9ee;
+}
+
+/* Show/Hide icon */
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  opacity: 0.6;
+  transition: 0.2s ease;
+}
+
+.toggle-password:hover {
+  opacity: 1;
+  transform: translateY(-50%) scale(1.05);
+}
+
+
 .title {
   font-size: 3rem;
   font-weight: 700;

@@ -1,0 +1,18 @@
+.vb-root { min-height: 100vh; background: #f7fafc; }
+.vb-container { max-width: 1100px; margin: 20px auto; padding: 18px; background: #fff; border-radius: 8px; box-shadow: 0 6px 20px rgba(2,6,23,0.06); }
+.vb-alert { max-width: 1100px; margin: 12px auto; padding: 12px 16px; text-align: center; border-radius: 6px; font-weight: 600; }
+.vb-alert-success { background: #0ea5a4; color: #fff; }
+.vb-alert-error { background: #ef4444; color: #fff; }
+
+.vb-controls { display:flex; gap:12px; align-items:center; margin-bottom:12px; }
+.vb-search { flex:1; padding:10px 12px; border-radius:6px; border:1px solid #e6e9ee; }
+.vb-refresh { padding:10px 14px; border-radius:6px; background:#0ea5a4; color:#fff; border:none; cursor:pointer; }
+
+.vb-table-wrap { overflow-x:auto; }
+.vb-table { width:100%; border-collapse: collapse; min-width:900px; }
+.vb-table th, .vb-table td { text-align:left; padding:10px 12px; border-bottom:1px solid #f1f5f9; }
+.vb-table th { background: #fbfdff; color:#111827; font-weight:700; }
+.vb-empty, .vb-error { padding: 18px; text-align:center; color:#6b7280; }
+
+.vb-cancel { padding:8px 10px; border-radius:6px; background:#ef4444; color:#fff; border:none; cursor:pointer; }
+.vb-cancel[disabled] { background:#ccc; cursor:not-allowed; opacity:0.8; }
