@@ -53,6 +53,7 @@ export default function AdminDashboard() {
         const data = await res.json();
         // API returns { data: { ... } }
         const payload = data && data.data ? data.data : {};
+        console.log(payload);
 
         if (!mounted) return;
 
@@ -65,8 +66,8 @@ export default function AdminDashboard() {
           totalCustomers: payload.totalCustomers ?? 0,
 
           // Prefer server-provided admin info, fallback to stored user
-          adminName: (payload.adminName ?? (storedUser?.FullName || storedUser?.name || '')),
-          adminId: (payload.adminId ?? (storedUser?.AdminId || storedUser?.id || '')),
+          adminName: storedUser?.name || '',
+          adminId: storedUser?.id || '',
         });
       } catch (err) {
         console.error("Failed to load admin stats:", err);
@@ -102,9 +103,9 @@ export default function AdminDashboard() {
         <p style={{ color: "#475569", marginBottom: 4 }}>
           Welcome, <b>{stats.adminName}</b>
         </p>
-        <p style={{ color: "#475569", marginTop: 0 }}>
+        {/* <p style={{ color: "#475569", marginTop: 0 }}>
           Admin ID: <b>{stats.adminId}</b>
-        </p>
+        </p> */}
 
         {/* Cards Grid */}
         <div

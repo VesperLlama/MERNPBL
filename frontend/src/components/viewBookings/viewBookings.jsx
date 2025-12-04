@@ -29,6 +29,7 @@ export default function ViewBookings() {
       if (!res.ok) throw new Error("Failed to load bookings");
 
       const data = await res.json();
+      console.log(data.data);
       const list = Array.isArray(data.data) ? data.data : data.bookings || [];
 
       // Normalize items
@@ -110,8 +111,7 @@ export default function ViewBookings() {
               <thead>
                 <tr>
                   <th>Booking ID</th>
-                  <th>Customer</th>
-                  <th>Email</th>
+                  <th>Customer ID</th>
                   <th>Flight</th>
                   <th>From</th>
                   <th>To</th>
@@ -131,8 +131,7 @@ export default function ViewBookings() {
                   return (
                     <tr key={id}>
                       <td>{id}</td>
-                      <td>{b.user?.name || b.customerName || b.fullName || "-"}</td>
-                      <td>{b.email || b.customerEmail || b.userEmail || b.user?.email || "-"}</td>
+                      <td>{b.user?.name || b.CustomerId || b.fullName || "-"}</td>
                       <td>{b.flightNumber || "-"}</td>
                       <td>{b.origin || b.from || "-"}</td>
                       <td>{b.destination || b.to || "-"}</td>

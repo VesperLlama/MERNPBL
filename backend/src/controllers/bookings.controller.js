@@ -360,7 +360,43 @@ exports.adminCancelFlight = (req, res, next) => {
 exports.listAllBookings = (req, res, next) => {
   try {
     const bookings = readJson(BOOKINGS_FILE) || [];
-    return res.json({ data: bookings });
+    const flights = readJson(FLIGHTS_FILE) || [];
+
+    // Utility to normalize
+    const norm = (x) => String(x || "").trim().toLowerCase();
+
+    const result = bookings
+      .map((b) => {
+        const flight = flights.find(
+          (f) => norm(f.flightNumber) === norm(b.flightNumber)
+        );
+
+        // Flattened merged object
+        return {
+          // booking fields
+          BookingId: b.BookingId,
+          CustomerId: b.CustomerId,
+          PNR: b.PNR,
+          BookingStatus: b.BookingStatus,
+          BookedAt: b.BookedAt,
+          PricePaid: b.PricePaid,
+          CancelledAt: b.CancelledAt,
+          RefundAmount: b.RefundAmount,
+          type: b.type,
+          Quantity: b.quantity,
+
+          // flight fields (null-safe)
+          flightNumber: flight?.flightNumber || null,
+          from: flight?.source || null,
+          to: flight?.destination || null,
+          departure: flight?.departureTime || null,
+          arrival: flight?.arrivalTime || null,
+          amount: flight?.price ?? null,
+          flightStatus: flight?.FlightStatus || null,
+        };
+      });
+
+    return res.json({ data: result });
   } catch (err) {
     next(err);
   }

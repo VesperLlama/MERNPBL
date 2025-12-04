@@ -147,10 +147,10 @@ export default function CustomerDashboard() {
                   <div className="action-sub">Find and book flights</div>
                 </div>
 
-                <div className="action-card" onClick={() => open("/customer/cancelBooking")}>
+                {/* <div className="action-card" onClick={() => open("/customer/cancelBooking")}>
                   <div className="action-title">❌ Cancel</div>
                   <div className="action-sub">Cancel an existing booking</div>
-                </div>
+                </div> */}
 
                 <div className="action-card" onClick={() => open("/customer/allbookings")}>
                   <div className="action-title">🧾 History</div>
