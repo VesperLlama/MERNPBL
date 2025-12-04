@@ -581,7 +581,7 @@ exports.listMyBookings = (req, res, next) => {
           CancelledAt: b.CancelledAt,
           RefundAmount: b.RefundAmount,
           type: b.type,
-          Quantity: b.Quantity,
+          Quantity: b.quantity,
 
           // flight fields (null-safe)
           flightNumber: flight?.flightNumber || null,

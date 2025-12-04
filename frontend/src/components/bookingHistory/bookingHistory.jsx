@@ -98,7 +98,7 @@ export default function BookingHistory() {
                   <tr key={b.BookingId}>
                     <td>{b.BookingId || b.id}</td>
                     <td>{b.flightNumber}</td>
-                    <td>{b.passengerName || b.user?.name}</td>
+                    <td>{b.Quantity || b.user?.name}</td>
                     <td>{b.origin || b.from}</td>
                     <td>{b.destination || b.to}</td>
                     <td>
@@ -121,7 +121,7 @@ export default function BookingHistory() {
                         b.BookingStatus
                       ).toLowerCase()}`}
                     >
-                      {b.status}
+                      {b.BookingStatus}
                     </td>
                   </tr>
                 ))}
