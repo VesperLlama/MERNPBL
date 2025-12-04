@@ -30,9 +30,10 @@ export default function AdminDashboard() {
 
     async function loadStats() {
       try {
-        const res = await fetch("http://localhost:4000/api/dashboard");
+        const res = await fetch("http://localhost:4000/api/admins/dashboard");
         if (!res.ok) throw new Error("Network response was not ok");
-        const data = await res.json();
+        const json = res.json();
+        const data = json.json();
 
         if (!mounted) return;
 

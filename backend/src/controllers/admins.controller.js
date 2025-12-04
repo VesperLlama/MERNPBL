@@ -71,7 +71,10 @@ exports.createAdmin = async (req, res, next) => {
 exports.getAdminDashboard = (req, res, next) => {
   try {
     // Must be admin (handled by middleware)
-
+    FLIGHTS_FILE = 'flights.json';
+    CARRIERS_FILE = 'carriers.json';
+    BOOKINGS_FILE = 'bookings.json';
+    CUSTOMERS_FILE = 'customers.json';
     // Read JSON DB
     const flights = readJson(FLIGHTS_FILE) || [];
     const carriers = readJson(CARRIERS_FILE) || [];

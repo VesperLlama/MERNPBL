@@ -16,7 +16,7 @@
     "BookedSeats": {
       "economy": 16,
       "business": 0,
-      "executive": 7
+      "executive": 1
     },
     "FlightStatus": "Active"
   },
