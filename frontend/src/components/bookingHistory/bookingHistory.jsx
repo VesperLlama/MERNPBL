@@ -121,7 +121,7 @@ export default function BookingHistory() {
                         b.BookingStatus
                       ).toLowerCase()}`}
                     >
-                      {b.Bookingtatus}
+                      {b.BookingStatus}
                     </td>
                   </tr>
                 ))}
