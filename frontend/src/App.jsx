@@ -19,6 +19,7 @@ import BookingHistory from "./components/bookingHistory/bookingHistory.jsx";
 import Profile from "./components/profile/profile.jsx";
 import Bookings from "./components/bookings/bookings.jsx";  
 import Payment from "./components/payment/payment.jsx";
+import ViewBookings from "./components/viewBookings/viewBookings.jsx";
 function App() {
   return (
     <BrowserRouter>
@@ -43,6 +44,7 @@ function App() {
         <Route path="/customer/Bookings" element={<Bookings/>}/>
         <Route path="/viewflights" element={<ViewFlights />} />
         <Route path="/payment" element={<Payment />} />
+        <Route path="/admin/viewbookings" element={<ViewBookings />} />
       </Routes>
     </BrowserRouter>
   );
