@@ -30,15 +30,7 @@ export default function AdminDashboard() {
 
     async function loadStats() {
       try {
-        const res = await fetch("http://localhost:4000/api/admins/dashboard");
-        if (!res.ok) throw new Error("Network response was not ok");
-        const data = await res.json();
-        // API returns { data: { ... } }
-        const payload = data && data.data ? data.data : {};
-
-        if (!mounted) return;
-
-        // Try to get admin info from localStorage (login stores `user`)
+        // Try to get admin info from localStorage (login stores `user`) and token
         const storedUser = (() => {
           try {
             return JSON.parse(localStorage.getItem('user') || 'null');
@@ -46,6 +38,23 @@ export default function AdminDashboard() {
             return null;
           }
         })();
+
+        const token = localStorage.getItem('token') || (storedUser && storedUser.token) || '';
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+        const res = await fetch("http://localhost:4000/api/admins/dashboard", { headers });
+        if (!res.ok) {
+          // try to read body for debugging
+          let body = null;
+          try { body = await res.json(); } catch (e) { /* ignore */ }
+          throw new Error("Network response was not ok" + (body ? ` - ${JSON.stringify(body)}` : ''));
+        }
+
+        const data = await res.json();
+        // API returns { data: { ... } }
+        const payload = data && data.data ? data.data : {};
+
+        if (!mounted) return;
 
         setStats({
           totalFlights: payload.totalFlights ?? 0,
@@ -55,9 +64,9 @@ export default function AdminDashboard() {
           upcomingBookings: payload.upcomingBookings ?? 0,
           totalCustomers: payload.totalCustomers ?? 0,
 
-          // Pull admin info from stored user if available
-          adminName: storedUser?.FullName || storedUser?.name || '',
-          adminId: storedUser?.AdminId || storedUser?.id || '',
+          // Prefer server-provided admin info, fallback to stored user
+          adminName: (payload.adminName ?? (storedUser?.FullName || storedUser?.name || '')),
+          adminId: (payload.adminId ?? (storedUser?.AdminId || storedUser?.id || '')),
         });
       } catch (err) {
         console.error("Failed to load admin stats:", err);

@@ -74,5 +74,47 @@
     },
     "CreatedAt": "2025-12-04T11:29:15.584Z",
     "UpdatedAt": "2025-12-04T18:45:06.815Z"
+  },
+  {
+    "CarrierId": 214,
+    "CarrierName": "Vistara",
+    "Discounts": {
+      "30DaysAdvanceBooking": 2.5,
+      "60DaysAdvanceBooking": 5.1,
+      "90DaysAdvanceBooking": 7.6,
+      "BulkBooking": 3
+    },
+    "userDiscounts": {
+      "Silver": 2.5,
+      "Gold": 5.1,
+      "Platinum": 7.6
+    },
+    "Refunds": {
+      "2DaysBeforeTravelDate": 0,
+      "10DaysBeforeTravelDate": 20,
+      "20DaysOrMoreBeforeTravelDate": 50
+    },
+    "CreatedAt": "2025-12-04T18:53:19.811Z"
+  },
+  {
+    "CarrierId": 215,
+    "CarrierName": "SpiceJet",
+    "Discounts": {
+      "30DaysAdvanceBooking": 5,
+      "60DaysAdvanceBooking": 7.5,
+      "90DaysAdvanceBooking": 12,
+      "BulkBooking": 5
+    },
+    "userDiscounts": {
+      "Silver": 5,
+      "Gold": 7.5,
+      "Platinum": 12
+    },
+    "Refunds": {
+      "2DaysBeforeTravelDate": 10,
+      "10DaysBeforeTravelDate": 31.2,
+      "20DaysOrMoreBeforeTravelDate": 70
+    },
+    "CreatedAt": "2025-12-04T18:54:13.196Z"
   }
 ]

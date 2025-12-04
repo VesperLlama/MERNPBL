@@ -110,30 +110,21 @@ export default function UpdateCarrier() {
       const data = await res.json();
       console.log(data);
       if (res.ok) {
-        // carrier may be at data.data.carrier or data.data or data.carrier or data
-        const c = data.data && (data.data.carrier || data.data) ? (data.data.carrier || data.data) : (data.carrier || data);
-
-        // discounts/refunds may be nested
-        const discounts = c.discounts || c.Discounts || c || {};
-        const refunds = c.refunds || c.Refunds || c || {};
-
-        const getVal = (obj, keys) => {
-          for (const k of keys) if (obj?.[k] !== undefined && obj?.[k] !== null) return obj[k];
-          return "";
-        };
-
+        const c = data.data && data.data.carrier ? data.data.carrier : data.data;
+        // Map possible backend keys to our fields (accept various casing)
+        const map = (k) => c[k] ?? c[k.toLowerCase()] ?? c[k.replace(/\d+/g, (d) => d)];
         setCarrier({
-          carrierName: c.carrierName || c.CarrierName || c.name || "",
-          "30DaysAdvanceBooking": getVal(discounts, ["30DaysAdvanceBooking", "30daysAdvanceBooking", "30Days", "30days"]),
-          "60DaysAdvanceBooking": getVal(discounts, ["60DaysAdvanceBooking", "60daysAdvanceBooking", "60Days", "60days"]),
-          "90DaysAdvanceBooking": getVal(discounts, ["90DaysAdvanceBooking", "90daysAdvanceBooking", "90Days", "90days"]),
-          BulkBooking: getVal(discounts, ["BulkBooking", "bulkBooking", "bulk"]),
-          SilverUser: getVal(discounts, ["SilverUser", "silverUser", "silver"]),
-          GoldUser: getVal(discounts, ["GoldUser", "goldUser", "gold"]),
-          PlatinumUser: getVal(discounts, ["PlatinumUser", "platinumUser", "platinum"]),
-          "2DaysBeforeTravelDate": getVal(refunds, ["2DaysBeforeTravelDate", "2daysBeforeTravelDate"]),
-          "10DaysBeforeTravelDate": getVal(refunds, ["10DaysBeforeTravelDate", "10daysBeforeTravelDate"]),
-          "20DaysOrMoreBeforeTravelDate": getVal(refunds, ["20DaysOrMoreBeforeTravelDate", "20daysOrMoreBeforeTravelDate"]),
+          carrierName: c.carrierName || c.CarrierName || "",
+          "30DaysAdvanceBooking": c["30DaysAdvanceBooking"] ?? c["30daysAdvanceBooking"] ?? c["30days"] ?? c["30Days"] ?? "",
+          "60DaysAdvanceBooking": c["60DaysAdvanceBooking"] ?? c["60daysAdvanceBooking"] ?? c["60Days"] ?? "",
+          "90DaysAdvanceBooking": c["90DaysAdvanceBooking"] ?? c["90daysAdvanceBooking"] ?? c["90Days"] ?? "",
+          BulkBooking: c.BulkBooking ?? c.bulkBooking ?? c.bulk ?? "",
+          SilverUser: c.SilverUser ?? c.silverUser ?? c.silver ?? "",
+          GoldUser: c.GoldUser ?? c.goldUser ?? c.gold ?? "",
+          PlatinumUser: c.PlatinumUser ?? c.platinumUser ?? c.platinum ?? "",
+          "2DaysBeforeTravelDate": c["2DaysBeforeTravelDate"] ?? c["2daysBeforeTravelDate"] ?? "",
+          "10DaysBeforeTravelDate": c["10DaysBeforeTravelDate"] ?? c["10daysBeforeTravelDate"] ?? "",
+          "20DaysOrMoreBeforeTravelDate": c["20DaysOrMoreBeforeTravelDate"] ?? c["20daysOrMoreBeforeTravelDate"] ?? "",
         });
         setStatus("Loaded carrier details. Edit and click Update.");
         setTouched({});
@@ -162,35 +153,38 @@ export default function UpdateCarrier() {
     if (!validateAll()) return;
     setLoading(true);
     try {
-      // Map frontend form fields to backend-expected schema keys
       const payload = {
-        CarrierName: carrier.carrierName,
-        Discounts: {
-          days30: Number(carrier["30DaysAdvanceBooking"]),
-          days60: Number(carrier["60DaysAdvanceBooking"]),
-          days90: Number(carrier["90DaysAdvanceBooking"]),
-          bulkBookingPercent: Number(carrier.BulkBooking),
-          // keep tier discounts if provided
-          tierDiscounts: {
-            Silver: Number(carrier.SilverUser) || 0,
-            Gold: Number(carrier.GoldUser) || 0,
-            Platinum: Number(carrier.PlatinumUser) || 0,
-          }
+        carrierName: carrier.carrierName,
+        discounts: {
+          "30DaysAdvanceBooking": Number(carrier["30DaysAdvanceBooking"]),
+          "60DaysAdvanceBooking": Number(carrier["60DaysAdvanceBooking"]),
+          "90DaysAdvanceBooking": Number(carrier["90DaysAdvanceBooking"]),
+          BulkBooking: Number(carrier.BulkBooking),
+          SilverUser: Number(carrier.SilverUser),
+          GoldUser: Number(carrier.GoldUser),
+          PlatinumUser: Number(carrier.PlatinumUser),
         },
-        Refunds: {
-          days2: Number(carrier["2DaysBeforeTravelDate"]),
-          days10: Number(carrier["10DaysBeforeTravelDate"]),
-          days20plus: Number(carrier["20DaysOrMoreBeforeTravelDate"]),
-        }
+        refunds: {
+          "2DaysBeforeTravelDate": Number(carrier["2DaysBeforeTravelDate"]),
+          "10DaysBeforeTravelDate": Number(carrier["10DaysBeforeTravelDate"]),
+          "20DaysOrMoreBeforeTravelDate": Number(carrier["20DaysOrMoreBeforeTravelDate"]),
+        },
       };
 
-      const token = localStorage.getItem('token');
-      // backend defines PUT /api/carriers/update/:id
-      const res = await fetch(`http://localhost:4000/api/carriers/update/${encodeURIComponent(carrierId)}`, {
+      let res = await fetch(`/api/carriers/${encodeURIComponent(carrierId)}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+
+      if (!res.ok) {
+        // Fallback endpoint
+        res = await fetch(`/api/carriers/update`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ carrierId, ...payload }),
+        });
+      }
 
       if (res.ok) {
         const data = await res.json();
