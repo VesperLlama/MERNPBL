@@ -47,5 +47,37 @@
     "DOB": "1998-06-15",
     "CreatedAt": "2025-12-03T05:31:04.580Z",
     "UpdatedAt": "2025-12-04T07:12:05.997Z"
+  },
+  {
+    "CustomerId": 1005,
+    "FullName": "Siddhant Srivastava",
+    "PasswordHash": "$2b$10$TQrq9slFAVdvkJf7FZZjHuJPugkUn/CJqZ9ZXmkaCifSmj4F8RJvK",
+    "Role": "customer",
+    "CustomerCategory": "Silver",
+    "Phone": "6386016689",
+    "EmailId": "Siddhant@gmail.com",
+    "AddressLine1": "123",
+    "AddressLine2": "123",
+    "City": "Lucknow",
+    "State": "Uttar Pradesh",
+    "ZipCode": "226004",
+    "DOB": "2003-09-10",
+    "CreatedAt": "2025-12-04T17:50:54.036Z"
+  },
+  {
+    "CustomerId": 1006,
+    "FullName": "asd",
+    "PasswordHash": "$2b$10$ykacuVHISfKgBxLm2XDvvuyMr9KFalxxMIUr5nkgOzeyshFsOy1OO",
+    "Role": "customer",
+    "CustomerCategory": "Silver",
+    "Phone": "9876543210",
+    "EmailId": "aaditya22@example.com",
+    "AddressLine1": "123",
+    "AddressLine2": "123",
+    "City": "Mumbai",
+    "State": "Maharashtra",
+    "ZipCode": "400001",
+    "DOB": "2003-03-10",
+    "CreatedAt": "2025-12-04T17:56:52.789Z"
   }
 ]
