@@ -1,4 +1,4 @@
-RESET ROOT & BODY TO REMOVE WHITE MARGINS html,
+html,
 body,
 #root {
   margin: 0;
@@ -12,36 +12,49 @@ body,
   box-sizing: border-box;
 }
 
-/* Background full page */
+/* Background container */
 .landing-container {
   position: relative;
   width: 100%;
   height: 100vh;
-  background: url("../../assets/bg.png") center/cover no-repeat;
+  overflow: hidden; /* important for video */
   display: flex;
   justify-content: center;
   align-items: center;
   font-family: "Poppins", sans-serif;
 }
 
-/* Dark gradient overlay */
-.overlay {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.55);
+/* 🔥 FULLSCREEN BACKGROUND VIDEO */
+.background-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: -2; /* behind overlay and content */
 }
 
+/* Dark gradient overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.45); /* reduce opacity if needed */
+  backdrop-filter: blur(2px);      /* ⭐ blur effect */
+  z-index: -1;
+}
 /* Content */
 .content {
   position: relative;
   text-align: center;
   color: #fff;
-  z-index: 2;
+  z-index: 2; /* above overlay */
   width: 100%;
   max-width: 1100px;
   padding: 0 20px;
-  box-sizing: border-box;
 }
 
 .title {
@@ -77,51 +90,85 @@ body,
   min-width: 160px;
 }
 
-.customer-btn {
-  background: white;
+.btn.customer-btn {
+  background: rgb(234, 223, 223);
   color: #1a73e8;
 }
 
-.customer-btn:hover {
-  color: blue;
-
+.btn.customer-btn:hover {
+  color: black;
+  background: #adb0b4;
 }
 
-.admin-btn {
-  background: #1a73e8;
-  color: #1a73e8;
-}
-
-.admin-btn:hover {
+.btn.admin-btn {
   background: #1a73e8;
 }
 
+.btn.admin-btn:hover {
+  color: black;
+  background: rgb(234, 223, 223);
+}
 
-/* Customer menu that appears under the customer button */
+/* Customer menu */
+/* Customer menu wrapper */
 .customer-menu {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   justify-content: center;
-  margin-top: 18px;
+  margin-top: 22px;
+  animation: fadeIn 0.3s ease-in-out;
 }
 
+/* Stylish buttons inside Customer menu */
 .customer-menu .menu-item {
-  padding: 10px 18px;
-  background: rgba(255, 255, 255, 0.98);
-  color: #0b1b26;
-  border-radius: 8px;
+  padding: 12px 26px;
+  background: rgba(255, 255, 255, 0.15);      /* semi-glass */
+  backdrop-filter: blur(8px);                 /* blur effect */
+  color: #ffffff;
+  border-radius: 10px;
   text-decoration: none;
   font-weight: 600;
-  min-width: 120px;
+  min-width: 140px;
   text-align: center;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
 }
 
+/* Hover animation */
 .customer-menu .menu-item:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px) scale(1.03);
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
 }
 
-@media (max-width:640px) {
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+  .customer-menu {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+  .customer-menu .menu-item {
+    width: 100%;
+  }
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
   .customer-menu {
     flex-direction: column;
     width: 100%;
@@ -142,4 +189,8 @@ body,
     padding-left: 18px;
     padding-right: 18px;
   }
+}
+
+.landing-container {
+  background: none !important;
 }
