@@ -104,7 +104,7 @@ export default function Profile({ userId: propUserId }) {
         const res = await fetch(`http://localhost:4000/api/customers/${userId}`);
         if (!res.ok) throw new Error("Failed to fetch user");
         const data = await res.json();
-        console.log(data);
+
         if (mounted) {
           hydrateFromObject(data);
           lastSavedRef.current = { ...lastSavedRef.current, ...data };
@@ -277,14 +277,18 @@ export default function Profile({ userId: propUserId }) {
     // email and dob are uneditable client-side; remove to avoid accidental overwrite
     delete payload.email;
     delete payload.dob;
+    delete payload.fullName;
+    delete payload.phone;
+    delete payload.customerCategory;
+    delete payload.role;
 
     try {
       const idToUse = userId || localStorage.getItem("id") || localStorage.getItem("ID");
       if (!idToUse) throw new Error("User ID not available. Cannot save.");
 
-      const res = await fetch(`http://localhost:4000/api/customers/update-profile/${user}`, {
-        method: "PUT", // or PATCH depending on your API; change if needed
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch(`http://localhost:4000/api/customers/update-profile/${idToUse}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}` },
         body: JSON.stringify(payload)
       });
       if (!res.ok) {
@@ -332,9 +336,9 @@ export default function Profile({ userId: propUserId }) {
       const idToUse = userId || localStorage.getItem("customerId") || localStorage.getItem("customerID");
       if (!idToUse) throw new Error("User ID not available. Cannot change password.");
 
-      const res = await fetch(`http://localhost:4000/api/customers/${idToUse}/change-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch(`http://localhost:4000/api/customers/update-profile/${idToUse}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}` },
         body: JSON.stringify({
           currentPassword: pwdForm.currentPassword,
           newPassword: pwdForm.newPassword
@@ -342,7 +346,7 @@ export default function Profile({ userId: propUserId }) {
       });
 
       if (!res.ok) {
-        const err = await res.json().catch(() => ({ message: "Change password failed" }));
+        const err = await res.json().catch(() => ({ message: res.message }));
         throw new Error(err.message || "Change password failed");
       }
 
@@ -363,7 +367,7 @@ export default function Profile({ userId: propUserId }) {
 
   // cancel edits -> revert to lastSavedRef
   function handleCancelEdit() {
-    setForm((prev) => ({ ...lastSavedRef.current }));
+    // setForm((prev) => ({ ...lastSavedRef.current }));
     setErrors({});
     setTouched({});
     setIsEditing(false);

@@ -91,46 +91,39 @@ exports.registerCustomer = async (req, res, next) => {
   try {
     const payload = req.body || {};
 
-    // Validate request body
-    const { error } = validateCustomerRegister(payload);
-    if (error) {
-      const messages = error.details.map(d => d.message);
-      return res.status(400).json({ message: 'Validation failed', errors: messages });
-    }
-
     // Read customers
     let customers = readJson(CUSTOMERS_FILE);
     if (!Array.isArray(customers)) customers = [];
 
     // Duplicate email check
     const exists = customers.find(
-      c => c.EmailId && c.EmailId.toLowerCase() === payload.EmailId.toLowerCase()
+      c => c.EmailId && c.EmailId.toLowerCase() === payload.email.toLowerCase()
     );
 
     if (exists) {
       return res.status(400).json({ message: 'Email already registered' });
     }
-
+    
     // Get next ID (simple version)
     const id = getNextId('customerId');
 
     // Hash password
-    const passwordHash = await bcrypt.hash(payload.Password, 10);
-
+    const passwordHash = await bcrypt.hash(payload.password, 10);
     const newCustomer = {
       CustomerId: id,
-      FullName: payload.FullName,
+      FullName: payload.fullName,
       PasswordHash: passwordHash,
       Role: 'customer',
       CustomerCategory: payload.CustomerCategory || 'Silver',
-      Phone: payload.Phone,
-      EmailId: payload.EmailId,
-      AddressLine1: payload.AddressLine1,
-      AddressLine2: payload.AddressLine2 || '',
-      City: payload.City,
-      State: payload.State,
-      ZipCode: payload.ZipCode,
-      DOB: payload.DOB,
+      Phone: payload.phone,
+      EmailId: payload.email,
+      AddressLine1: payload.address1,
+      AddressLine2: payload.address2 || '',
+      City: payload.city,
+      State: payload.state,
+      ZipCode: payload.zip,
+      DOB: payload.dob,
+      estimateSpend: payload.estimateSpend,
       CreatedAt: new Date().toISOString()
     };
 
@@ -184,13 +177,13 @@ exports.updateMyProfile = async (req, res, next) => {
     }
 
     const {
-      AddressLine1,
-      AddressLine2,
-      ZipCode,
-      City,
-      State,
-      OldPassword,
-      Password
+      address1,
+      address2,
+      zip,
+      city,
+      state,
+      currentPassword,
+      newPassword
     } = req.body || {};
 
     const customers = readJson(CUSTOMERS_FILE) || [];
@@ -208,16 +201,16 @@ exports.updateMyProfile = async (req, res, next) => {
     // Prepare updated object
     const updated = {
       ...existing,
-      AddressLine1: AddressLine1 || existing.AddressLine1,
-      AddressLine2: AddressLine2 ?? existing.AddressLine2,
-      ZipCode: ZipCode || existing.ZipCode,
-      City: City || existing.City,
-      State: State || existing.State,
+      AddressLine1: address1 || existing.AddressLine1,
+      AddressLine2: address2 ?? existing.AddressLine2,
+      ZipCode: zip || existing.ZipCode,
+      City: city || existing.City,
+      State: state || existing.State,
       UpdatedAt: new Date().toISOString()
     };
-    if(bcrypt.compare(OldPassword, existing.PasswordHash)){
-      if (Password && Password.trim().length > 0) {
-      updated.PasswordHash = await bcrypt.hash(Password, 10);
+    if(bcrypt.compare(currentPassword, existing.PasswordHash)){
+      if (currentPassword && currentPassword.trim().length > 0) {
+      updated.PasswordHash = await bcrypt.hash(newPassword, 10);
     }
     }
     else{
