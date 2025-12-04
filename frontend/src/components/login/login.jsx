@@ -166,6 +166,7 @@ export default function CustomerLogin() {
     email: "",
     password: "",
   });
+  const [serverError, setServerError] = useState("");
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -179,6 +180,8 @@ export default function CustomerLogin() {
 
     if (!email || !password) return; // stop submit
 
+    setServerError("");
+
     const data = { EmailId: email, Password: password, isAdmin: isAdmin };
 
     fetch("http://localhost:4000/api/auth/login", {
@@ -186,16 +189,31 @@ export default function CustomerLogin() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     })
-      .then((res) => {
-        if (res.status === 401) throw new Error(res.json().message);
-        return res.json();
+      .then(async (res) => {
+        // try to parse JSON body if present
+        const payload = await res.json().catch(() => null);
+        if (!res.ok) {
+          // prefer server message, fall back to generic
+          const msg = (payload && (payload.message || payload.error)) || `Request failed: ${res.status}`;
+          throw new Error(msg);
+        }
+        return payload;
       })
-      .then((res) => {
-        localStorage.setItem("user", JSON.stringify(res.user));
-        localStorage.setItem("token", res.token);
+      .then((resBody) => {
+        localStorage.setItem("user", JSON.stringify(resBody.user));
+        localStorage.setItem("token", resBody.token);
         navigate(isAdmin ? "/admin" : "/dashboard");
       })
-      .catch({});
+      .catch((err) => {
+        // show a friendly message
+        const msg = err && err.message ? err.message : "Login failed";
+        // Normalize common auth message
+        if (/invalid|incorrect|expired|unauthor/i.test(msg)) {
+          setServerError("Invalid email or password");
+        } else {
+          setServerError(msg);
+        }
+      });
   }
 
   return (
@@ -230,7 +248,7 @@ export default function CustomerLogin() {
           <input
             required
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => { setEmail(e.target.value); setServerError(""); }}
             type="email"
             name="email"
             style={{
@@ -244,6 +262,8 @@ export default function CustomerLogin() {
 
           {errors.email && <p className="error-text">{errors.email}</p>}
 
+          {serverError && <p className="error-text">{serverError}</p>}
+
           <label style={{ display: "block", marginBottom: 6, color: "#6b7280" }}>
             Password
           </label>
@@ -252,7 +272,7 @@ export default function CustomerLogin() {
             <input
               required
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => { setPassword(e.target.value); setServerError(""); }}
               type={showPassword ? "text" : "password"}
               name="password"
               className="password-input"
