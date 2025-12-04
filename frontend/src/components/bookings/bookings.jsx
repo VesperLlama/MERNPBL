@@ -349,48 +349,86 @@ export default function Bookings() {
   }
 
   function handleCompleteBooking() {
-    if (!selectedFlight) return;
-    if (passengerRef.current) {
-      const res = passengerRef.current.validate();
-      if (!res.ok) {
-        // scroll to passenger form errors
-        window.scrollTo({ top: document.querySelector(".passenger-form-root")?.getBoundingClientRect().top + window.scrollY - 80 || 0, behavior: "smooth" });
-        return;
-      }
+  if (!selectedFlight) return;
+
+  // validate passenger form if present
+  if (passengerRef.current) {
+    const res = passengerRef.current.validate();
+    if (!res.ok) {
+      // scroll to passenger form errors
+      window.scrollTo({
+        top:
+          document.querySelector(".passenger-form-root")?.getBoundingClientRect().top +
+          window.scrollY -
+          80 || 0,
+        behavior: "smooth",
+      });
+      return;
     }
-
-    // compute price and totals
-    const basePrice = Number(selectedFlight.price ?? selectedFlight.fare ?? selectedFlight.airFare ?? selectedFlight.pricePerSeat ?? 0);
-    const mult = seatMultiplier(seatParam || "Economy");
-    const pricePerSeat = Math.round(basePrice * mult);
-    const totalPassengers = Math.max(1, Number(adultsParam || 0) + Number(childrenParam || 0));
-    const totalPrice = pricePerSeat * totalPassengers;
-
-    // gather flight info to pass along
-    const fid = selectedFlight._id || selectedFlight.flightId || selectedFlight.id || "";
-    const from = selectedFlight.origin || selectedFlight.from || selectedFlight.source || "";
-    const to = selectedFlight.destination || selectedFlight.to || selectedFlight.arrival || "";
-    const dep = selectedFlight.departureTime || selectedFlight.dep || selectedFlight.departure || "";
-    const arr = selectedFlight.arrivalTime || selectedFlight.arr || selectedFlight.arrival || "";
-    const airline = selectedFlight.carrierName || selectedFlight.airline || selectedFlight.CarrierName || "";
-
-    const params = new URLSearchParams({
-      flightId: fid,
-      pricePerSeat: String(pricePerSeat),
-      totalPrice: String(totalPrice),
-      from,
-      to,
-      dep,
-      arr,
-      airline,
-      adults: String(adultsParam || 1),
-      children: String(childrenParam || 0),
-      seatType: seatParam || "Economy",
-    });
-
-    // navigate to payment page (keeps previous behavior of redirecting to payment)
-    navigate(`/payment?${params.toString()}`);
   }
+
+  // compute price and totals (unchanged)
+  const basePrice = Number(
+    selectedFlight.price ??
+      selectedFlight.fare ??
+      selectedFlight.airFare ??
+      selectedFlight.pricePerSeat ??
+      0
+  );
+  const mult = seatMultiplier(seatParam || "Economy");
+  const pricePerSeat = Math.round(basePrice * mult);
+  const totalPassengers = Math.max(
+    1,
+    Number(adultsParam || 0) + Number(childrenParam || 0)
+  );
+  const totalPrice = pricePerSeat * totalPassengers;
+
+  // gather flight info to pass along
+  const fid = selectedFlight._id || selectedFlight.flightId || selectedFlight.id || "";
+  const from = selectedFlight.origin || selectedFlight.from || selectedFlight.source || "";
+  const to = selectedFlight.destination || selectedFlight.to || selectedFlight.arrival || "";
+  const dep = selectedFlight.departureTime || selectedFlight.dep || selectedFlight.departure || "";
+  const arr = selectedFlight.arrivalTime || selectedFlight.arr || selectedFlight.arrival || "";
+  const airline = selectedFlight.carrierName || selectedFlight.airline || selectedFlight.CarrierName || "";
+
+ 
+  const rawPassengers = passengerRef.current ? passengerRef.current.getPassengers() : [];
+  const passengers = rawPassengers.map((p) => ({
+    name: p.name ?? "",
+    age: p.age ?? "",
+    gender: p.gender ?? "",
+  }));
+
+  const params = new URLSearchParams({
+    flightId: fid,
+    pricePerSeat: String(pricePerSeat),
+    totalPrice: String(totalPrice),
+    from,
+    to,
+    dep,
+    arr,
+    airline,
+    adults: String(adultsParam || 1),
+    children: String(childrenParam || 0),
+    seatType: seatParam || "Economy",
+  });
+
+  
+  navigate(`/payment?${params.toString()}`, {
+    state: {
+      flight: {
+        flightId: fid,
+        from, to, dep, arr, airline,
+        pricePerSeat,
+        totalPrice,
+        adults: adultsParam,
+        children: childrenParam,
+        seatType: seatParam || "Economy"
+      },
+      passengers 
+    }
+  });
+}
 
   // existing onBook left intact for compatibility (not used by new flow)
   const onBook = (flight) => {
