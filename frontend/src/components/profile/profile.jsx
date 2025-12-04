@@ -297,7 +297,7 @@ export default function Profile({ userId: propUserId }) {
       }
       const data = await res.json();
       // update local form from returned data if any
-      hydrateFromObject(data);
+      hydrateFromObject(data.data);
       lastSavedRef.current = { ...lastSavedRef.current, ...payload };
       setServerMessage({ type: "success", text: "Profile saved successfully." });
       setIsEditing(false);
@@ -468,6 +468,7 @@ export default function Profile({ userId: propUserId }) {
                         placeholder="Enter full name"
                         aria-invalid={!!errors.fullName}
                         autoComplete="name"
+                        disabled
                         readOnly={!isEditing}
                       />
                     </label>
@@ -543,6 +544,7 @@ export default function Profile({ userId: propUserId }) {
                         onBlur={handleBlur}
                         placeholder="e.g. 20000"
                         autoComplete="off"
+                        disabled
                         readOnly={!isEditing}
                       />
                     </label>
