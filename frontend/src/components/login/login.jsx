@@ -262,7 +262,7 @@ export default function CustomerLogin() {
 
           {errors.email && <p className="error-text">{errors.email}</p>}
 
-          {serverError && <p className="error-text">{serverError}</p>}
+          
 
           <label style={{ display: "block", marginBottom: 6, color: "#6b7280" }}>
             Password
@@ -287,6 +287,7 @@ export default function CustomerLogin() {
           </div>
 
           {errors.password && <p className="error-text">{errors.password}</p>}
+          {serverError && <p className="error-text">{serverError}</p>}
 
           <div
             style={{

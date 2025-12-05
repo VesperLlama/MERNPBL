@@ -2,8 +2,15 @@ import React, { useState } from "react";
 import AdminNavBar from "../adminNavBar/adminNavBar.jsx";
 import "./updateFlight.css";
 
-// const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
-const nameRegex = /[A-Za-z]+\s\([A-Za-z]+\)/i;
+  const places = [
+    "DEL (Delhi)",
+    "BOM (Mumbai)",
+    "VNS (Varanasi)",
+    "LKO (Lucknow)",
+    "TRV (Trivandrum)",
+    "AYJ (Ayodhya)",
+    "HYD (Hyderabad)",
+  ];
 
 export default function UpdateFlight() {
   const [flightId, setFlightId] = useState("");
@@ -22,6 +29,8 @@ export default function UpdateFlight() {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [origin, setOrigin] = useState("");
+  const [destination, setDestination] = useState("");
 
   function handleBlur(k) {
     setTouched((s) => ({ ...s, [k]: true }));
@@ -30,8 +39,8 @@ export default function UpdateFlight() {
   function validateAll() {
     const e = {};
     if (!flight.carrierName) e.carrierName = "Required";
-    if (!nameRegex.test(flight.origin || "")) e.origin = "Invalid origin";
-    if (!nameRegex.test(flight.destination || "")) e.destination = "Invalid destination";
+    // if (!nameRegex.test(flight.origin || "")) e.origin = "Invalid origin";
+    // if (!nameRegex.test(flight.destination || "")) e.destination = "Invalid destination";
     const fare = Number(flight.airFare);
     if (!Number.isFinite(fare) || fare < 2000 || fare > 150000) e.airFare = "Fare must be 2,000–150,000";
     const b = Number(flight.seatCapacityBusinessClass);
@@ -57,10 +66,11 @@ export default function UpdateFlight() {
       if (res.ok) {
         const data = await res.json();
         const f = data && data.flight ? data.flight : data;
+        console.log(f);
         // Map backend keys to our fields if necessary
         setFlight({
           carrierName: f.carrierName || f.CarrierName || "",
-          source: f.origin || f.source || "",
+          origin: f.origin || f.source || "",
           destination: f.destination || f.Destination || "",
           airFare: f.price || f.airfare || f.fare || "",
           seatCapacityBusinessClass: f.seats.business || f.seatsBusiness || f.businessSeats || "",
@@ -70,6 +80,7 @@ export default function UpdateFlight() {
         setStatus("Loaded flight details. Edit fields and click Update.");
         setTouched({});
         setSubmitted(false);
+        setOrigin(f.source);
       } else if (res.status === 404) {
         setStatus("Flight not found.");
       } else {
@@ -96,9 +107,9 @@ export default function UpdateFlight() {
     try {
       const payload = {
         carrierName: flight.carrierName,
-        source: flight.source,
+        source: flight.origin,
         destination: flight.destination,
-        price: Number(flight.price),
+        price: Number(flight.airFare),
         seats: {
           economy: Number(flight.seatCapacityEconomyClass),
           business: Number(flight.seatCapacityBusinessClass),
@@ -158,12 +169,25 @@ export default function UpdateFlight() {
         <form className="uf-form" onSubmit={handleUpdate}>
           <label className="uf-row">
             <span>Flight ID</span>
-            <input value={flightId} onChange={(e) => setFlightId(e.target.value)} placeholder="Enter flight id" />
-            <button type="button" className="uf-load" onClick={handleLoad} disabled={loading}>Load</button>
+            <input
+              value={flightId}
+              onChange={(e) => setFlightId(e.target.value)}
+              placeholder="Enter flight id"
+            />
+            <button
+              type="button"
+              className="uf-load"
+              onClick={handleLoad}
+              disabled={loading}
+            >
+              Load
+            </button>
           </label>
 
           <label className="uf-row">
-            <span>Carrier Name <span className="uf-required">*</span></span>
+            <span>
+              Carrier Name <span className="uf-required">*</span>
+            </span>
             <select
               required
               value={flight.carrierName}
@@ -179,48 +203,204 @@ export default function UpdateFlight() {
               <option>Akasa Air</option>
               <option>Alliance Air</option>
             </select>
-            <div className="uf-err">{(touched.carrierName || submitted) && errors.carrierName}</div>
+            <div className="uf-err">
+              {(touched.carrierName || submitted) && errors.carrierName}
+            </div>
           </label>
 
           <label className="uf-row">
-            <span>Origin <span className="uf-required">*</span></span>
-            <input required placeholder="City (letters only)" value={flight.origin} onChange={(e) => onChange("origin", e.target.value)} onBlur={() => handleBlur("origin")} />
-            <div className="uf-err">{(touched.origin || submitted) && errors.origin}</div>
+            <span>
+              Origin <span className="uf-required">*</span>
+            </span>
+            {/* <input required placeholder="City (letters only)" value={flight.origin} onChange={(e) => onChange("origin", e.target.value)} onBlur={() => handleBlur("origin")} /> */}
+            <select
+              // ref={originRef}
+              required
+              className="bk-input"
+              aria-label="Origin"
+              value={flight.origin}
+              onChange={(e) => {
+                const v = String(e.target.value || "");
+                onChange("origin", e.target.value);
+                // allow only known values (or empty)
+                if (v !== "" && !places.includes(v)) {
+                  console.warn("Unexpected Origin selected:", v);
+                  setOrigin("");
+                } else {
+                  setOrigin(v);
+                  // if user selects an origin equal to current destination, clear destination
+                  if (v !== "" && v === destination) {
+                    setDestination("");
+                  }
+                }
+              }}
+            >
+              <option disabled value="">
+                Select Origin
+              </option>
+              {places.map((p) => (
+                <option key={p} value={p}>
+                  {p}
+                </option>
+              ))}
+            </select>
+            <div className="uf-err">
+              {(touched.origin || submitted) && errors.origin}
+            </div>
           </label>
 
           <label className="uf-row">
-            <span>Destination <span className="uf-required">*</span></span>
-            <input required placeholder="City (letters only)" value={flight.destination} onChange={(e) => onChange("destination", e.target.value)} onBlur={() => handleBlur("destination")} />
-            <div className="uf-err">{(touched.destination || submitted) && errors.destination}</div>
+            <span>
+              Destination <span className="uf-required">*</span>
+            </span>
+            {/* <input required placeholder="City (letters only)" value={flight.destination} onChange={(e) => onChange("destination", e.target.value)} onBlur={() => handleBlur("destination")} /> */}
+            <select
+              // ref={destRef}
+              required
+              className="bk-input"
+              aria-label="Destination"
+              value={flight.destination}
+              onChange={(e) => {
+                const v = String(e.target.value || "");
+                onChange("destination", e.target.value);
+                if (v !== "" && !places.includes(v)) {
+                  console.warn("Unexpected Destination selected:", v);
+                  setDestination("");
+                } else {
+                  setDestination(v);
+                }
+              }}
+            >
+              <option disabled value="">
+                Select Destination
+              </option>
+              {places.map((p) => (
+                // disable the option that matches selected origin
+                <option key={p} value={p} disabled={p === origin}>
+                  {p}
+                  {p === origin ? " — (selected as origin)" : ""}
+                </option>
+              ))}
+            </select>
+            <div className="uf-err">
+              {(touched.destination || submitted) && errors.destination}
+            </div>
           </label>
 
           <label className="uf-row">
-            <span>Air Fare <span className="uf-required">*</span></span>
-            <input required placeholder="2000 - 150000" type="number" min="2000" max="150000" step="1" value={flight.airFare} onChange={(e) => onChange("airFare", e.target.value)} onBlur={() => handleBlur("airFare")} />
-            <div className="uf-err">{(touched.airFare || submitted) && errors.airFare}</div>
+            <span>
+              Air Fare <span className="uf-required">*</span>
+            </span>
+            <input
+              required
+              placeholder="2000 - 150000"
+              type="number"
+              min="2000"
+              max="150000"
+              step="1"
+              value={flight.airFare}
+              onChange={(e) => onChange("airFare", e.target.value)}
+              onBlur={() => handleBlur("airFare")}
+            />
+            <div className="uf-err">
+              {(touched.airFare || submitted) && errors.airFare}
+            </div>
           </label>
 
           <label className="uf-row">
-            <span>Seats (Business) <span className="uf-required">*</span></span>
-            <input required placeholder="10 - 30" type="number" min="10" max="30" step="1" value={flight.seatCapacityBusinessClass} onChange={(e) => onChange("seatCapacityBusinessClass", e.target.value)} onBlur={() => handleBlur("seatCapacityBusinessClass")} />
-            <div className="uf-err">{(touched.seatCapacityBusinessClass || submitted) && errors.seatCapacityBusinessClass}</div>
+            <span>
+              Seats (Business) <span className="uf-required">*</span>
+            </span>
+            <input
+              required
+              placeholder="10 - 30"
+              type="number"
+              min="10"
+              max="30"
+              step="1"
+              value={flight.seatCapacityBusinessClass}
+              onChange={(e) =>
+                onChange("seatCapacityBusinessClass", e.target.value)
+              }
+              onBlur={() => handleBlur("seatCapacityBusinessClass")}
+            />
+            <div className="uf-err">
+              {(touched.seatCapacityBusinessClass || submitted) &&
+                errors.seatCapacityBusinessClass}
+            </div>
           </label>
 
           <label className="uf-row">
-            <span>Seats (Economy) <span className="uf-required">*</span></span>
-            <input required placeholder="50 - 70" type="number" min="50" max="70" step="1" value={flight.seatCapacityEconomyClass} onChange={(e) => onChange("seatCapacityEconomyClass", e.target.value)} onBlur={() => handleBlur("seatCapacityEconomyClass")} />
-            <div className="uf-err">{(touched.seatCapacityEconomyClass || submitted) && errors.seatCapacityEconomyClass}</div>
+            <span>
+              Seats (Economy) <span className="uf-required">*</span>
+            </span>
+            <input
+              required
+              placeholder="50 - 70"
+              type="number"
+              min="50"
+              max="70"
+              step="1"
+              value={flight.seatCapacityEconomyClass}
+              onChange={(e) =>
+                onChange("seatCapacityEconomyClass", e.target.value)
+              }
+              onBlur={() => handleBlur("seatCapacityEconomyClass")}
+            />
+            <div className="uf-err">
+              {(touched.seatCapacityEconomyClass || submitted) &&
+                errors.seatCapacityEconomyClass}
+            </div>
           </label>
 
           <label className="uf-row">
-            <span>Seats (Executive) <span className="uf-required">*</span></span>
-            <input required placeholder="3 - 8" type="number" min="3" max="8" step="1" value={flight.seatCapacityExecutiveClass} onChange={(e) => onChange("seatCapacityExecutiveClass", e.target.value)} onBlur={() => handleBlur("seatCapacityExecutiveClass")} />
-            <div className="uf-err">{(touched.seatCapacityExecutiveClass || submitted) && errors.seatCapacityExecutiveClass}</div>
+            <span>
+              Seats (Executive) <span className="uf-required">*</span>
+            </span>
+            <input
+              required
+              placeholder="3 - 8"
+              type="number"
+              min="3"
+              max="8"
+              step="1"
+              value={flight.seatCapacityExecutiveClass}
+              onChange={(e) =>
+                onChange("seatCapacityExecutiveClass", e.target.value)
+              }
+              onBlur={() => handleBlur("seatCapacityExecutiveClass")}
+            />
+            <div className="uf-err">
+              {(touched.seatCapacityExecutiveClass || submitted) &&
+                errors.seatCapacityExecutiveClass}
+            </div>
           </label>
 
           <div className="uf-actions">
-            <button type="submit" className="uf-update" disabled={loading}> {loading ? "Updating..." : "Update"} </button>
-            <button type="button" className="uf-clear" onClick={() => { setFlightId(""); setFlight({ carrierName: "", origin: "", destination: "", airFare: "", seatCapacityBusinessClass: "", seatCapacityEconomyClass: "", seatCapacityExecutiveClass: "" }); setErrors({}); setStatus(""); }}>Clear</button>
+            <button type="submit" className="uf-update" disabled={loading}>
+              {" "}
+              {loading ? "Updating..." : "Update"}{" "}
+            </button>
+            <button
+              type="button"
+              className="uf-clear"
+              onClick={() => {
+                setFlightId("");
+                setFlight({
+                  carrierName: "",
+                  origin: "",
+                  destination: "",
+                  airFare: "",
+                  seatCapacityBusinessClass: "",
+                  seatCapacityEconomyClass: "",
+                  seatCapacityExecutiveClass: "",
+                });
+                setErrors({});
+                setStatus("");
+              }}
+            >
+              Clear
+            </button>
           </div>
 
           {status && <div className="uf-status">{status}</div>}

@@ -232,7 +232,7 @@ export default function SearchingPage() {
 
               <div className="bk-row">
                 <label className="bk-label bk-inline">
-                  Adults
+                  Passengers
                   <div className="bk-passenger">
                     <button
                       type="button"

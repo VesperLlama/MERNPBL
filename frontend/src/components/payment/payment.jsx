@@ -83,12 +83,10 @@ export default function Payment(props) {
     loadPaymentStats();
   }, []);
 
-  function validateCardNumberRaw(raw) {
-    const n = String(raw || "").replace(/\s+/g, "");
-    if (!n) return "Card number required.";
-    if (n.length !== 16) return "Card number must be 16 digits.";
-    if (!onlyDigits(n)) return "Card number must contain digits only.";
-    if (/^(\d)\1{15}$/.test(n)) return "Enter a valid card number.";
+  function validateCardNameRaw(name) {
+    if (!name || !String(name).trim()) return "Cardholder name required.";
+    if (!/^[A-Za-z\s\-'.]+$/.test(name))
+      return "Name must contain letters only (no digits or symbols).";
     return "";
   }
 
@@ -152,11 +150,22 @@ export default function Payment(props) {
     return "";
   }
 
-  function validateCardNameRaw(name) {
-    if (!name || !String(name).trim()) return "Cardholder name required.";
-    if (!/^[A-Za-z\s\-'.]+$/.test(name)) return "Name must contain letters only (no digits or symbols).";
-    return "";
-  }
+    function validateCardNumberRaw(raw) {
+      const digits = String(raw).replace(/\s+/g, ""); // remove spaces
+
+      if (!digits) return "Card number required.";
+      if (!/^\d+$/.test(digits)) return "Card number must contain digits only.";
+      if (digits.startsWith("1")) return "Card number cannot start with 1.";
+
+      // enforce 16 digits (adjust if you accept other lengths)
+      if (digits.length !== 16) return "Card number must be 16 digits.";
+
+      // reject when all 16 digits are identical (e.g., "1111111111111111")
+      const allSame = digits.split("").every((d) => d === digits[0]);
+      if (allSame) return "Card number cannot be the same digit repeated.";
+
+      return "";
+    }
 
   function clearErrors() {
     setErrors({});

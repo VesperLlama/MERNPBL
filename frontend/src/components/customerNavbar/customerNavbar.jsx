@@ -16,7 +16,7 @@ export default function CustomerNavbar() {
     <nav className="customer-navbar">
       {/* LEFT SECTION */}
       <div className="nav-left" onClick={() => navigate("/dashboard")}>
-        <div className="brand">Next<p style={{ color: "blue", display: "inline" }}>Trip</p></div>
+        <div className="brand"> <p style={{ color: "orange", display: "inline" }}>Go</p> Voyage</div>
       </div>
 
       {/* CENTER NAVIGATION BUTTONS */}
@@ -50,7 +50,7 @@ export default function CustomerNavbar() {
 
       {/* RIGHT SIDE */}
       <div className="nav-right">
-        <div className="welcome-msg"><p style={{ color: "skyblue", display: "inline" }}>{fullName}</p>&nbsp;&nbsp;</div>
+        <div className="welcome-msg"><p style={{ color: "#f09537", display: "inline" }}>{fullName}</p>&nbsp;&nbsp;</div>
 
         <button className="logout-btn" onClick={handleLogout}>
           Logout

@@ -101,7 +101,7 @@ export default function AdminDashboard() {
 
         {/* UPDATED TEXT */}
         <p style={{ color: "#475569", marginBottom: 4 }}>
-          Welcome, <b>{stats.adminName}</b>
+          Welcome, <i><b style={{"color":"orange"}}>{stats.adminName.toLocaleUpperCase()}</b></i>
         </p>
         {/* <p style={{ color: "#475569", marginTop: 0 }}>
           Admin ID: <b>{stats.adminId}</b>
@@ -116,32 +116,32 @@ export default function AdminDashboard() {
             marginTop: 20,
           }}
         >
-          <div style={cardStyle}>
+          <div style={{cardStyle, "background":"rgb(141 220 245 / 27%)", "borderRadius":"15px 15px 15px 15px", "padding": "20px"}}>
             <div style={cardTitleStyle}>TOTAL FLIGHTS</div>
             <div style={cardValueStyle}>{stats.totalFlights}</div>
           </div>
 
-          <div style={cardStyle}>
+          <div style={{cardStyle, "background":"rgb(141 220 245 / 27%)", "borderRadius":"15px 15px 15px 15px", "padding": "20px"}}>
             <div style={cardTitleStyle}>TOTAL CARRIERS</div>
             <div style={cardValueStyle}>{stats.totalCarriers}</div>
           </div>
 
-          <div style={cardStyle}>
+          <div style={{cardStyle, "background":"rgb(141 220 245 / 27%)", "borderRadius":"15px 15px 15px 15px", "padding": "20px"}}>
             <div style={cardTitleStyle}>TOTAL REVENUE</div>
             <div style={cardValueStyle}>₹ {formatCurrency(stats.totalRevenue)}</div>
           </div>
 
-          <div style={cardStyle}>
+          <div style={{cardStyle, "background":"rgb(141 220 245 / 27%)", "borderRadius":"15px 15px 15px 15px", "padding": "20px"}}>
             <div style={cardTitleStyle}>TOTAL BOOKINGS</div>
             <div style={cardValueStyle}>{stats.totalBookings}</div>
           </div>
 
-          <div style={cardStyle}>
+          <div style={{cardStyle, "background":"rgb(141 220 245 / 27%)", "borderRadius":"15px 15px 15px 15px", "padding": "20px"}}>
             <div style={cardTitleStyle}>UPCOMING BOOKINGS</div>
             <div style={cardValueStyle}>{stats.upcomingBookings}</div>
           </div>
 
-          <div style={cardStyle}>
+          <div style={{cardStyle, "background":"rgb(141 220 245 / 27%)", "borderRadius":"15px 15px 15px 15px", "padding": "20px"}}>
             <div style={cardTitleStyle}>TOTAL CUSTOMERS</div>
             <div style={cardValueStyle}>{stats.totalCustomers}</div>
           </div>

@@ -41,7 +41,7 @@ export default function CustomerDashboard() {
       // Keep only future flights
       const future = my.filter((b) => {
         const d = new Date(b.departure);
-        return !isNaN(d) && d >= new Date();
+        return !isNaN(d) && d >= new Date() && b.BookingStatus === "Booked";
       });
 
       if (future.length === 0) {
@@ -84,7 +84,7 @@ export default function CustomerDashboard() {
         <div className="cust-container">
           <header className="cust-hero">
             <div>
-              <h1>Welcome, <i>{fullName}</i></h1>
+              <h1>Welcome, <i><b style={{"color":"orange"}}>{fullName}</b></i></h1>
               <p className="cust-sub">Manage bookings, travel plans and your profile.</p>
             </div>
           </header>
@@ -94,7 +94,7 @@ export default function CustomerDashboard() {
             <div className="cust-left">
               <div className="upcoming-large">
                 <div className="upcoming-head">
-                  <h3 style={{"color":"green"}}>Upcoming Flight</h3>
+                  <h3>Upcoming Flight</h3>
                   {loading ? <small className="muted">Loading…</small> : null}
                 </div>
 
@@ -107,9 +107,9 @@ export default function CustomerDashboard() {
                 {!loading && upcoming && (
                   <div className="up-content">
                     <div className="route">
-                      <div className="iata">{upcoming.origin || upcoming.from || "-"}</div>
+                      <div style={{"color":"green"}} className="iata">{upcoming.origin || upcoming.from || "-"}</div>
                       <div className="arrow">→</div>
-                      <div className="iata to">{upcoming.destination || upcoming.to || "-"}</div>
+                      <div style={{"color":"green"}} className="iata to">{upcoming.destination || upcoming.to || "-"}</div>
                     </div>
 
                     <div className="meta">
@@ -122,7 +122,12 @@ export default function CustomerDashboard() {
 
                       <div>
                         <div className="meta-label">Flight ID</div>
-                        <div className="meta-value">{upcoming.flightNumber || upcoming.id || "-"}</div>
+                        <div className="meta-value"><i>{upcoming.flightNumber || upcoming.id || "-"}</i></div>
+                      </div>
+
+                      <div>
+                        <div className="meta-label">PNR</div>
+                        <div className="meta-value"><i>{upcoming.PNR || upcoming.pnr || "-"}</i></div>
                       </div>
                     </div>
 

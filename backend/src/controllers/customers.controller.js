@@ -7,64 +7,82 @@ const CUSTOMERS_FILE = 'customers.json';
 exports.registerCustomer = async (req, res, next) => {
   try {
     const payload = req.body || {};
+    
+    const normalized = {
+      fullName: payload.FullName,
+      email: payload.EmailId,
+      password: payload.Password,
+      phone: payload.Phone,
+      address1: payload.AddressLine1,
+      address2: payload.AddressLine2,
+      city: payload.City,
+      state: payload.State,
+      zip: payload.ZipCode,
+      dob: payload.DOB,
+      CustomerCategory: payload.CustomerCategory
+    };
 
-    // Read customers
+    // Validate normalized data
+    // const { error } = validateCustomerRegister(normalized);
+    // if (error) {
+    //   return res.status(400).json({
+    //     message: "Validation failed",
+    //     errors: error.details.map(d => d.message)
+    //   });
+    // }
+
+    // Read users
     let customers = readJson(CUSTOMERS_FILE);
     if (!Array.isArray(customers)) customers = [];
 
-    // Duplicate email check
+    // FULLY WORKING UNIQUE CHECKS
     const emailExists = customers.find(
-      c => c.EmailId && c.EmailId.toLowerCase() === String(payload.EmailId).toLowerCase()
+      c => c.EmailId?.toLowerCase() === normalized.email?.toLowerCase()
     );
+
     const phoneExists = customers.find(
-      c => c.Phone && String(c.Phone) === String(payload.Phone)
+      c => String(c.Phone) === String(normalized.phone)
     );
 
     if (emailExists || phoneExists) {
       const parts = [];
-      if (emailExists) parts.push('Email');
-      if (phoneExists) parts.push('Phone');
-      return res.status(400).json({ message: parts.join(' and ') + ' already registered' });
-    }
-    
-    // Get next ID (simple version)
-    const id = getNextId('customerId');
+      if (emailExists) parts.push("Email");
+      if (phoneExists) parts.push("Phone");
 
-    // Hash password
-    const passwordHash = await bcrypt.hash(payload.password, 10);
+      return res.status(400).json({
+        message: parts.join(" and ") + " already registered"
+      });
+    }
+
+    const id = getNextId("customerId");
+    const passwordHash = await bcrypt.hash(normalized.password, 10);
+
     const newCustomer = {
       CustomerId: id,
-      FullName: payload.fullName,
+      FullName: normalized.fullName,
       PasswordHash: passwordHash,
-      Role: 'customer',
-      CustomerCategory: payload.CustomerCategory || 'Silver',
-      Phone: payload.phone,
-      EmailId: payload.email,
-      AddressLine1: payload.address1,
-      AddressLine2: payload.address2 || '',
-      City: payload.city,
-      State: payload.state,
-      ZipCode: payload.zip,
-      DOB: payload.dob,
-      estimateSpend: payload.estimateSpend,
+      Role: "customer",
+      CustomerCategory: normalized.CustomerCategory || "Silver",
+      Phone: normalized.phone,
+      EmailId: normalized.email,
+      AddressLine1: normalized.address1,
+      AddressLine2: normalized.address2 || "",
+      City: normalized.city,
+      State: normalized.state,
+      ZipCode: normalized.zip,
+      DOB: normalized.dob,
       CreatedAt: new Date().toISOString()
     };
 
-    // Save
     customers.push(newCustomer);
     writeJson(CUSTOMERS_FILE, customers);
 
-    return res.status(201).json({
-      message: 'Registered',
-      CustomerId: id
-    });
+    return res.status(201).json({ message: "Registered", CustomerId: id });
 
   } catch (err) {
     next(err);
   }
 };
-
-// password for id 1003 = "Aaditya@123"
 
 exports.getCustomerById = (req, res, next) => {
   try {
@@ -131,14 +149,18 @@ exports.updateMyProfile = async (req, res, next) => {
       State: state || existing.State,
       UpdatedAt: new Date().toISOString()
     };
-    if(bcrypt.compare(currentPassword, existing.PasswordHash)){
-      if (currentPassword && currentPassword.trim().length > 0) {
-      updated.PasswordHash = await bcrypt.hash(newPassword, 10);
+
+    if(currentPassword){
+    const match = await bcrypt.compare(currentPassword, existing.PasswordHash);
+    console.log(match);
+    if (match) {
+      if (newPassword && newPassword.trim().length > 0) {
+        updated.PasswordHash = await bcrypt.hash(newPassword, 10);
+      }
     }
-    }
-    else{
-      return res.status(401).json({"message": "Invalid Old Password"});
-    }
+    else {
+      return res.status(401).json({ "message": "Invalid Old Password" });
+    }}
     // if(Password && Password.trim().length > 0 )
     // If updating password → hash it
     // if (Password && Password.trim().length > 0) {

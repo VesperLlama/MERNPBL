@@ -25,7 +25,7 @@ export default function AdminNavBar() {
   return (
     <nav className="admin-navbar" ref={rootRef}>
       <div className="nav-left" onClick={() => navigate("/admin") }>
-        <div className="brand">Next<p style={{ color: "blue", display: "inline" }}>Trip</p></div>
+        <div className="brand"> <p style={{ color: "orange", display: "inline" }}>Go</p> Voyage</div>
       </div>
 
       <ul className="nav-center">

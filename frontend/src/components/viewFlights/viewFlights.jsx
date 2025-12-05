@@ -13,6 +13,8 @@ export default function ViewFlights() {
   const [searchError, setSearchError] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [alert, setAlert] = useState("");
+  const [alertType, setAlertType] = useState("success");
 
   useEffect(() => {
     fetchFlights();
@@ -36,6 +38,15 @@ export default function ViewFlights() {
     } finally {
       setLoading(false);
     }
+  }
+
+  async function resetFilter() {
+    setFilter("All");
+    setOriginFilter("All");
+    setDestFilter("All");
+    setDateFilter("");
+    setSearchId("");
+    fetchFlights();
   }
 
   const carriers = Array.from(new Set(flights.map((f) => f.carrierName || f.CarrierName).filter(Boolean))).sort();
@@ -62,6 +73,42 @@ export default function ViewFlights() {
     return d.getFullYear() === sel.getFullYear() && d.getMonth() === sel.getMonth() && d.getDate() === sel.getDate();
   }
 
+  async function handleCancel(flightNumber) {
+    const res = await fetch(`http://localhost:4000/api/bookings/admin-cancel-flight/${flightNumber}`, {
+      "method": "PUT",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("token")}`
+      }
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      showAlert(`Failed to cancel flight. ${res.message}`, error);
+      return;
+    }
+    showAlert("Flight Cancelled Successfully!");
+  }
+
+  function navigateToDetails(id){
+    navigate(`/admin/flights/${id}`);
+  }
+    
+
+  function handleTrOrButtonClick(event, id) {
+    console.log(id);
+    if (event.target.matches('button[class="vb-cancel"]')) {
+      handleCancel(id);
+    } else {
+      navigateToDetails(id);
+    }
+  }
+
+  function showAlert(msg, type = "success", ms = 3500) {
+    setAlertType(type);
+    setAlert(msg);
+    setTimeout(() => setAlert(""), ms);
+  }
+
   const displayed = flights.filter((f) => {
     const carrierMatch = filter === "All" || (f.carrierName || f.CarrierName) === filter;
     const originMatch = originFilter === "All" || String(getField(f, ["source", "Origin"])) === originFilter;
@@ -73,6 +120,11 @@ export default function ViewFlights() {
   return (
     <div className="vf-root">
       <AdminNavBar />
+      {alert && (
+        <div className={`vb-alert ${alertType === "error" ? "vb-alert-error" : "vb-alert-success"}`}>
+          {alert}
+        </div>
+      )}
       <div className="vf-container">
         <h2>Flights</h2>
 
@@ -134,8 +186,8 @@ export default function ViewFlights() {
               Go
             </button>
           </label>
-          <button className="vf-refresh" onClick={fetchFlights} disabled={loading}>
-            {loading ? "Loading..." : "Refresh"}
+          <button className="vf-refresh" onClick={resetFilter} disabled={loading}>
+            {loading ? "Loading..." : "Reset"}
           </button>
         </div>
 
@@ -154,6 +206,7 @@ export default function ViewFlights() {
                   <th>Seats (Economy)</th>
                   <th>Seats (Business)</th>
                   <th>Seats (Executive)</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -169,12 +222,14 @@ export default function ViewFlights() {
                 )}
                 {displayed.map((f, idx) => {
                   const id = getField(f, ["_id", "flightNumber", "id"]);
+                  const isCancelled = Boolean(f.cancelled || String(f.FlightStatus).toLowerCase() !== "active");
+                  const isCancelling = Boolean(f.cancelling);
                   return (
                     <tr
                       key={id || idx}
                       className="vf-row"
                       tabIndex={0}
-                      onClick={() => id && navigate(`/admin/flights/${id}`)}
+                      onClick={() => handleTrOrButtonClick(event, id)}
                       onKeyDown={(e) => (e.key === "Enter" && id && navigate(`/admin/flights/${id}`))}
                     >
                       <td>{id}</td>
@@ -185,6 +240,15 @@ export default function ViewFlights() {
                       <td>{getField(f.seats, ["economy"])}</td>
                       <td>{getField(f.seats, ["business"])}</td>
                       <td>{getField(f.seats, ["executive"])}</td>
+                      <td>
+                        <button
+                          className="vb-cancel"
+                          disabled={isCancelled || isCancelling}
+                          title={isCancelled ? "Already cancelled" : "Cancel booking"}
+                        >
+                          {isCancelling ? "Cancelling..." : isCancelled ? "Cancelled" : "Cancel"}
+                        </button>
+                      </td>
                     </tr>
                   );
                 })}

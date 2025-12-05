@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./registerUser.css";
+import {useNavigate} from "react-router-dom";
 
 const cities = [
   { name: "Mumbai", state: "Maharashtra", zip: "400001" },
@@ -15,6 +16,7 @@ const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
 const phoneRegex = /^[6-9]\d{9}$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const estimatedSpendRegex = /^\d*\.?\d+$/;
 
 export default function RegisterUser() {
   const [form, setForm] = useState({
@@ -39,6 +41,7 @@ export default function RegisterUser() {
   const [submitting, setSubmitting] = useState(false);
   const [touched, setTouched] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const isAdmin = localStorage.getItem("isAdmin") === "true";
@@ -68,6 +71,9 @@ export default function RegisterUser() {
 
     if (!phoneRegex.test(form.phone))
       e.phone = "Phone must be 10 digits, starting with 6–9";
+
+    if (!estimatedSpendRegex.test(form.estimatedSpend))
+      e.estimatedSpend = "must be positive";
 
     if (!emailRegex.test(form.email)) e.email = "Enter a valid email address";
 
@@ -120,6 +126,9 @@ export default function RegisterUser() {
         break;
       case "phone":
         setErr("phone", !phoneRegex.test(v) ? "Phone must be 10 digits, starting with 6–9" : null);
+        break;
+      case "estimatedSpend":
+        setErr("estimatedSpend", !estimatedSpendRegex.test(v) ? "Estimated spent must be positive" : null);
         break;
       case "email":
         setErr("email", !emailRegex.test(v) ? "Enter a valid email address" : null);
@@ -238,6 +247,7 @@ export default function RegisterUser() {
         // popup with clear message to note the ID
         if (id) {
           alert(`Registration successful!\nYour Customer ID: ${id}\nPlease note this ID for future reference.`);
+          navigate("/login", { state: { fromAdmin: false } });
         } else {
           alert('Registration successful!');
         }
@@ -406,6 +416,7 @@ export default function RegisterUser() {
                 placeholder="e.g. 20000"
               />
               <div className="small-text">Category: {customerCategory}</div>
+              {errors.estimatedSpend && (touched.estimatedSpend || submitted) && <div className="error">{errors.estimatedSpend}</div>}
             </div>
 
             {/* ADDRESS 1 */}

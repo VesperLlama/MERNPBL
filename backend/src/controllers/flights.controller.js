@@ -129,11 +129,6 @@ exports.getFlightByNumber = (req, res) => {
       return res.status(404).json({ message: "Flight not found" });
     }
 
-    // Hide cancelled flights from customers
-    if (flight.FlightStatus === "Cancelled") {
-      return res.status(404).json({ message: "Flight not found" });
-    }
-
     return res.status(200).json(flight);
 
   } catch (err) {

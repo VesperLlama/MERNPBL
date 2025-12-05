@@ -92,20 +92,22 @@ body,
 
 .btn.customer-btn {
   background: rgb(234, 223, 223);
-  color: #1a73e8;
+  color: orange;
 }
 
 .btn.customer-btn:hover {
-  color: black;
-  background: #adb0b4;
+  color: white;
+  background: orange;
+  border: bold;
+  border-color: white;
 }
 
 .btn.admin-btn {
-  background: #1a73e8;
+  background: orange;
 }
 
 .btn.admin-btn:hover {
-  color: black;
+  color: orange;
   background: rgb(234, 223, 223);
 }
 

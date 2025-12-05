@@ -320,7 +320,7 @@ export default function Profile({ userId: propUserId }) {
     else if (!passwordRegex.test(pwdForm.newPassword))
       e.newPassword = "Password must be 8+ chars and include upper, lower, number & special char";
     if (!pwdForm.confirmNewPassword) e.confirmNewPassword = "Confirm the new password";
-    else if (pwdForm.newPassword !== pwdForm.confirmNewPassword) e.confirmNewPassword = "Passwords do not match";
+    else if (pwdForm.newPassword !== pwdForm.confirmNewPassword) e.confirmNewPassword = "New & Confirm passwords do not match";
     setPwdErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -531,7 +531,7 @@ export default function Profile({ userId: propUserId }) {
                 </div>
 
                 <div className="pr-row">
-                  <div className="half">
+                  {/* <div className="half">
                     <label className="pr-label">Estimated Spend on Flights (INR)
                       <input
                         className="pr-input"
@@ -548,7 +548,7 @@ export default function Profile({ userId: propUserId }) {
                         readOnly={!isEditing}
                       />
                     </label>
-                  </div>
+                  </div> */}
 
                   <div className="half">
                     <label className="pr-label">Address Line 1

@@ -118,7 +118,6 @@ export default function ViewBookings() {
                   <th>Date</th>
                   <th>Amount</th>
                   <th>Status</th>
-                  <th>Action</th>
                 </tr>
               </thead>
 
@@ -151,16 +150,6 @@ export default function ViewBookings() {
                         <div style={{ color: isCancelled ? "grey" : "green", fontWeight: 700 }}>
                           {b.BookingStatus}
                         </div>
-                      </td>
-                      <td>
-                        <button
-                          className="vb-cancel"
-                          disabled={isCancelled || isCancelling}
-                          onClick={() => handleCancel(b)}
-                          title={isCancelled ? "Already cancelled" : "Cancel booking"}
-                        >
-                          {isCancelling ? "Cancelling..." : isCancelled ? "Cancelled" : "Cancel"}
-                        </button>
                       </td>
                     </tr>
                   );

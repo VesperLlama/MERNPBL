@@ -107,7 +107,7 @@ const LandingPage = () => {
 
       <div className="content">
         <h1 className="title">
-          <p style={{ color: "yellow", display: "inline" }}>Go</p> Voyage
+          <p style={{ color: "orange", display: "inline" }}>Go</p> Voyage
         </h1>
         <p className="subtitle">Book Your Next Destination</p>
 
@@ -141,10 +141,10 @@ const LandingPage = () => {
 
         {showCustomerMenu && (
           <div id="customer-menu" className="customer-menu" role="dialog" aria-label="Customer options">
-            <Link to="/login" state={{ fromAdmin: false }} className="menu-item">
+            <Link to="/login" state={{ fromAdmin: false }}  style={{"color":"orange"}} className="menu-item">
               Login
             </Link>
-            <Link to="/register" className="menu-item">
+            <Link to="/register" style={{"color":"orange"}} className="menu-item">
               Register
             </Link>
           </div>
