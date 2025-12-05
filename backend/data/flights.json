@@ -4,7 +4,7 @@
     "carrierName": "IndiGo",
     "source": "AYJ (Ayodhya)",
     "destination": "TRV (Trivandrum)",
-    "departureTime": "2025-12-07T00:00",
+    "departureTime": "2026-12-07T00:00",
     "arrivalTime": "2025-12-07T01:00",
     "price": 11000,
     "seats": {
@@ -18,7 +18,7 @@
       "business": 0,
       "executive": 0
     },
-    "FlightStatus": "Active"
+    "FlightStatus": "Cancelled"
   },
   {
     "flightNumber": "L201",

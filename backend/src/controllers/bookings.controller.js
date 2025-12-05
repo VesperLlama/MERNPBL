@@ -232,7 +232,52 @@ exports.cancelBookingByPNR = (req, res, next) => {
     booking.CancelledAt = new Date().toISOString();
 
     // Refund ONLY THIS CUSTOMER
-    booking.RefundAmount = booking.PricePaid; // OR apply rule
+    try {
+      // load carrier refund rules and flight departure
+      const carriers = readJson('carriers.json') || [];
+      const flightForBooking = flights.find(
+        f => f.flightNumber.toLowerCase() === booking.flightNumber.toLowerCase()
+      );
+
+      // find carrier by name (case-insensitive)
+      const carrierName = (flightForBooking && (flightForBooking.carrierName || flightForBooking.CarrierName)) || '';
+      const carrier = carriers.find(c => String(c.CarrierName || '').toLowerCase() === String(carrierName).toLowerCase());
+
+      const defaultRefunds = {
+        "2DaysBeforeTravelDate": 0,
+        "10DaysBeforeTravelDate": 20,
+        "20DaysOrMoreBeforeTravelDate": 50
+      };
+
+      const refunds = (carrier && (carrier.Refunds || carrier.refunds)) || defaultRefunds;
+
+      // determine days until departure
+      const departureRaw = flightForBooking && (flightForBooking.departureTime || flightForBooking.departure || flightForBooking.DepartureTime);
+      let percent = 0;
+      if (!departureRaw) {
+        // unknown departure -> fall back to full refund
+        percent = 100;
+      } else {
+        const now = new Date();
+        const departure = new Date(departureRaw);
+        if (isNaN(departure.getTime())) {
+          percent = 100;
+        } else {
+          const diffDays = (departure - now) / (1000 * 60 * 60 * 24);
+          if (diffDays >= 20) percent = Number(refunds["20DaysOrMoreBeforeTravelDate"] || refunds["20days"] || 0);
+          else if (diffDays >= 10) percent = Number(refunds["10DaysBeforeTravelDate"] || refunds["10days"] || 0);
+          else if (diffDays >= 2) percent = Number(refunds["2DaysBeforeTravelDate"] || refunds["2days"] || 0);
+          else percent = 0; // within 2 days -> no refund unless carrier specifies otherwise
+        }
+      }
+
+      const paid = Number(booking.PricePaid) || 0;
+      booking.RefundAmount = Math.round((paid * (percent / 100)) * 100) / 100;
+    } catch (rfErr) {
+      // on error, fallback to full refund
+      console.error('Refund calc error:', rfErr && rfErr.message);
+      booking.RefundAmount = booking.PricePaid;
+    }
 
     // Restore seats
     const flight = flights.find(
