@@ -1,15 +1,15 @@
 [
   {
-    "BookingId": 5045,
+    "BookingId": 5046,
     "CustomerId": 1004,
-    "flightNumber": "E840",
-    "PNR": "TZL9C4",
-    "BookingStatus": "Booked",
-    "BookedAt": "2025-12-05T15:34:33.303Z",
-    "PricePaid": 23400,
-    "CancelledAt": null,
-    "RefundAmount": null,
+    "flightNumber": "L281",
+    "PNR": "SORJ0J",
+    "BookingStatus": "CancelledByCustomer",
+    "BookedAt": "2025-12-05T15:58:16.767Z",
+    "PricePaid": 16087.5,
+    "CancelledAt": "2025-12-05T17:05:03.853Z",
+    "RefundAmount": 16087.5,
     "type": "business",
-    "quantity": 4
+    "quantity": 1
   }
 ]

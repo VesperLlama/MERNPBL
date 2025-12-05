@@ -136,7 +136,7 @@ export default function BookingHistory() {
                           )
                         : "-"}
                     </td>
-                    <td>₹{b.amount}</td>
+                    <td>₹{b.PricePaid}</td>
 
                     {/* ⭐ STATUS updated to grey when cancelled */}
                     <td>

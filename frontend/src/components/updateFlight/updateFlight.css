@@ -3,7 +3,7 @@
 .uf-card h2 { margin:0 0 12px 0; }
 .uf-form { display:flex; flex-direction:column; gap:10px; }
 .uf-row { display:flex; gap:12px; align-items:center; }
-.uf-row span { display:inline-block; width:170px; font-weight:600; }
+.uf-row span { display:flex; align-items:center; gap:6px; width:170px; min-width:170px; font-weight:600; }
 .uf-row input { flex:1; padding:8px 10px; border:1px solid #e6e9ef; border-radius:6px; }
 .uf-load { margin-left:8px; padding:8px 10px; background:#2563eb; color:#fff; border:none; border-radius:6px; cursor:pointer; }
 .uf-actions { display:flex; gap:8px; margin-top:8px; }
@@ -13,7 +13,7 @@
 .uf-status { margin-top:12px; padding:10px; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:6px; color:#0f172a; }
 
 /* Additional form polish */
-.uf-required { color:#dc2626; margin-left:6px; font-weight:700; }
+.uf-required { color:#dc2626; font-weight:700; }
 .uf-row select { flex:1; padding:8px 10px; border:1px solid #e6e9ef; border-radius:6px; background:#fff; }
 .uf-row input:focus, .uf-row select:focus { outline:none; box-shadow:0 6px 18px rgba(37,99,235,0.08); border-color:#2563eb; }
 .uf-row input:invalid, .uf-row select:invalid { border-color:#f87171; }

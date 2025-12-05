@@ -145,7 +145,7 @@ export default function ViewBookings() {
                             })
                           : "-"}
                       </td>
-                      <td>₹{b.amount ?? "-"}</td>
+                      <td>₹{b.PricePaid ?? "-"}</td>
                       <td>
                         <div style={{ color: isCancelled ? "grey" : "green", fontWeight: 700 }}>
                           {b.BookingStatus}

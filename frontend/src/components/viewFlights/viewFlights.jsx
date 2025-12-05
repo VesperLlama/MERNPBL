@@ -87,6 +87,7 @@ export default function ViewFlights() {
       return;
     }
     showAlert("Flight Cancelled Successfully!");
+    fetchFlights();
   }
 
   function navigateToDetails(id){

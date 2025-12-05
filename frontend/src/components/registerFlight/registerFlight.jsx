@@ -540,13 +540,13 @@ export default function RegisterFlight() {
       }
 
       case "seatsBusiness":
-        validateIntRange(name, v, 10, 30);
+        validateIntRange(name, v, 0, 30);
         break;
       case "seatsEconomy":
         validateIntRange(name, v, 50, 70);
         break;
       case "seatsExecutive":
-        validateIntRange(name, v, 3, 8);
+        validateIntRange(name, v, 0, 8);
         break;
 
       case "departureTime": {
@@ -829,9 +829,9 @@ export default function RegisterFlight() {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 type="number"
-                min="10"
+                min="0"
                 max="30"
-                placeholder="10 - 30"
+                placeholder="0 - 30"
               />
               {errors.seatsBusiness && (touched.seatsBusiness || submitted) && (
                 <div className="error">{errors.seatsBusiness}</div>
@@ -865,9 +865,9 @@ export default function RegisterFlight() {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 type="number"
-                min="3"
+                min="0"
                 max="8"
-                placeholder="3 - 8"
+                placeholder="0 - 8"
               />
               {errors.seatsExecutive &&
                 (touched.seatsExecutive || submitted) && (
