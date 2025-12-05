@@ -1,54 +1,15 @@
 [
   {
-    "BookingId": 5041,
-    "CustomerId": 1009,
-    "flightNumber": "E425",
-    "PNR": "8HU8IN",
-    "BookingStatus": "CancelledByCustomer",
-    "BookedAt": "2025-12-05T07:14:29.221Z",
-    "PricePaid": 40500,
-    "CancelledAt": "2025-12-05T07:20:47.157Z",
-    "RefundAmount": 40500,
-    "type": "executive",
-    "quantity": 3
-  },
-  {
-    "BookingId": 5042,
+    "BookingId": 5045,
     "CustomerId": 1004,
-    "flightNumber": "E705",
-    "PNR": "REXST5",
-    "BookingStatus": "CancelledByCustomer",
-    "BookedAt": "2025-12-05T08:28:04.036Z",
-    "PricePaid": 5626,
-    "CancelledAt": "2025-12-05T08:29:21.136Z",
-    "RefundAmount": 5626,
-    "type": "economy",
-    "quantity": 1
-  },
-  {
-    "BookingId": 5043,
-    "CustomerId": 1004,
-    "flightNumber": "E705",
-    "PNR": "QLGIN4",
-    "BookingStatus": "CancelledByCustomer",
-    "BookedAt": "2025-12-05T08:33:27.889Z",
-    "PricePaid": 5626,
-    "CancelledAt": "2025-12-05T08:33:31.380Z",
-    "RefundAmount": 5626,
-    "type": "economy",
-    "quantity": 1
-  },
-  {
-    "BookingId": 5044,
-    "CustomerId": 1010,
-    "flightNumber": "E720",
-    "PNR": "946M23",
-    "BookingStatus": "CancelledByAdmin",
-    "BookedAt": "2025-12-05T09:13:04.917Z",
-    "PricePaid": 14235,
-    "CancelledAt": "2025-12-05T09:14:46.878Z",
-    "RefundAmount": 14235,
+    "flightNumber": "E840",
+    "PNR": "TZL9C4",
+    "BookingStatus": "Booked",
+    "BookedAt": "2025-12-05T15:34:33.303Z",
+    "PricePaid": 23400,
+    "CancelledAt": null,
+    "RefundAmount": null,
     "type": "business",
-    "quantity": 2
+    "quantity": 4
   }
 ]
