@@ -1,54 +1,15 @@
 [
   {
-    "BookingId": 5041,
-    "CustomerId": 1009,
-    "flightNumber": "E425",
-    "PNR": "8HU8IN",
-    "BookingStatus": "CancelledByCustomer",
-    "BookedAt": "2025-12-05T07:14:29.221Z",
-    "PricePaid": 40500,
-    "CancelledAt": "2025-12-05T07:20:47.157Z",
-    "RefundAmount": 40500,
-    "type": "executive",
-    "quantity": 3
-  },
-  {
-    "BookingId": 5042,
+    "BookingId": 5046,
     "CustomerId": 1004,
-    "flightNumber": "E705",
-    "PNR": "REXST5",
-    "BookingStatus": "CancelledByCustomer",
-    "BookedAt": "2025-12-05T08:28:04.036Z",
-    "PricePaid": 5626,
-    "CancelledAt": "2025-12-05T08:29:21.136Z",
-    "RefundAmount": 5626,
-    "type": "economy",
-    "quantity": 1
-  },
-  {
-    "BookingId": 5043,
-    "CustomerId": 1004,
-    "flightNumber": "E705",
-    "PNR": "QLGIN4",
-    "BookingStatus": "CancelledByCustomer",
-    "BookedAt": "2025-12-05T08:33:27.889Z",
-    "PricePaid": 5626,
-    "CancelledAt": "2025-12-05T08:33:31.380Z",
-    "RefundAmount": 5626,
-    "type": "economy",
-    "quantity": 1
-  },
-  {
-    "BookingId": 5044,
-    "CustomerId": 1010,
-    "flightNumber": "E720",
-    "PNR": "946M23",
+    "flightNumber": "L281",
+    "PNR": "SORJ0J",
     "BookingStatus": "CancelledByAdmin",
-    "BookedAt": "2025-12-05T09:13:04.917Z",
-    "PricePaid": 14235,
-    "CancelledAt": "2025-12-05T09:14:46.878Z",
-    "RefundAmount": 14235,
+    "BookedAt": "2025-12-05T15:58:16.767Z",
+    "PricePaid": 16087.5,
+    "CancelledAt": "2025-12-05T17:34:33.365Z",
+    "RefundAmount": 16087.5,
     "type": "business",
-    "quantity": 2
+    "quantity": 1
   }
 ]

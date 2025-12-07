@@ -46,9 +46,9 @@ export default function UpdateFlight() {
     const b = Number(flight.seatCapacityBusinessClass);
     const ec = Number(flight.seatCapacityEconomyClass);
     const ex = Number(flight.seatCapacityExecutiveClass);
-    if (!Number.isInteger(b) || b < 10 || b > 30) e.seatCapacityBusinessClass = "Business seats 10–30";
+    if (!Number.isInteger(b) || b < 0 || b > 30) e.seatCapacityBusinessClass = "Business seats 0–30";
     if (!Number.isInteger(ec) || ec < 50 || ec > 70) e.seatCapacityEconomyClass = "Economy seats 50–70";
-    if (!Number.isInteger(ex) || ex < 3 || ex > 8) e.seatCapacityExecutiveClass = "Executive seats 3–8";
+    if (!Number.isInteger(ex) || ex < 0 || ex > 8) e.seatCapacityExecutiveClass = "Executive seats 0–8";
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -66,16 +66,15 @@ export default function UpdateFlight() {
       if (res.ok) {
         const data = await res.json();
         const f = data && data.flight ? data.flight : data;
-        console.log(f);
         // Map backend keys to our fields if necessary
         setFlight({
           carrierName: f.carrierName || f.CarrierName || "",
           origin: f.origin || f.source || "",
           destination: f.destination || f.Destination || "",
           airFare: f.price || f.airfare || f.fare || "",
-          seatCapacityBusinessClass: f.seats.business || f.seatsBusiness || f.businessSeats || "",
-          seatCapacityEconomyClass: f.seats.economy || f.seatsEconomy || f.economySeats || "",
-          seatCapacityExecutiveClass: f.seats.executive || f.seatsExecutive || f.executiveSeats || "",
+          seatCapacityBusinessClass: f.seats.business,
+          seatCapacityEconomyClass: f.seats.economy,
+          seatCapacityExecutiveClass: f.seats.executive,
         });
         setStatus("Loaded flight details. Edit fields and click Update.");
         setTouched({});
@@ -289,7 +288,7 @@ export default function UpdateFlight() {
 
           <label className="uf-row">
             <span>
-              Air Fare <span className="uf-required">*</span>
+              AirFare <span className="uf-required">*</span>
             </span>
             <input
               required
@@ -313,9 +312,9 @@ export default function UpdateFlight() {
             </span>
             <input
               required
-              placeholder="10 - 30"
+              placeholder="0 - 30"
               type="number"
-              min="10"
+              min="0"
               max="30"
               step="1"
               value={flight.seatCapacityBusinessClass}
@@ -359,9 +358,9 @@ export default function UpdateFlight() {
             </span>
             <input
               required
-              placeholder="3 - 8"
+              placeholder="0 - 8"
               type="number"
-              min="3"
+              min="0"
               max="8"
               step="1"
               value={flight.seatCapacityExecutiveClass}

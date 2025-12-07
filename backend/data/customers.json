@@ -54,7 +54,7 @@
     "PasswordHash": "$2b$10$TQrq9slFAVdvkJf7FZZjHuJPugkUn/CJqZ9ZXmkaCifSmj4F8RJvK",
     "Role": "customer",
     "CustomerCategory": "Silver",
-    "Phone": "6386016689",
+    "Phone": "6386016609",
     "EmailId": "Siddhant@gmail.com",
     "AddressLine1": "123",
     "AddressLine2": "123",
@@ -144,5 +144,21 @@
     "ZipCode": "211002",
     "DOB": "2007-12-03",
     "CreatedAt": "2025-12-05T09:10:06.669Z"
+  },
+  {
+    "CustomerId": 1011,
+    "FullName": "Siddhant Srivastava",
+    "PasswordHash": "$2b$10$bSstOb3vTDj9oXsuGMWJu.i/704.g7FXiMvNE6VFBtsEPMBIIs.7O",
+    "Role": "customer",
+    "CustomerCategory": "Gold",
+    "Phone": "6386016689",
+    "EmailId": "ssiddhant508@gmail.com",
+    "AddressLine1": "H-6, Pandey Ka Talab Colony",
+    "AddressLine2": "Aishbagh",
+    "City": "Lucknow",
+    "State": "Uttar Pradesh",
+    "ZipCode": "226004",
+    "DOB": "2003-09-10",
+    "CreatedAt": "2025-12-05T15:15:36.934Z"
   }
 ]

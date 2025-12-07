@@ -150,7 +150,7 @@ exports.registerCarrier = async (req, res, next) => {
       c => c.CarrierName && c.CarrierName.toLowerCase() === (payload.carrierName || '').toLowerCase()
     );
     if (exists) {
-      return res.status(400).json({ message: 'Carrier with this name already exists' });
+      return res.status(400).json({ message: 'Carrier already exists' });
     }
 
     // Get next id (simple, non-atomic)

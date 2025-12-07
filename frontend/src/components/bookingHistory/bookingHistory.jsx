@@ -9,6 +9,8 @@ export default function BookingHistory() {
 
   // NEW ALERT BOX STATE
   const [alert, setAlert] = useState("");
+  // Confirmation dialog state
+  const [confirm, setConfirm] = useState({ open: false, pnr: null, bookingId: null, refund: null });
 
   const email =
     localStorage.getItem("email") ||
@@ -59,25 +61,38 @@ export default function BookingHistory() {
     }
   }
 
-  async function handleCancel(pnr) {
+  // Open confirmation dialog (called when user clicks Cancel)
+  function handleCancel(pnr, bookingId, refund) {
+    setConfirm({ open: true, pnr, bookingId, refund });
+  }
 
-    const res = await fetch(`http://localhost:4000/api/bookings/cancel/${pnr}`, {
+  // Perform cancellation after user confirms
+  async function performCancel() {
+    const pnr = confirm.pnr;
+    if (!pnr) return;
+
+    try {
+      const res = await fetch(`http://localhost:4000/api/bookings/cancel/${pnr}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}` },
-    });
-    
-    const data = await res.json();
-    console.log(data);
-    
-    if (res.ok) { 
-      setAlert(`Booking cancelled successfully! ₹${data.booking.RefundAmount} will be refunded to you in a few business days.`);
-      loadBookings();
-    }
-    else {
-      setAlert(data.message);
-    }
+      });
 
-    setTimeout(() => setAlert(""), 3000);
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok) {
+        const refund = data.booking && (data.booking.RefundAmount ?? data.booking.refundAmount ?? data.booking.Refund) ;
+        setAlert(`Booking cancelled successfully! ₹${refund || 0} will be refunded to you in a few business days.`);
+        await loadBookings();
+      } else {
+        setAlert(data.message || `Cancel failed: ${res.status}`);
+      }
+    } catch (err) {
+      console.error(err);
+      setAlert('Failed to cancel booking.');
+    } finally {
+      setConfirm({ open: false, pnr: null, bookingId: null, refund: null });
+      setTimeout(() => setAlert(""), 4000);
+    }
   }
 
   return (
@@ -136,11 +151,11 @@ export default function BookingHistory() {
                           )
                         : "-"}
                     </td>
-                    <td>₹{b.amount}</td>
+                    <td>₹{b.PricePaid}</td>
 
                     {/* ⭐ STATUS updated to grey when cancelled */}
                     <td>
-                      <div 
+                      <div
                         style={{
                           color: b.BookingStatus !== "Booked" ? "red" : "green",
                           fontWeight: 600,
@@ -151,28 +166,44 @@ export default function BookingHistory() {
                     </td>
 
                     <td>
-                      <button
-                        className="logout-btn"
-                        disabled={b.cancelled || b.BookingStatus !== "Booked"}
-                        onClick={() => handleCancel(b.PNR)}
-                        style={{
-                          opacity:
-                            b.cancelled || b.BookingStatus !== "Booked" ? 0.5 : 1,
-                          cursor:
-                            b.cancelled || b.BookingStatus !== "Booked"
-                              ? "not-allowed"
-                              : "pointer",
-                        }}
-                      >
-                        {b.cancelled || b.BookingStatus !== "Booked"
-                          ? "Cancelled"
-                          : "Cancel"}
-                      </button>
+                      {b.BookingStatus !== "Booked" ? (
+                        <div style={{ fontWeight: 600, color: "#6b7280" }}>
+                          {`Refund: ₹${b.RefundAmount ?? b.refundAmount ?? b.refund}`}
+                        </div>
+                      ) : (
+                        <button
+                          className="logout-btn"
+                          disabled={b.cancelled}
+                          onClick={() => handleCancel(b.PNR, b.BookingId, b.RefundAmount)}
+                          style={{
+                            opacity: b.cancelled ? 0.5 : 1,
+                            cursor: b.cancelled ? "not-allowed" : "pointer",
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+
+            {/* Confirmation modal */}
+            {confirm.open && (
+              <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
+                <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)' }} onClick={() => setConfirm({ open: false, pnr: null, bookingId: null, refund: null })} />
+                <div style={{ background: '#fff', padding: 20, borderRadius: 8, boxShadow: '0 12px 40px rgba(2,6,23,0.2)', minWidth: 320, zIndex: 10000 }}>
+                  <h3 style={{ marginTop: 0 }}>Confirm cancellation</h3>
+                  <p>Are you sure you want to cancel booking <strong>{confirm.bookingId || confirm.pnr}</strong>?</p>
+                  {confirm.refund !== null && <p>Refund: <strong>₹{confirm.refund}</strong></p>}
+                  <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 12 }}>
+                    <button onClick={() => setConfirm({ open: false, pnr: null, bookingId: null, refund: null })} style={{ padding: '8px 12px', borderRadius: 6 }}>No</button>
+                    <button onClick={performCancel} style={{ padding: '8px 12px', borderRadius: 6, background: '#ef4444', color: '#fff', border: 'none' }}>Yes, cancel</button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
