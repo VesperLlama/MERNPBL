@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminNavBar from "../adminNavBar/adminNavBar.jsx";
 import "./registerCarrier.css";
+import Popup from "../pop-up/pop-up.jsx";
 
 const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
 
@@ -24,6 +25,9 @@ export default function RegisterCarrier() {
   const [touched, setTouched] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastMsg, setToastMsg] = useState("");
+  const [toastType, setToastType] = useState("success");
 
   function setErr(key, msg) {
     setErrors((e) => {
@@ -162,8 +166,17 @@ export default function RegisterCarrier() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
       const id = data.carrierId || data.id || data.carrierID;
-      if (id) alert(`Carrier registered successfully. Carrier ID: ${id}`);
-      else alert("Carrier registered successfully.");
+      if (id) {
+        const msg = `Carrier registered successfully. Carrier ID: ${id}`;
+        setToastMsg(msg);
+        setToastType('success');
+        setToastOpen(true);
+      } else {
+        const msg = "Carrier registered successfully.";
+        setToastMsg(msg);
+        setToastType('success');
+        setToastOpen(true);
+      }
       // optional: clear form
       setForm({
         carrierName: "",
@@ -182,7 +195,10 @@ export default function RegisterCarrier() {
       setErrors({});
       setSubmitted(false);
     } catch (err) {
-      alert("Failed to register carrier: " + err.message);
+      const msg = "Failed to register carrier: " + err.message;
+      setToastMsg(msg);
+      setToastType('error');
+      setToastOpen(true);
     } finally {
       setSubmitting(false);
     }
@@ -193,6 +209,7 @@ export default function RegisterCarrier() {
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "#f3f7fb" }}>
       <AdminNavBar />
+      <Popup open={toastOpen} message={toastMsg} type={toastType} onClose={() => { setToastOpen(false); setToastMsg(''); }} />
       <div style={{ width: "100%", maxWidth: 980, margin: "28px auto", background: "#fff", padding: 22, borderRadius: 12, boxShadow: "0 10px 30px rgba(9,30,66,0.06)" }}>
         <h2>Register Carrier</h2>
         <p className="required-note">Fields marked <span className="req">*</span> are required</p>

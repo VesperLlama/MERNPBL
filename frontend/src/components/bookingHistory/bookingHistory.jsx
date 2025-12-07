@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
 import CustomerNavbar from "../customerNavbar/customerNavbar.jsx";
 import "./bookingHistory.css";
+import Popup from "../pop-up/pop-up.jsx";
 
 export default function BookingHistory() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // NEW ALERT BOX STATE
+  // NEW ALERT BOX STATE (kept for legacy usage but shown via Popup)
   const [alert, setAlert] = useState("");
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastMsg, setToastMsg] = useState("");
+  const [toastType, setToastType] = useState("success");
   // Confirmation dialog state
   const [confirm, setConfirm] = useState({ open: false, pnr: null, bookingId: null, refund: null });
   const [downloading, setDownloading] = useState(null);
@@ -22,6 +26,16 @@ export default function BookingHistory() {
   useEffect(() => {
     loadBookings();
   }, []);
+
+  // mirror legacy `alert` into toaster when set from other places
+  useEffect(() => {
+    if (!alert) return;
+    setToastMsg(alert);
+    const low = String(alert || "").toLowerCase();
+    const isError = low.includes('fail') || low.includes('failed') || low.includes('error') || low.includes('cancel failed');
+    setToastType(isError ? 'error' : 'success');
+    setToastOpen(true);
+  }, [alert]);
 
   async function loadBookings() {
     setLoading(true);
@@ -82,15 +96,27 @@ export default function BookingHistory() {
       const data = await res.json().catch(() => ({}));
 
       if (res.ok) {
-        const refund = data.booking && (data.booking.RefundAmount ?? data.booking.refundAmount ?? data.booking.Refund) ;
-        setAlert(`Booking cancelled successfully! ₹${refund || 0} will be refunded to you in a few business days.`);
+        const refund = data.booking && (data.booking.RefundAmount ?? data.booking.refundAmount ?? data.booking.Refund);
+        const msg = `Booking cancelled successfully! ₹${refund || 0} will be refunded to you in a few business days.`;
+        setAlert(msg);
+        setToastMsg(msg);
+        setToastType('success');
+        setToastOpen(true);
         await loadBookings();
       } else {
-        setAlert(data.message || `Cancel failed: ${res.status}`);
+        const msg = data.message || `Cancel failed: ${res.status}`;
+        setAlert(msg);
+        setToastMsg(msg);
+        setToastType('error');
+        setToastOpen(true);
       }
     } catch (err) {
       console.error(err);
-      setAlert('Failed to cancel booking.');
+      const msg = 'Failed to cancel booking.';
+      setAlert(msg);
+      setToastMsg(msg);
+      setToastType('error');
+      setToastOpen(true);
     } finally {
       setConfirm({ open: false, pnr: null, bookingId: null, refund: null });
       setTimeout(() => setAlert(""), 4000);
@@ -101,7 +127,11 @@ export default function BookingHistory() {
   async function downloadBoardingPass(booking) {
     const id = booking.BookingId || booking.id || booking.bookingId || booking.BookingId;
     if (!id) {
-      setAlert('Booking id missing for this record.');
+      const msg = 'Booking id missing for this record.';
+      setAlert(msg);
+      setToastMsg(msg);
+      setToastType('error');
+      setToastOpen(true);
       setTimeout(() => setAlert(''), 3000);
       return;
     }
@@ -114,7 +144,11 @@ export default function BookingHistory() {
 
       if (!res.ok) {
         const text = await res.text().catch(() => '');
-        setAlert(`Failed to download boarding pass: ${res.status} ${text}`);
+        const msg = `Failed to download boarding pass: ${res.status} ${text}`;
+        setAlert(msg);
+        setToastMsg(msg);
+        setToastType('error');
+        setToastOpen(true);
         setTimeout(() => setAlert(''), 4000);
         return;
       }
@@ -136,11 +170,19 @@ export default function BookingHistory() {
       a.remove();
       window.URL.revokeObjectURL(url);
 
-      setAlert('Boarding pass downloaded.');
+      const msg = 'Boarding pass downloaded.';
+      setAlert(msg);
+      setToastMsg(msg);
+      setToastType('success');
+      setToastOpen(true);
       setTimeout(() => setAlert(''), 3000);
     } catch (err) {
       console.error('download boarding pass error', err);
-      setAlert('Failed to download boarding pass.');
+      const msg = 'Failed to download boarding pass.';
+      setAlert(msg);
+      setToastMsg(msg);
+      setToastType('error');
+      setToastOpen(true);
       setTimeout(() => setAlert(''), 3000);
     } finally {
       setDownloading(null);
@@ -151,8 +193,8 @@ export default function BookingHistory() {
     <div className="bh-root">
       <CustomerNavbar />
 
-      {/* ⭐ TOP ALERT BOX */}
-      {alert && <div className="bh-alert">{alert}</div>}
+      {/* ⭐ TOP ALERT TOASTER */}
+      <Popup open={toastOpen} message={toastMsg || alert} type={toastType} onClose={() => { setToastOpen(false); setToastMsg(''); setAlert(''); }} />
 
       <div className="bh-container">
         <h2>Your Booking History</h2>
