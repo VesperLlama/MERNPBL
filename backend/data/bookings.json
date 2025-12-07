@@ -11,5 +11,30 @@
     "RefundAmount": 16087.5,
     "type": "business",
     "quantity": 1
+  },
+  {
+    "BookingId": 5047,
+    "CustomerId": 1004,
+    "flightNumber": "L201",
+    "PNR": "ID5QB5",
+    "BookingStatus": "Booked",
+    "BookedAt": "2025-12-07T17:51:09.545Z",
+    "PricePaid": 32175,
+    "CancelledAt": null,
+    "RefundAmount": null,
+    "type": "business",
+    "quantity": 2,
+    "passengers": [
+      {
+        "name": "asd",
+        "age": "22",
+        "gender": "Adult"
+      },
+      {
+        "name": "asd",
+        "age": "22",
+        "gender": "Adult"
+      }
+    ]
   }
 ]

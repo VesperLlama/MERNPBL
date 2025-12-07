@@ -319,9 +319,27 @@ export default function Payment() {
           passengers: passengers
         })
       });
-    
+
       const data = await res.json();
-      const bookingId = data.booking.BookingId;
+
+      if (!res.ok) {
+        console.error('booking failed', data);
+        setGlobalError(data && (data.message || data.error) ? (data.message || data.error) : 'Booking failed.');
+        return;
+      }
+
+      if (!data || !data.booking) {
+        console.error('unexpected booking response', data);
+        setGlobalError('Booking failed: invalid server response.');
+        return;
+      }
+
+      // support different casing/keys just in case
+      const bookingId = data.booking.BookingId || data.booking.bookingId || data.booking.id || null;
+      if (!bookingId) {
+        console.warn('booking created but id missing on response', data.booking);
+      }
+
       setSuccess({ bookingId });
 
       setTimeout(() => {
