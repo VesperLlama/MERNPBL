@@ -17,8 +17,6 @@ function requireAuth(requiredRole) {
       const token = parts[1];
       const payload = jwt.verify(token, secret);
       // payload contains role, id, name, email as we create in login
-      console.log(payload.role);
-      console.log(requiredRole);
 
       if (requiredRole && payload.role !== requiredRole) {
         return res.status(403).json({ message: 'Forbidden: insufficient role' });

@@ -1,19 +1,20 @@
 // Payment.jsx
 import React, { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import CustomerNavbar from "../customerNavbar/customerNavbar.jsx";
 import "./payment.css";
 
 const EMPTY = { type: "", message: "" };
 
-export default function Payment(props) {
+export default function Payment() {
   const bp=localStorage.getItem("baseprice")
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // read live pricing / passengers from query params (sent from booking)
-  const flightNumber = searchParams.get("flightId") ?? props.flight.flightId;
-  const passengers = props.passengers;
+  const flightNumber = searchParams.get("flightId") ?? location.state.flight.flightId;
+  const passengers = location.state.passengers;
   const pricePerSeatParam = Number(searchParams.get("pricePerSeat") ?? 0);
   const totalPriceParam = Number(searchParams.get("totalPrice") ?? 0);
   const adultsParam = Number(searchParams.get("adults") ?? 0);
@@ -314,7 +315,8 @@ export default function Payment(props) {
         body: JSON.stringify({
           flightNumber: flightNumber,
           type: seatTypeParam.toLowerCase(),
-          quantity: passg
+          quantity: passg,
+          passengers: passengers
         })
       });
     

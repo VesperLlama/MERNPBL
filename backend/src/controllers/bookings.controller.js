@@ -23,9 +23,8 @@ exports.bookFlight = async (req, res, next) => {
     const customerId = req.user?.id;
     if (!customerId) return res.status(401).json({ message: 'Unauthorized' });
 
-    const { flightNumber, type, quantity } = req.body || {};
+    const { flightNumber, type, quantity, passengers } = req.body || {};
     const qty = Math.max(1, Number(quantity) || 1); // default 1, at least 1
-    
 
     if (!flightNumber) return res.status(400).json({ message: 'flightNumber is required' });
     if (quantity <= 0 || quantity >15 ) return res.status(400).json({ message: 'quantity must be >1 & <15' });
@@ -106,7 +105,8 @@ exports.bookFlight = async (req, res, next) => {
       null,
       null,
       type,
-      qty // quantity (added as last param)
+      qty,
+      passengers
     );
 
     // push booking and update flight BookedSeats per class by qty

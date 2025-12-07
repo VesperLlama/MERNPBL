@@ -1,5 +1,5 @@
 class Booking {
-  constructor(BookingId, CustomerId, flightNumber, PNR, BookingStatus, BookedAt, PricePaid, CancelledAt = null, RefundAmount = null, type, qty) {
+  constructor(BookingId, CustomerId, flightNumber, PNR, BookingStatus, BookedAt, PricePaid, CancelledAt = null, RefundAmount = null, type, qty, passengers) {
     this.BookingId = BookingId;          // integer (from meta)
     this.CustomerId = CustomerId;        // integer (from customers.json)
     this.flightNumber = flightNumber;    // e.g. A123
@@ -11,6 +11,7 @@ class Booking {
     this.RefundAmount = RefundAmount;    // number or null (calculated later)
     this.type = type;
     this.quantity = qty;
+    this.passengers = passengers;
   }
 }
 
