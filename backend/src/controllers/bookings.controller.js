@@ -430,6 +430,7 @@ exports.listAllBookings = (req, res, next) => {
           RefundAmount: b.RefundAmount,
           type: b.type,
           Quantity: b.quantity,
+          passengers: b.passengers || [],
 
           // flight fields (null-safe)
           flightNumber: flight?.flightNumber || null,
