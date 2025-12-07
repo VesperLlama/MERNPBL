@@ -133,6 +133,8 @@ export default function Bookings() {
       const flightOrigin = normalize(f.source || f.from || f.departure || f.departureAirport || f.Origin);
       const flightDest = normalize(f.destination || f.to || f.arrival || f.arrivalAirport || f.Destination);
 
+      if (f.FlightStatus === 'Cancelled') return false;
+
       const routeOk =
         (!o || flightOrigin.includes(o) || flightOrigin === o) &&
         (!d || flightDest.includes(d) || flightDest === d);
