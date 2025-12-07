@@ -11,6 +11,7 @@ export default function BookingHistory() {
   const [alert, setAlert] = useState("");
   // Confirmation dialog state
   const [confirm, setConfirm] = useState({ open: false, pnr: null, bookingId: null, refund: null });
+  const [downloading, setDownloading] = useState(null);
 
   const email =
     localStorage.getItem("email") ||
@@ -95,6 +96,56 @@ export default function BookingHistory() {
     }
   }
 
+  // Download boarding pass as PDF (saves file locally)
+  async function downloadBoardingPass(booking) {
+    const id = booking.BookingId || booking.id || booking.bookingId || booking.BookingId;
+    if (!id) {
+      setAlert('Booking id missing for this record.');
+      setTimeout(() => setAlert(''), 3000);
+      return;
+    }
+
+    setDownloading(id);
+    try {
+      const res = await fetch(`http://localhost:4000/api/bookings/boardingpass/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      });
+
+      if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        setAlert(`Failed to download boarding pass: ${res.status} ${text}`);
+        setTimeout(() => setAlert(''), 4000);
+        return;
+      }
+
+      const blob = await res.blob();
+      const disposition = res.headers.get('content-disposition') || '';
+      let filename = `boardingpass_${id}.pdf`;
+      const m = disposition.match(/filename\*?=([^;]+)/);
+      if (m) {
+        filename = m[1].replace(/(^\s*"|"\s*$)/g, '');
+      }
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+
+      setAlert('Boarding pass downloaded.');
+      setTimeout(() => setAlert(''), 3000);
+    } catch (err) {
+      console.error('download boarding pass error', err);
+      setAlert('Failed to download boarding pass.');
+      setTimeout(() => setAlert(''), 3000);
+    } finally {
+      setDownloading(null);
+    }
+  }
+
   return (
     <div className="bh-root">
       <CustomerNavbar />
@@ -125,6 +176,7 @@ export default function BookingHistory() {
                   <th>Date</th>
                   <th>Amount</th>
                   <th>Status</th>
+                  <th>Boarding Pass</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -167,7 +219,21 @@ export default function BookingHistory() {
 
                     <td>
                       {b.BookingStatus !== "Booked" ? (
-                        <div style={{ fontWeight: 600, color: "#6b7280" }}>
+                        <div style={{ fontWeight: 600, color: "#6b7280" }}>The Booking is Cancelled</div>
+                      ) : (
+                        <button
+                          className="logout-btn"
+                          onClick={() => downloadBoardingPass(b)}
+                          disabled={!(b.BookingId || b.id || b.bookingId) || downloading === (b.BookingId || b.id || b.bookingId)}
+                        >
+                          {downloading === (b.BookingId || b.id || b.bookingId) ? 'Downloading...' : 'Download'}
+                        </button>
+                      )}
+                    </td>
+
+                    <td>
+                      {b.BookingStatus !== "Booked" ? (
+                        <div style={{ fontWeight: 600, color: b.BookingStatus !== 'Booked' ? 'red' : 'green' }}>
                           {`Refund: ₹${b.RefundAmount ?? b.refundAmount ?? b.refund}`}
                         </div>
                       ) : (
