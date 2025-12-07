@@ -36,5 +36,30 @@
         "gender": "Adult"
       }
     ]
+  },
+  {
+    "BookingId": 5048,
+    "CustomerId": 1004,
+    "flightNumber": "L201",
+    "PNR": "MQMMNQ",
+    "BookingStatus": "CancelledByCustomer",
+    "BookedAt": "2025-12-07T18:27:31.721Z",
+    "PricePaid": 32175,
+    "CancelledAt": "2025-12-07T18:27:37.011Z",
+    "RefundAmount": 0,
+    "type": "business",
+    "quantity": 2,
+    "passengers": [
+      {
+        "name": "qwe",
+        "age": "22",
+        "gender": "Adult"
+      },
+      {
+        "name": "qwe",
+        "age": "22",
+        "gender": "Adult"
+      }
+    ]
   }
 ]
