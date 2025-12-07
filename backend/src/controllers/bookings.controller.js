@@ -1,5 +1,6 @@
 const { readJson, writeJson, getNextId } = require('../utils/jsonDb');
 const Booking = require('../../models/bookings.model');
+const PDFDocument = require('pdfkit');
 const { TotalPrice } = require('../utils/TotalPriceCalculation');
 
 const BOOKINGS_FILE = 'bookings.json';
@@ -506,6 +507,194 @@ exports.listMyBookings = (req, res, next) => {
       });
 
     return res.json({ data: result });
+  } catch (err) {
+    next(err);
+  }
+};
+
+function generateSeatNumbers(passengers) {
+  const seatsPerRowAvailable = [1,2,3,4,5];
+  const letters = 'ABCDEF';
+  
+  const assignedSeats = [];
+  
+  passengers.forEach((passenger, index) => {
+    const row = Math.floor(index / seatsPerRowAvailable.length) + 1;
+    const seatIndex = index % seatsPerRowAvailable.length;
+    const seatLetterIndex = seatsPerRowAvailable[seatIndex % seatsPerRowAvailable.length];
+    
+    assignedSeats.push({
+      ...passenger,
+      seat: `${row}${letters[seatLetterIndex - 1]}`
+    });
+  });
+  
+  return assignedSeats;
+}
+
+function formatDateTimeIntl(dateString) {
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('en-IN', {
+    day: '2-digit',
+    month: '2-digit', 
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  }).format(date).replace(',', '');
+}
+
+exports.getBoardingPass = (req, res, next) => {
+  try {
+    const customerId = req.user?.id;
+    if (!customerId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const bookings = readJson(BOOKINGS_FILE) || [];
+    const flights = readJson(FLIGHTS_FILE) || [];
+    const bookingId = req.params.bookingId;
+
+    const booking = bookings.find(
+      (b) =>
+        Number(b.BookingId) === Number(bookingId) && Number(b.CustomerId) === Number(customerId)
+    );
+
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
+    const flight = flights.find((f) => f.flightNumber === booking.flightNumber);
+
+    booking.passengers = generateSeatNumbers(booking.passengers);
+    flight.departureTime = formatDateTimeIntl(flight.departureTime);
+    flight.arrivalTime = formatDateTimeIntl(flight.arrivalTime);
+    // Create a PDF document
+    const doc = new PDFDocument();
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=boarding-pass-${bookingId}.pdf`
+    );
+
+    doc.pipe(res);
+
+    const margin = 50;
+    const centerX = 300;
+    const leftCol = margin;
+    const rightCol = 250;
+    const lineHeight = 20;
+
+    doc
+      .fontSize(36)
+      .font('Helvetica-Bold')
+      .fillColor("orange")
+      .text("Go", centerX - 80, 80)
+      .fillColor("black")
+      .text("Voyage", centerX - 30, 80)
+      .fillColor("black")
+      .font('Helvetica')
+      .fontSize(14)
+      .text("BOARDING PASS", centerX - 50, 120);
+
+    // Flight Information Section
+    let yPos = 160;
+    doc
+      .fontSize(18)
+      .fillColor("#333")
+      .text("Flight Information", leftCol, yPos, { underline: true });
+    yPos += lineHeight + 5;
+
+    // From-To on same line
+    doc.fontSize(12).fillColor("#666").text("From:", leftCol, yPos);
+    doc
+      .fontSize(14)
+      .fillColor("#333")
+      .text(`${flight?.source || "N/A"}`, rightCol, yPos);
+    doc.fontSize(12).fillColor("#666").text("To:", leftCol, yPos + lineHeight);
+    doc
+      .fontSize(14)
+      .fillColor("#333")
+      .text(`${flight?.destination || "N/A"}`, rightCol, yPos + lineHeight);
+
+    yPos += lineHeight * 2;
+
+    // Times below cities
+    doc.fontSize(12).fillColor("#666").text("Departure:", leftCol, yPos);
+    doc
+      .fontSize(14)
+      .fillColor("#333")
+      .text(`${flight?.departureTime || "N/A"}`, rightCol, yPos);
+    doc.fontSize(12).fillColor("#666").text("Arrival:", leftCol, yPos + lineHeight);
+    doc
+      .fontSize(14)
+      .fillColor("#333")
+      .text(`${flight?.arrivalTime || "N/A"}`, rightCol, yPos + lineHeight);
+
+    yPos += lineHeight * 2.5;
+
+    // Separator line
+    doc
+      .lineWidth(1)
+      .strokeColor("#ddd")
+      .moveTo(leftCol, yPos)
+      .lineTo(550, yPos)
+      .stroke();
+    yPos += 20;
+
+    // Passenger Details
+    doc
+      .fontSize(18)
+      .fillColor("#333")
+      .text("Passenger Details", leftCol, yPos, { underline: true });
+    yPos += lineHeight + 10;
+
+    booking.passengers.forEach((passenger, index) => {
+      doc.fontSize(14).fillColor("#333");
+      doc.text(`${index + 1}. ${passenger.name}`, leftCol, yPos);
+      doc
+        .fontSize(12)
+        .fillColor("#666")
+        .text(`Seat: ${passenger.seat || "N/A"}`, rightCol, yPos)
+        .text(`Age: ${passenger.age || "N/A"}`, 450, yPos, { align: "right" });
+      yPos += lineHeight * 1.8;
+    });
+
+    // Booking Summary (right side)
+    const bookingY = 160;
+    doc.fontSize(11).fillColor("#333");
+    [
+      `Booking ID: ${booking.BookingId}`,
+      `PNR: ${booking.PNR}`,
+      `Amount: Rs.${booking.PricePaid}`,
+      `Status: ${booking.BookingStatus}`,
+    ].forEach((info, i) => {
+      doc.text(info, 380, bookingY + i * 16 + 25, {
+        width: 180,
+        align: "right",
+      });
+    });
+
+    // Footer
+    yPos += 10;
+    doc
+      .lineWidth(1)
+      .strokeColor("#ddd")
+      .moveTo(leftCol, yPos)
+      .lineTo(550, yPos)
+      .stroke();
+    yPos += 20;
+    doc
+      .fontSize(10)
+      .fillColor("#999")
+      .text(
+        "Please arrive 45 minutes before departure. Have your ID ready.",
+        centerX - 100,
+        yPos,
+        { align: "center", width: 400 }
+      );
+
+    doc.end();
   } catch (err) {
     next(err);
   }

@@ -8,6 +8,7 @@ router.post('/book', requireAuth('customer'), bookingsController.bookFlight);
 router.put('/cancel/:pnr', requireAuth('customer'), bookingsController.cancelBookingByPNR);
 router.get('/list', requireAuth('customer'), bookingsController.listMyBookings);
 router.post('/calculatePrice', requireAuth('customer'), bookingsController.calculatePrice);
+router.get('/boardingpass/:bookingId', requireAuth('customer'), bookingsController.getBoardingPass);
 
 // Admin routes
 router.put('/admin-cancel-flight/:flightNumber', requireAuth('admin'), bookingsController.adminCancelFlight);
