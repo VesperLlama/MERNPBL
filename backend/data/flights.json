@@ -36,10 +36,10 @@
     "TotalSeats": 63,
     "BookedSeats": {
       "economy": 0,
-      "business": 0,
+      "business": 2,
       "executive": 0
     },
-    "FlightStatus": "Cancelled"
+    "FlightStatus": "Active"
   },
   {
     "flightNumber": "W574",
