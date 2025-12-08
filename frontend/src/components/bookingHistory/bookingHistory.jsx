@@ -19,8 +19,6 @@ export default function BookingHistory() {
   const [confirm, setConfirm] = useState({ open: false, pnr: null, bookingId: null, refund: null });
   const [downloading, setDownloading] = useState(null);
   const [selectedBooking, setSelectedBooking] = useState(null);
-  const [downloading, setDownloading] = useState(null);
-  const [selectedBooking, setSelectedBooking] = useState(null);
 
   const email =
     localStorage.getItem("email") ||
@@ -116,19 +114,8 @@ export default function BookingHistory() {
         setToastMsg(msg);
         setToastType('success');
         setToastOpen(true);
-        const refund = data.booking && (data.booking.RefundAmount ?? data.booking.refundAmount ?? data.booking.Refund);
-        const msg = `Booking cancelled successfully! ₹${refund || 0} will be refunded to you in a few business days.`;
-        setAlert(msg);
-        setToastMsg(msg);
-        setToastType('success');
-        setToastOpen(true);
         await loadBookings();
       } else {
-        const msg = data.message || `Cancel failed: ${res.status}`;
-        setAlert(msg);
-        setToastMsg(msg);
-        setToastType('error');
-        setToastOpen(true);
         const msg = data.message || `Cancel failed: ${res.status}`;
         setAlert(msg);
         setToastMsg(msg);
