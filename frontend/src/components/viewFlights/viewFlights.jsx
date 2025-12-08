@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminNavBar from "../adminNavBar/adminNavBar.jsx";
+import Popup from "../pop-up/pop-up.jsx";
 import "./viewFlights.css";
 
 export default function ViewFlights() {
@@ -13,8 +14,10 @@ export default function ViewFlights() {
   const [searchError, setSearchError] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [alert, setAlert] = useState("");
-  const [alertType, setAlertType] = useState("success");
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [popupMsg, setPopupMsg] = useState("");
+  const [popupType, setPopupType] = useState("success");
+  const [popupDuration, setPopupDuration] = useState(3500);
 
   useEffect(() => {
     fetchFlights();
@@ -83,10 +86,11 @@ export default function ViewFlights() {
     });
     const data = await res.json();
     if (!res.ok) {
-      showAlert(`Failed to cancel flight. ${res.message}`, error);
+      const msg = data?.message || `Status ${res.status}`;
+      showAlert(`Failed to cancel flight. ${msg}`, "error");
       return;
     }
-    showAlert("Flight Cancelled Successfully!");
+    showAlert("Flight Cancelled Successfully!", "success");
     fetchFlights();
   }
 
@@ -105,9 +109,10 @@ export default function ViewFlights() {
   }
 
   function showAlert(msg, type = "success", ms = 3500) {
-    setAlertType(type);
-    setAlert(msg);
-    setTimeout(() => setAlert(""), ms);
+    setPopupMsg(msg);
+    setPopupType(type === "error" ? "error" : "success");
+    setPopupDuration(ms);
+    setPopupOpen(true);
   }
 
   const displayed = flights.filter((f) => {
@@ -121,11 +126,7 @@ export default function ViewFlights() {
   return (
     <div className="vf-root">
       <AdminNavBar />
-      {alert && (
-        <div className={`vb-alert ${alertType === "error" ? "vb-alert-error" : "vb-alert-success"}`}>
-          {alert}
-        </div>
-      )}
+      <Popup open={popupOpen} message={popupMsg} type={popupType} duration={popupDuration} onClose={() => setPopupOpen(false)} />
       <div className="vf-container">
         <h2>Flights</h2>
 

@@ -55,8 +55,12 @@
       "executive": 0
     },
     "TotalSeats": 70,
-    "BookedSeats": 0,
-    "FlightStatus": "Active"
+    "BookedSeats": {
+      "economy": 0,
+      "business": 0,
+      "executive": 0
+    },
+    "FlightStatus": "Cancelled"
   },
   {
     "flightNumber": "E568",
@@ -94,6 +98,23 @@
       "business": -8,
       "executive": 0
     },
+    "FlightStatus": "Active"
+  },
+  {
+    "flightNumber": "E540",
+    "carrierName": "Jet Airways",
+    "source": "DEL (Delhi)",
+    "destination": "AYJ (Ayodhya)",
+    "departureTime": "2025-12-10T18:00",
+    "arrivalTime": "2025-12-10T22:00",
+    "price": 4500,
+    "seats": {
+      "economy": 70,
+      "business": 10,
+      "executive": 8
+    },
+    "TotalSeats": 88,
+    "BookedSeats": 0,
     "FlightStatus": "Active"
   }
 ]
