@@ -90,12 +90,12 @@ export default function ViewBookings() {
 
         <div className="vb-controls">
           <input
-            placeholder="Search by booking id, email or flight..."
+            placeholder="Search by booking id"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="vb-search"
           />
-          <button className="vb-refresh" onClick={loadBookings}>Refresh</button>
+            <button className="vb-refresh" onClick={() => setQuery("")}>Reset</button>
         </div>
 
         {loading && <div className="vb-empty">Loading bookings...</div>}

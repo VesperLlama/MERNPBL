@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./registerUser.css";
 import {useNavigate} from "react-router-dom";
+import Popup from "../pop-up/pop-up.jsx";
 
 const cities = [
   { name: "Mumbai", state: "Maharashtra", zip: "400001" },
@@ -35,9 +36,12 @@ export default function RegisterUser() {
   });
 
   const [errors, setErrors] = useState({});
-  const [serverError, setServerError] = useState("");
   const [role, setRole] = useState("Customer");
   const [customerCategory, setCustomerCategory] = useState("Silver");
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [popupMsg, setPopupMsg] = useState("");
+  const [popupType, setPopupType] = useState("success");
+  const [popupDuration, setPopupDuration] = useState(4000);
   const [submitting, setSubmitting] = useState(false);
   const [touched, setTouched] = useState({});
   const [submitted, setSubmitted] = useState(false);
@@ -93,14 +97,14 @@ export default function RegisterUser() {
 
     setErrors(e);
     return Object.keys(e).length === 0;
+
   }
 
   function validateField(name) {
-    const e = { ...errors };
-    // helper to set or remove error for a single field
+    const local = { ...errors };
     const setErr = (key, msg) => {
-      if (msg) e[key] = msg;
-      else delete e[key];
+      if (msg) local[key] = msg;
+      else delete local[key];
     };
 
     const v = form[name];
@@ -116,7 +120,6 @@ export default function RegisterUser() {
           "password",
           !passwordRegex.test(v) ? "Password must be 8+ chars and include upper, lower, number & special char" : null
         );
-        // also re-validate confirmPassword when password changes
         if (touched.confirmPassword || submitted) validateField("confirmPassword");
         break;
       case "confirmPassword":
@@ -147,14 +150,13 @@ export default function RegisterUser() {
         }
         break;
       case "zip":
-        // pincode must be 6 digits and first digit 1-9 (no leading zero)
         setErr("zip", !/^[1-9][0-9]{5}$/.test(v) ? "Pincode must be 6 digits and start with 1-9" : null);
         break;
       default:
         break;
     }
 
-    setErrors(e);
+    setErrors(local);
   }
 
   async function handlePincodeLookup(zip) {
@@ -216,7 +218,6 @@ export default function RegisterUser() {
     if (!validate()) return;
 
     setSubmitting(true);
-    setServerError("");
     const { confirmPassword, ...payloadData } = form;
 
     // Map frontend form keys to backend expected keys
@@ -244,12 +245,11 @@ export default function RegisterUser() {
       const resBody = await res.json().catch(() => null);
       if (res.ok) {
         const id = resBody?.CustomerId || resBody?.customerId || resBody?.id || resBody?.CustomerID;
-        // popup with clear message to note the ID
+        // show popup with clear message to note the ID
         if (id) {
-          alert(`Registration successful!\nYour Customer ID: ${id}\nPlease note this ID for future reference.`);
-          navigate("/login", { state: { fromAdmin: false } });
+          showAlert(`Registration successful! Your Customer ID: ${id}. Please note this ID for future reference.`, "success", 4000);
         } else {
-          alert('Registration successful!');
+          showAlert('Registration successful!', "success", 2500);
         }
         // optionally reset form
         setForm({
@@ -266,22 +266,24 @@ export default function RegisterUser() {
           dob: "",
           estimatedSpend: ""
         });
+        // navigate to login after brief delay so popup is visible
+        setTimeout(() => navigate("/login", { state: { fromAdmin: false } }), 1600);
       } else {
         // show meaningful server error(s)
         if (resBody) {
           if (Array.isArray(resBody.errors) && resBody.errors.length > 0) {
-            setServerError(resBody.errors.join('; '));
+            showAlert(resBody.errors.join('; '), 'error', 5000);
           } else if (resBody.message) {
-            setServerError(resBody.message);
+            showAlert(resBody.message, 'error', 5000);
           } else {
-            setServerError('Registration failed: Server validation error');
+            showAlert('Registration failed: Server validation error', 'error', 5000);
           }
         } else {
-          setServerError('Registration failed: Server error');
+          showAlert('Registration failed: Server error', 'error', 5000);
         }
       }
     } catch (err) {
-      setServerError('Registration failed: ' + (err.message || 'Network error'));
+      showAlert('Registration failed: ' + (err.message || 'Network error'), 'error', 5000);
     } finally {
       setSubmitting(false);
     }
@@ -305,11 +307,7 @@ export default function RegisterUser() {
           Fields marked <span className="req">*</span> are required
         </p>
 
-        {serverError && (
-          <div className="server-error" style={{ color: 'red', marginBottom: 12 }}>
-            {serverError}
-          </div>
-        )}
+        <Popup open={popupOpen} message={popupMsg} type={popupType} duration={popupDuration} onClose={() => setPopupOpen(false)} />
 
         <form onSubmit={handleSubmit} className="mt-3">
           <div className="row g-3">
