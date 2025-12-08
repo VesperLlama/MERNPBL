@@ -3,6 +3,60 @@ const { readJson, writeJson, getNextId } = require('../utils/jsonDb');
 const { validateCustomerRegister } = require('../utils/validators');
 
 const CUSTOMERS_FILE = 'customers.json';
+exports.checkEmail = (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const customers = readJson(CUSTOMERS_FILE);
+
+    const exists = customers.find(
+      c => c.EmailId?.toLowerCase() === email.toLowerCase()
+    );
+
+    if (!exists) {
+      return res.status(404).json({ message: "Email not found in system" });
+    }
+
+    return res.json({ message: "Email verified" });
+
+  } catch (err) {
+    next(err);
+  }
+};
+exports.resetPassword = async (req, res, next) => {
+  try {
+    const { email, newPassword } = req.body;
+
+    if (!email || !newPassword) {
+      return res.status(400).json({ message: "Missing data" });
+    }
+
+    let customers = readJson(CUSTOMERS_FILE);
+    const index = customers.findIndex(
+      c => c.EmailId.toLowerCase() === email.toLowerCase()
+    );
+
+    if (index === -1) {
+      return res.status(404).json({ message: "Email not registered" });
+    }
+
+    const hash = await bcrypt.hash(newPassword, 10);
+
+    customers[index].PasswordHash = hash;
+    customers[index].UpdatedAt = new Date().toISOString();
+
+    writeJson(CUSTOMERS_FILE, customers);
+
+    return res.json({ message: "Password updated successfully" });
+
+  } catch (err) {
+    next(err);
+  }
+};
 
 exports.registerCustomer = async (req, res, next) => {
   try {

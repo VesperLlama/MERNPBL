@@ -104,7 +104,7 @@ exports.getAdminDashboard = (req, res, next) => {
       // 3. Total revenue
       const totalRevenue = (Array.isArray(bookings) ? bookings : [])
         .filter(b => b.BookingStatus === "Booked") // only active bookings
-        .reduce((sum, b) => sum + Number(b.PricePaid || 0), 0);
+        .reduce((sum, b) => sum + Number(b.PricePaid.finalPrice || 0), 0);
 
       // 4. Total bookings
       const totalBookings = Array.isArray(bookings) ? bookings.length : 0;

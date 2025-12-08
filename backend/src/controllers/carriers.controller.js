@@ -129,6 +129,7 @@ const { readJson, writeJson, getNextId } = require('../utils/jsonDb');
 const { validateCarrier } = require('../utils/validators');
 
 const CARRIERS_FILE = 'carriers.json';
+const FLIGHTS_FILE = 'flights.json';
 
 exports.registerCarrier = async (req, res, next) => {
   try {
@@ -183,13 +184,13 @@ exports.updateCarrier = (req, res, next) => {
     const payload = req.body || {};
 
     // validate payload (we accept partial updates; validate only if keys present)
-    const { error } = validateCarrier({ ...payload, CarrierName: payload.CarrierName || 'x' });
-    if (error) {
-      const msgs = error.details.map(d => d.message);
-      // If CarrierName missing, ignore that error (we used 'x' placeholder above)
-      const filtered = msgs.filter(m => !m.includes('CarrierName'));
-      if (filtered.length > 0) return res.status(400).json({ message: 'Validation failed', errors: filtered });
-    }
+    // const { error } = validateCarrier({ ...payload, CarrierName: payload.CarrierName || 'x' });
+    // if (error) {
+    //   const msgs = error.details.map(d => d.message);
+    //   // If CarrierName missing, ignore that error (we used 'x' placeholder above)
+    //   const filtered = msgs.filter(m => !m.includes('CarrierName'));
+    //   if (filtered.length > 0) return res.status(400).json({ message: 'Validation failed', errors: filtered });
+    // }
 
     // Read carriers
     let carriers = readJson(CARRIERS_FILE);
@@ -207,7 +208,8 @@ exports.updateCarrier = (req, res, next) => {
       ...existing,
       CarrierName: payload.CarrierName || existing.CarrierName,
       Discounts: payload.Discounts ? { ...existing.Discounts, ...payload.Discounts } : existing.Discounts,
-      Refunds: payload.Refunds ? { ...existing.Refunds, ...payload.Refunds } : existing.Refunds,
+      userDiscounts: payload.userDiscounts || existing.userDiscounts,
+      Refunds: payload.refunds || existing.Refunds,
       UpdatedAt: new Date().toISOString()
     };
 
@@ -224,10 +226,20 @@ exports.listCarriers = (req, res, next) => {
   try {
     const q = (req.query.q || '').toLowerCase();
     const carriers = readJson(CARRIERS_FILE) || [];
+    const flights = readJson(FLIGHTS_FILE);
     const filtered = q
       ? carriers.filter(c => (c.CarrierName || '').toLowerCase().includes(q))
       : carriers;
-    return res.json({ data: filtered });
+    
+    const filteredCarriers = [];
+    filtered.forEach(c => {
+      const numberOfFlights = flights.filter((f => (c.CarrierName === f.carrierName))).length;
+      filteredCarriers.push({
+        ...c,
+        numberOfFlights: numberOfFlights
+      });
+    })
+    return res.json({ data: filteredCarriers });
   } catch (err) {
     next(err);
   }

@@ -102,7 +102,7 @@ exports.bookFlight = async (req, res, next) => {
       pnr,
       'Booked',
       new Date().toISOString(),
-      priceData.finalPrice,
+      priceData,
       null,
       null,
       type,
@@ -272,7 +272,7 @@ exports.cancelBookingByPNR = (req, res, next) => {
         }
       }
 
-      const paid = Number(booking.PricePaid) || 0;
+      const paid = Number(booking.PricePaid.finalPrice) || 0;
       booking.RefundAmount = Math.round((paid * (percent / 100)) * 100) / 100;
     } catch (rfErr) {
       // on error, fallback to full refund
@@ -381,7 +381,7 @@ exports.adminCancelFlight = (req, res, next) => {
       ) {
         b.BookingStatus = "CancelledByAdmin";
         b.CancelledAt = new Date().toISOString();
-        b.RefundAmount = b.PricePaid; // FULL refund
+        b.RefundAmount = b.PricePaid.finalPrice; // FULL refund
         cancelledCount++;
       }
     });
@@ -430,6 +430,7 @@ exports.listAllBookings = (req, res, next) => {
           RefundAmount: b.RefundAmount,
           type: b.type,
           Quantity: b.quantity,
+          passengers: b.passengers || [],
 
           // flight fields (null-safe)
           flightNumber: flight?.flightNumber || null,
@@ -494,6 +495,7 @@ exports.listMyBookings = (req, res, next) => {
           RefundAmount: b.RefundAmount,
           type: b.type,
           Quantity: b.quantity,
+          passengers: b.passengers,
 
           // flight fields (null-safe)
           flightNumber: flight?.flightNumber || null,
@@ -570,131 +572,284 @@ exports.getBoardingPass = (req, res, next) => {
     flight.departureTime = formatDateTimeIntl(flight.departureTime);
     flight.arrivalTime = formatDateTimeIntl(flight.arrivalTime);
     // Create a PDF document
-    const doc = new PDFDocument();
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename=boarding-pass-${bookingId}.pdf`
-    );
+    // const doc = new PDFDocument();
+    // res.setHeader("Content-Type", "application/pdf");
+    // res.setHeader(
+    //   "Content-Disposition",
+    //   `attachment; filename=boarding-pass-${bookingId}.pdf`
+    // );
 
-    doc.pipe(res);
+    // doc.pipe(res);
 
-    const margin = 50;
-    const centerX = 300;
-    const leftCol = margin;
-    const rightCol = 250;
-    const lineHeight = 20;
+    // const margin = 50;
+    // const centerX = 300;
+    // const leftCol = margin;
+    // const rightCol = 250;
+    // const lineHeight = 20;
 
-    doc
-      .fontSize(36)
-      .font('Helvetica-Bold')
-      .fillColor("orange")
-      .text("Go", centerX - 80, 80)
-      .fillColor("black")
-      .text("Voyage", centerX - 30, 80)
-      .fillColor("black")
-      .font('Helvetica')
-      .fontSize(14)
-      .text("BOARDING PASS", centerX - 50, 120);
+    // doc
+    //   .fontSize(36)
+    //   .font('Helvetica-Bold')
+    //   .fillColor("orange")
+    //   .text("Go", centerX - 80, 80)
+    //   .fillColor("black")
+    //   .text("Voyage", centerX - 30, 80)
+    //   .fillColor("black")
+    //   .font('Helvetica')
+    //   .fontSize(14)
+    //   .text("INVOICE", centerX - 30, 120);
 
-    // Flight Information Section
-    let yPos = 160;
-    doc
-      .fontSize(18)
-      .fillColor("#333")
-      .text("Flight Information", leftCol, yPos, { underline: true });
-    yPos += lineHeight + 5;
+    // // Flight Information Section
+    // let yPos = 160;
+    // doc
+    //   .fontSize(18)
+    //   .fillColor("#333")
+    //   .text("Flight Information", leftCol, yPos, { underline: true });
+    // yPos += lineHeight + 5;
 
-    // From-To on same line
-    doc.fontSize(12).fillColor("#666").text("From:", leftCol, yPos);
-    doc
-      .fontSize(14)
-      .fillColor("#333")
-      .text(`${flight?.source || "N/A"}`, rightCol, yPos);
-    doc.fontSize(12).fillColor("#666").text("To:", leftCol, yPos + lineHeight);
-    doc
-      .fontSize(14)
-      .fillColor("#333")
-      .text(`${flight?.destination || "N/A"}`, rightCol, yPos + lineHeight);
+    // // From-To on same line
+    // doc.fontSize(12).fillColor("#666").text("From:", leftCol, yPos);
+    // doc
+    //   .fontSize(14)
+    //   .fillColor("#333")
+    //   .text(`${flight?.source || "N/A"}`, rightCol, yPos);
+    // doc.fontSize(12).fillColor("#666").text("To:", leftCol, yPos + lineHeight);
+    // doc
+    //   .fontSize(14)
+    //   .fillColor("#333")
+    //   .text(`${flight?.destination || "N/A"}`, rightCol, yPos + lineHeight);
 
-    yPos += lineHeight * 2;
+    // yPos += lineHeight * 2;
 
-    // Times below cities
-    doc.fontSize(12).fillColor("#666").text("Departure:", leftCol, yPos);
-    doc
-      .fontSize(14)
-      .fillColor("#333")
-      .text(`${flight?.departureTime || "N/A"}`, rightCol, yPos);
-    doc.fontSize(12).fillColor("#666").text("Arrival:", leftCol, yPos + lineHeight);
-    doc
-      .fontSize(14)
-      .fillColor("#333")
-      .text(`${flight?.arrivalTime || "N/A"}`, rightCol, yPos + lineHeight);
+    // // Times below cities
+    // doc.fontSize(12).fillColor("#666").text("Departure:", leftCol, yPos);
+    // doc
+    //   .fontSize(14)
+    //   .fillColor("#333")
+    //   .text(`${flight?.departureTime || "N/A"}`, rightCol, yPos);
+    // doc.fontSize(12).fillColor("#666").text("Arrival:", leftCol, yPos + lineHeight);
+    // doc
+    //   .fontSize(14)
+    //   .fillColor("#333")
+    //   .text(`${flight?.arrivalTime || "N/A"}`, rightCol, yPos + lineHeight);
 
-    yPos += lineHeight * 2.5;
+    // yPos += lineHeight * 2.5;
 
-    // Separator line
-    doc
-      .lineWidth(1)
-      .strokeColor("#ddd")
-      .moveTo(leftCol, yPos)
-      .lineTo(550, yPos)
-      .stroke();
-    yPos += 20;
+    // // Separator line
+    // doc
+    //   .lineWidth(1)
+    //   .strokeColor("#ddd")
+    //   .moveTo(leftCol, yPos)
+    //   .lineTo(550, yPos)
+    //   .stroke();
+    // yPos += 20;
 
-    // Passenger Details
-    doc
-      .fontSize(18)
-      .fillColor("#333")
-      .text("Passenger Details", leftCol, yPos, { underline: true });
-    yPos += lineHeight + 10;
+    // // Passenger Details
+    // doc
+    //   .fontSize(18)
+    //   .fillColor("#333")
+    //   .text("Passenger Details", leftCol, yPos, { underline: true });
+    // yPos += lineHeight + 10;
 
-    booking.passengers.forEach((passenger, index) => {
-      doc.fontSize(14).fillColor("#333");
-      doc.text(`${index + 1}. ${passenger.name}`, leftCol, yPos);
-      doc
-        .fontSize(12)
-        .fillColor("#666")
-        .text(`Seat: ${passenger.seat || "N/A"}`, rightCol, yPos)
-        .text(`Age: ${passenger.age || "N/A"}`, 450, yPos, { align: "right" });
-      yPos += lineHeight * 1.8;
-    });
+    // booking.passengers.forEach((passenger, index) => {
+    //   doc.fontSize(14).fillColor("#333");
+    //   doc.text(`${index + 1}. ${passenger.name}`, leftCol, yPos);
+    //   doc
+    //     .fontSize(12)
+    //     .fillColor("#666")
+    //     .text(`Seat: ${passenger.seat || "N/A"}`, rightCol, yPos)
+    //     .text(`Age: ${passenger.age || "N/A"}`, 450, yPos, { align: "right" });
+    //   yPos += lineHeight * 1.8;
+    // });
 
-    // Booking Summary (right side)
-    const bookingY = 160;
-    doc.fontSize(11).fillColor("#333");
-    [
-      `Booking ID: ${booking.BookingId}`,
-      `PNR: ${booking.PNR}`,
-      `Amount: Rs.${booking.PricePaid}`,
-      `Status: ${booking.BookingStatus}`,
-    ].forEach((info, i) => {
-      doc.text(info, 380, bookingY + i * 16 + 25, {
-        width: 180,
-        align: "right",
-      });
-    });
+    // // Booking Summary (right side)
+    // const bookingY = 380;
+    // doc.fontSize(14).fillColor("#333");
+    // [
+    //   `Booking ID: ${booking.BookingId}`,
+    //   `PNR: ${booking.PNR}`,
+    //   `Base Price: Rs.${booking.PricePaid.basePrice}`,
+    //   `Advance Discount: - Rs.${booking.PricePaid.advanceDiscount}`,
+    //   `Category Discount: - Rs.${booking.PricePaid.categoryDiscount}`,
+    //   `Bulk Discount: - Rs.${booking.PricePaid.bulkDiscount}`,
+    //   `Final Amount: Rs.${booking.PricePaid.finalPrice}`,
+    //   `Status: ${booking.BookingStatus}`,
+    // ].forEach((info, i) => {
+    //   doc.text(info, 320, bookingY + i * 16 + 25, {
+    //     width: 250,
+    //     align: "right",
+    //   });
+    // });
 
-    // Footer
-    yPos += 10;
-    doc
-      .lineWidth(1)
-      .strokeColor("#ddd")
-      .moveTo(leftCol, yPos)
-      .lineTo(550, yPos)
-      .stroke();
-    yPos += 20;
-    doc
-      .fontSize(10)
-      .fillColor("#999")
-      .text(
-        "Please arrive 45 minutes before departure. Have your ID ready.",
-        centerX - 100,
-        yPos,
-        { align: "center", width: 400 }
-      );
+    // // // Footer
+    // // yPos += 10;
+    // // doc
+    // //   .lineWidth(1)
+    // //   .strokeColor("#ddd")
+    // //   .moveTo(leftCol, yPos)
+    // //   .lineTo(550, yPos)
+    // //   .stroke();
+    // // yPos += 20;
+    // // doc
+    // //   .fontSize(10)
+    // //   .fillColor("#999")
+    // //   .text(
+    // //     "Please arrive 45 minutes before departure. Have your ID ready.",
+    // //     centerX - 100,
+    // //     yPos,
+    // //     { align: "center", width: 400 }
+    // //   );
 
-    doc.end();
+    // doc.end();
+
+    const doc = new PDFDocument({ margin: 50 });
+res.setHeader("Content-Type", "application/pdf");
+res.setHeader(
+  "Content-Disposition",
+  `attachment; filename=boarding-pass-${bookingId}.pdf`
+);
+
+doc.pipe(res);
+
+// ------------------------- HEADER ---------------------------
+doc
+  .fontSize(32)
+  .font("Helvetica-Bold")
+  .fillColor("#FF7A00")
+  .text("Go", 50, 40, { continued: true })
+  .fillColor("black")
+  .text("Voyage");
+
+doc
+  .fontSize(14)
+  .font("Helvetica")
+  .fillColor("#333")
+  .text("INVOICE", 50, 80);
+
+// Separator
+doc
+  .moveTo(50, 110)
+  .lineWidth(1)
+  .strokeColor("#cccccc")
+  .lineTo(550, 110)
+  .stroke();
+
+// ------------------------ FLIGHT DETAILS ------------------------
+let y = 130;
+
+doc
+  .fontSize(18)
+  .font("Helvetica-Bold")
+  .fillColor("#222")
+  .text("Flight Details", 50, y);
+y += 30;
+
+doc.fontSize(12).font("Helvetica-Bold").text("From:", 50, y);
+doc.font("Helvetica").fillColor("#333").text(flight?.source || "N/A", 150, y);
+
+doc.font("Helvetica-Bold").fillColor("#222").text("To:", 50, y + 20);
+doc.font("Helvetica").fillColor("#333").text(flight?.destination || "N/A", 150, y + 20);
+
+doc.font("Helvetica-Bold").text("Departure:", 50, y + 50);
+doc.font("Helvetica").text(flight?.departureTime || "N/A", 150, y + 50);
+
+doc.font("Helvetica-Bold").text("Arrival:", 50, y + 70);
+doc.font("Helvetica").text(flight?.arrivalTime || "N/A", 150, y + 70);
+
+y += 110;
+
+// Separator
+doc
+  .moveTo(50, y)
+  .lineWidth(1)
+  .strokeColor("#cccccc")
+  .lineTo(550, y)
+  .stroke();
+y += 20;
+
+// ------------------------ PASSENGER DETAILS ------------------------
+doc
+  .fontSize(18)
+  .font("Helvetica-Bold")
+  .fillColor("#222")
+  .text("Passenger Details", 50, y);
+y += 30;
+
+booking.passengers.forEach((passenger, index) => {
+  doc
+    .font("Helvetica-Bold")
+    .fontSize(13)
+    .fillColor("#333")
+    .text(`${index + 1}. ${passenger.name}`, 50, y);
+
+  doc
+    .font("Helvetica")
+    .fontSize(11)
+    .fillColor("#666")
+    .text(`Seat: ${passenger.seat || "N/A"}`, 300, y)
+    .text(`Age: ${passenger.age || "N/A"}`, 450, y);
+
+  y += 25;
+});
+
+// ------------------------ BOOKING SUMMARY ------------------------
+y += 20;
+
+doc
+  .fontSize(18)
+  .font("Helvetica-Bold")
+  .fillColor("#222")
+  .text("Booking Summary", 50, y);
+y += 35;
+
+const summary = [
+  ["Booking ID", booking.BookingId],
+  ["PNR", booking.PNR],
+  ["Base Fare", `Rs. ${booking.PricePaid.basePrice}`],
+  ["Advance Discount", `- Rs. ${booking.PricePaid.advanceDiscount}`],
+  ["Category Discount", `- Rs. ${booking.PricePaid.categoryDiscount}`],
+  ["Bulk Discount", `- Rs. ${booking.PricePaid.bulkDiscount}`],
+  ["Final Amount", `Rs. ${booking.PricePaid.finalPrice}`],
+  ["Status", booking.BookingStatus]
+];
+
+summary.forEach(([label, value]) => {
+  doc
+    .font("Helvetica-Bold")
+    .fontSize(12)
+    .fillColor("#000")
+    .text(label + ":", 50, y, { width: 200 });
+
+  doc
+    .font("Helvetica")
+    .fontSize(12)
+    .fillColor("#333")
+    .text(value, 250, y);
+
+  y += 20;
+});
+
+// ------------------------ FOOTER ------------------------
+doc
+  .moveTo(50, y + 20)
+  .lineWidth(1)
+  .strokeColor("#cccccc")
+  .lineTo(550, y + 20)
+  .stroke();
+
+doc
+  .font("Helvetica")
+  .fontSize(10)
+  .fillColor("#777")
+  .text(
+    "Please arrive at least 45 minutes before departure. Carry a valid Government ID.",
+    50,
+    y + 30,
+    { width: 500, align: "center" }
+  );
+
+// End PDF
+doc.end();
   } catch (err) {
     next(err);
   }

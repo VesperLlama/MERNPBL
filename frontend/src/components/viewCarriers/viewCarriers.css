@@ -3,11 +3,16 @@
 .vc-filter-label{font-weight:600;color:#475569}
 .vc-filter{padding:6px 8px;border-radius:8px;border:1px solid #e6edf3}
 .vc-empty{padding:18px;color:#6b7280}
-.vc-table-wrap{overflow:auto;margin-top:12px}
-.vc-table{width:100%;border-collapse:collapse;font-size:0.95rem}
-.vc-table th,.vc-table td{padding:10px 12px;border-bottom:1px solid #f1f5f9;text-align:left;color:#0b1b26}
+/* .vc-table-wrap{overflow:auto;margin-top:12px} */
+/* .vc-table{width:100%;border-collapse:collapse;font-size:0.95rem}
+.vc-table th,.vc-table td{padding:10px 12px;border-bottom:1px solid #f1f5f9;text-align:center;color:#0b1b26}
 .vc-table thead th{background:#fbfdff;color:#334155;font-weight:700;border-bottom:2px solid #e6edf3}
-.vc-table tbody tr:hover{background:#f8fbfd}
+.vc-table tbody tr:hover{background:#f8fbfd} */
+
+.vc-table-wrap { overflow-x:auto; margin-top:12px; }
+.vc-table { width:100%; border-collapse:collapse; font-size:0.95rems; }
+.vc-table th, .vc-table td { border:1px solid var(--border); padding:12px 10px; text-align:center; color:#0b1b26}
+.vc-table th { background:#fbfcfe; color:#111827; font-weight:600; }
 
 .vc-btn{background:transparent;border:1px solid #e6edf3;padding:6px 10px;border-radius:6px;cursor:pointer;font-weight:700}
 .vc-btn:hover{background:#fbfdff}

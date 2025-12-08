@@ -17,11 +17,10 @@
     "CustomerId": 1004,
     "flightNumber": "L201",
     "PNR": "ID5QB5",
-    "BookingStatus": "Booked",
+    "BookingStatus": "CancelledByCustomer",
     "BookedAt": "2025-12-07T17:51:09.545Z",
     "PricePaid": 32175,
-    "CancelledAt": null,
-    "RefundAmount": null,
+    "CancelledAt": "2025-12-08T09:44:16.600Z",
     "type": "business",
     "quantity": 2,
     "passengers": [
@@ -32,6 +31,156 @@
       },
       {
         "name": "asd",
+        "age": "22",
+        "gender": "Adult"
+      }
+    ],
+    "RefundAmount": 0
+  },
+  {
+    "BookingId": 5048,
+    "CustomerId": 1004,
+    "flightNumber": "L201",
+    "PNR": "MQMMNQ",
+    "BookingStatus": "CancelledByCustomer",
+    "BookedAt": "2025-12-07T18:27:31.721Z",
+    "PricePaid": 32175,
+    "CancelledAt": "2025-12-08T09:49:31.087Z",
+    "RefundAmount": 0,
+    "type": "business",
+    "quantity": 2,
+    "passengers": [
+      {
+        "name": "qwe",
+        "age": "22",
+        "gender": "Adult"
+      },
+      {
+        "name": "qwe",
+        "age": "22",
+        "gender": "Adult"
+      }
+    ]
+  },
+  {
+    "BookingId": 5049,
+    "CustomerId": 1004,
+    "flightNumber": "L201",
+    "PNR": "CMQSUA",
+    "BookingStatus": "CancelledByAdmin",
+    "BookedAt": "2025-12-09T03:39:09.296Z",
+    "PricePaid": {
+      "basePrice": 66000,
+      "advanceDiscount": 0,
+      "categoryDiscount": 1650,
+      "bulkDiscount": 0,
+      "finalPrice": 64350
+    },
+    "CancelledAt": "2025-12-08T06:50:56.113Z",
+    "RefundAmount": 64350,
+    "type": "economy",
+    "quantity": 6,
+    "passengers": [
+      {
+        "name": "qwe",
+        "age": "22",
+        "gender": "Adult"
+      },
+      {
+        "name": "qwe",
+        "age": "22",
+        "gender": "Adult"
+      }
+    ]
+  },
+  {
+    "BookingId": 5050,
+    "CustomerId": 1004,
+    "flightNumber": "L201",
+    "PNR": "8ZU8ON",
+    "BookingStatus": "CancelledByCustomer",
+    "BookedAt": "2025-12-0T04:05:24.100Z",
+    "PricePaid": {
+      "basePrice": 49500,
+      "advanceDiscount": 0,
+      "categoryDiscount": 1237.5,
+      "bulkDiscount": 0,
+      "finalPrice": 48262.5
+    },
+    "CancelledAt": "2025-12-08T09:45:48.797Z",
+    "RefundAmount": 0,
+    "type": "business",
+    "quantity": 3,
+    "passengers": [
+      {
+        "name": "P1",
+        "age": "33",
+        "gender": "Adult"
+      },
+      {
+        "name": "P2",
+        "age": "31",
+        "gender": "Adult"
+      },
+      {
+        "name": "P3",
+        "age": "44",
+        "gender": "Adult"
+      }
+    ]
+  },
+  {
+    "BookingId": 5051,
+    "CustomerId": 1004,
+    "flightNumber": "C254",
+    "PNR": "S94GSN",
+    "BookingStatus": "CancelledByCustomer",
+    "BookedAt": "2025-12-08T09:39:57.900Z",
+    "PricePaid": {
+      "basePrice": 30000,
+      "advanceDiscount": 0,
+      "categoryDiscount": 750,
+      "bulkDiscount": 0,
+      "finalPrice": 29250
+    },
+    "CancelledAt": "2025-12-08T09:47:50.531Z",
+    "RefundAmount": 5850,
+    "type": "business",
+    "quantity": 2,
+    "passengers": [
+      {
+        "name": "Shreyansh",
+        "age": "22",
+        "gender": "Adult"
+      },
+      {
+        "name": "Siddhant",
+        "age": "22",
+        "gender": "Adult"
+      }
+    ]
+  },
+  {
+    "BookingId": 5052,
+    "CustomerId": 1004,
+    "flightNumber": "C254",
+    "PNR": "XXNHDU",
+    "BookingStatus": "CancelledByCustomer",
+    "BookedAt": "2025-12-08T09:52:38.040Z",
+    "PricePaid": {
+      "basePrice": 10000,
+      "advanceDiscount": 0,
+      "categoryDiscount": 250,
+      "bulkDiscount": 0,
+      "finalPrice": 9750
+    },
+    "CancelledAt": "2025-12-08T09:53:39.355Z",
+    "RefundAmount": 1950,
+    "type": "economy",
+    "quantity": 1,
+    "passengers": [
+      {
+        "name": "aaditya",
         "age": "22",
         "gender": "Adult"
       }

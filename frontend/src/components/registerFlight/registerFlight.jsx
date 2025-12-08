@@ -446,16 +446,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminNavBar from "../adminNavBar/adminNavBar.jsx";
 import "./registerFlight.css";
+import { useEffect, useRef ,useMemo} from "react";
 
-const carrierOptions = [
-  "IndiGo",
-  "Air India",
-  "SpiceJet",
-  "Vistara",
-  "Air India Express",
-  "Akasa Air",
-  "Alliance Air",
-];
+let carrierOptions = [];
 const airports = [
   "DEL (Delhi)",
   "BOM (Mumbai)",
@@ -483,6 +476,32 @@ export default function RegisterFlight() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const navigate = useNavigate();
+  const dataFetched = useRef(false);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    async function getCarrierNames() {
+      const carriers = await fetch("http://localhost:4000/api/carriers/list", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      const data = await carriers.json();
+      if (carriers.ok) {
+        data.data.forEach((c) => {
+          carrierOptions.push(c.CarrierName);
+        });
+        setLoaded(true);
+      }
+    }
+
+    if (!dataFetched.current) {
+      getCarrierNames();
+      dataFetched.current = true;
+    }
+  }, []);
 
   function setErr(k, msg) {
     setErrors((e) => {
@@ -718,12 +737,18 @@ export default function RegisterFlight() {
                 onChange={handleChange}
                 onBlur={handleBlur}
               >
-                <option value="">Select carrier</option>
-                {carrierOptions.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
+                {!loaded ? (
+                  <option value="Loading">Loading...</option>
+                ) : (
+                  <>
+                    <option value="">Select carrier</option>
+                    {carrierOptions.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </>
+                )}
               </select>
               {errors.carrierName && (touched.carrierName || submitted) && (
                 <div className="error">{errors.carrierName}</div>

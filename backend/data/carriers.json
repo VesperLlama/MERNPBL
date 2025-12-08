@@ -45,22 +45,23 @@
     "CarrierId": 218,
     "CarrierName": "SpiceJet",
     "Discounts": {
-      "30DaysAdvanceBooking": 3.8,
-      "60DaysAdvanceBooking": 6.4,
-      "90DaysAdvanceBooking": 9.9,
-      "BulkBooking": 4.6
+      "30DaysAdvanceBooking": 4,
+      "60DaysAdvanceBooking": 6,
+      "90DaysAdvanceBooking": 10,
+      "BulkBooking": 4.9
     },
     "userDiscounts": {
-      "Silver": 5,
-      "Gold": 7,
-      "Platinum": 10.5
+      "Silver": 3,
+      "Gold": 5.2,
+      "Platinum": 12
     },
     "Refunds": {
-      "2DaysBeforeTravelDate": 2.7,
-      "10DaysBeforeTravelDate": 21.8,
-      "20DaysOrMoreBeforeTravelDate": 70
+      "2DaysBeforeTravelDate": 3,
+      "10DaysBeforeTravelDate": 22,
+      "20DaysOrMoreBeforeTravelDate": 55
     },
-    "CreatedAt": "2025-12-04T19:13:49.559Z"
+    "CreatedAt": "2025-12-04T19:13:49.559Z",
+    "UpdatedAt": "2025-12-08T09:31:26.865Z"
   },
   {
     "CarrierId": 220,
@@ -82,5 +83,110 @@
       "20DaysOrMoreBeforeTravelDate": 50
     },
     "CreatedAt": "2025-12-05T16:05:07.898Z"
+  },
+  {
+    "CarrierId": 222,
+    "CarrierName": "Alliance Air",
+    "Discounts": {
+      "30DaysAdvanceBooking": 2.5,
+      "60DaysAdvanceBooking": 5.1,
+      "90DaysAdvanceBooking": 7.6,
+      "BulkBooking": 3
+    },
+    "userDiscounts": {
+      "Silver": 2.5,
+      "Gold": 5.1,
+      "Platinum": 7.6
+    },
+    "Refunds": {
+      "2DaysBeforeTravelDate": 0,
+      "10DaysBeforeTravelDate": 20,
+      "20DaysOrMoreBeforeTravelDate": 50
+    },
+    "CreatedAt": "2025-12-07T18:46:22.858Z"
+  },
+  {
+    "CarrierId": 223,
+    "CarrierName": "Jet Airways",
+    "Discounts": {
+      "30DaysAdvanceBooking": 2.6,
+      "60DaysAdvanceBooking": 5.1,
+      "90DaysAdvanceBooking": 7.6,
+      "BulkBooking": 3
+    },
+    "userDiscounts": {
+      "Silver": 2.5,
+      "Gold": 5.1,
+      "Platinum": 7.6
+    },
+    "Refunds": {
+      "2DaysBeforeTravelDate": 0.1,
+      "10DaysBeforeTravelDate": 20,
+      "20DaysOrMoreBeforeTravelDate": 50
+    },
+    "CreatedAt": "2025-12-08T05:11:03.507Z"
+  },
+  {
+    "CarrierId": 224,
+    "CarrierName": "Europe",
+    "Discounts": {
+      "30DaysAdvanceBooking": 2.5,
+      "60DaysAdvanceBooking": 5.1,
+      "90DaysAdvanceBooking": 7.6,
+      "BulkBooking": 3
+    },
+    "userDiscounts": {
+      "Silver": 2.5,
+      "Gold": 5.1,
+      "Platinum": 7.6
+    },
+    "Refunds": {
+      "2DaysBeforeTravelDate": 0.1,
+      "10DaysBeforeTravelDate": 20,
+      "20DaysOrMoreBeforeTravelDate": 50
+    },
+    "CreatedAt": "2025-12-08T05:22:23.593Z"
+  },
+  {
+    "CarrierId": 225,
+    "CarrierName": "dsadas",
+    "Discounts": {
+      "30DaysAdvanceBooking": 0,
+      "60DaysAdvanceBooking": 0,
+      "90DaysAdvanceBooking": 0,
+      "BulkBooking": 0
+    },
+    "userDiscounts": {
+      "Silver": 0,
+      "Gold": 0,
+      "Platinum": 0
+    },
+    "Refunds": {
+      "2DaysBeforeTravelDate": 0,
+      "10DaysBeforeTravelDate": 0,
+      "20DaysOrMoreBeforeTravelDate": 0
+    },
+    "CreatedAt": "2025-12-08T05:27:57.569Z"
+  },
+  {
+    "CarrierId": 226,
+    "CarrierName": "Shreyansh",
+    "Discounts": {
+      "30DaysAdvanceBooking": 2.5,
+      "60DaysAdvanceBooking": 5.1,
+      "90DaysAdvanceBooking": 7.6,
+      "BulkBooking": 3
+    },
+    "userDiscounts": {
+      "Silver": 2.5,
+      "Gold": 5.1,
+      "Platinum": 7.6
+    },
+    "Refunds": {
+      "2DaysBeforeTravelDate": 0.1,
+      "10DaysBeforeTravelDate": 20,
+      "20DaysOrMoreBeforeTravelDate": 50
+    },
+    "CreatedAt": "2025-12-08T05:51:14.883Z"
   }
 ]

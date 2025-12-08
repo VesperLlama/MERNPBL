@@ -16,7 +16,7 @@
 .vf-refresh[disabled]{ opacity:0.6; cursor:not-allowed; }
 .vf-table-wrap { overflow-x:auto; margin-top:6px; }
 .vf-table { width:100%; border-collapse:collapse; font-size:14px; }
-.vf-table th, .vf-table td { border:1px solid var(--border); padding:12px 10px; text-align:left; vertical-align:middle; }
+.vf-table th, .vf-table td { border:1px solid var(--border); padding:12px 10px; text-align:center; }
 .vf-table th { background:#fbfcfe; color:#111827; font-weight:600; }
 .vf-empty { padding:18px 8px; color:var(--muted); }
 

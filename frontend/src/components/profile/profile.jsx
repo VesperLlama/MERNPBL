@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./profile.css";
 import CustomerNavbar from "../customerNavbar/customerNavbar";
+import Popup from "../pop-up/pop-up";
 
 const cities = [
   { name: "Mumbai", state: "Maharashtra", zip: "400001" },
@@ -54,6 +55,8 @@ export default function Profile({ userId: propUserId }) {
   const [pwdForm, setPwdForm] = useState({ currentPassword: "", newPassword: "", confirmNewPassword: "" });
   const [pwdErrors, setPwdErrors] = useState({});
   const [pwdSubmitting, setPwdSubmitting] = useState(false);
+  const [toastType, setToastType] = useState('');
+  const [toastOpen, setToastOpen] = useState(false);
 
   // compute category from estimatedSpend (same rules)
   useEffect(() => {
@@ -268,7 +271,9 @@ export default function Profile({ userId: propUserId }) {
     setServerMessage(null);
 
     if (!validateAll()) {
-      setServerMessage({ type: "error", text: "Fix highlighted errors before saving." });
+      setServerMessage("Fix highlighted errors before saving.");
+      setToastType("error");
+      setToastOpen(true);
       return;
     }
 
@@ -299,14 +304,18 @@ export default function Profile({ userId: propUserId }) {
       // update local form from returned data if any
       hydrateFromObject(data.data);
       lastSavedRef.current = { ...lastSavedRef.current, ...payload };
-      setServerMessage({ type: "success", text: "Profile saved successfully." });
+      setServerMessage("Profile saved successfully.");
+      setToastType("success");
+      setToastOpen(true);
       setIsEditing(false);
       // optionally update localStorage copy
       try {
         localStorage.setItem("currentUser", JSON.stringify({ ...form, id: idToUse }));
       } catch (e) {}
     } catch (err) {
-      setServerMessage({ type: "error", text: "Save failed: " + err.message });
+      setServerMessage("Save failed: " + err.message);
+      setToastType("error");
+      setToastOpen(true);
     } finally {
       setSaving(false);
     }
@@ -328,6 +337,8 @@ export default function Profile({ userId: propUserId }) {
   async function handleChangePassword(ev) {
     ev.preventDefault();
     setServerMessage(null);
+    setToastType("");
+    setToastOpen(false);
 
     if (!validatePwdForm()) return;
 
@@ -350,11 +361,15 @@ export default function Profile({ userId: propUserId }) {
         throw new Error(err.message || "Change password failed");
       }
 
-      setServerMessage({ type: "success", text: "Password changed successfully." });
+      setServerMessage("Password changed successfully.");
+      setToastType("success");
+      setToastOpen(true);
       setPwdForm({ currentPassword: "", newPassword: "", confirmNewPassword: "" });
       setShowChangePwd(false);
     } catch (err) {
-      setServerMessage({ type: "error", text: "Change password failed: " + err.message });
+      setServerMessage("Change password failed: " + err.message);
+      setToastType("error");
+      setToastOpen(true);
     } finally {
       setPwdSubmitting(false);
     }
@@ -372,11 +387,14 @@ export default function Profile({ userId: propUserId }) {
     setTouched({});
     setIsEditing(false);
     setServerMessage(null);
+    setToastType("");
+    setToastOpen(false);
   }
 
   return (
 <>
 <CustomerNavbar />
+<Popup open={toastOpen} message={serverMessage} type={toastType} onClose={() => { setToastOpen(false); setServerMessage(''); }} />
     
     <div className="pr-root">
       <div className="pr-container">

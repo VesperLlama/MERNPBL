@@ -39,14 +39,14 @@
     "CustomerCategory": "Silver",
     "Phone": "9876543210",
     "EmailId": "aaditya2@example.com",
-    "AddressLine1": "House 15",
-    "AddressLine2": "",
-    "City": "Allahabad",
+    "AddressLine1": "House 142",
+    "AddressLine2": "india",
+    "City": "Lucknow",
     "State": "Uttar Pradesh",
-    "ZipCode": "211002",
+    "ZipCode": "226004",
     "DOB": "1998-06-15",
     "CreatedAt": "2025-12-03T05:31:04.580Z",
-    "UpdatedAt": "2025-12-05T08:35:13.616Z"
+    "UpdatedAt": "2025-12-08T09:54:32.983Z"
   },
   {
     "CustomerId": 1005,

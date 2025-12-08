@@ -25,8 +25,8 @@
     "carrierName": "IndiGo",
     "source": "HYD (Hyderabad)",
     "destination": "LKO (Lucknow)",
-    "departureTime": "2025-12-07T00:00",
-    "arrivalTime": "2025-12-07T01:00",
+    "departureTime": "2025-12-09T00:00",
+    "arrivalTime": "2025-12-09T01:00",
     "price": 11000,
     "seats": {
       "economy": 50,
@@ -36,10 +36,10 @@
     "TotalSeats": 63,
     "BookedSeats": {
       "economy": 0,
-      "business": 2,
+      "business": -17,
       "executive": 0
     },
-    "FlightStatus": "Active"
+    "FlightStatus": "Cancelled"
   },
   {
     "flightNumber": "W574",
@@ -56,6 +56,44 @@
     },
     "TotalSeats": 70,
     "BookedSeats": 0,
+    "FlightStatus": "Active"
+  },
+  {
+    "flightNumber": "E568",
+    "carrierName": "Air India",
+    "source": "BOM (Mumbai)",
+    "destination": "VNS (Varanasi)",
+    "departureTime": "2025-12-10T00:00",
+    "arrivalTime": "2025-12-11T00:00",
+    "price": 2500,
+    "seats": {
+      "economy": 50,
+      "business": 10,
+      "executive": 8
+    },
+    "TotalSeats": 68,
+    "BookedSeats": 0,
+    "FlightStatus": "Active"
+  },
+  {
+    "flightNumber": "C254",
+    "carrierName": "IndiGo",
+    "source": "DEL (Delhi)",
+    "destination": "BOM (Mumbai)",
+    "departureTime": "2025-12-20T17:08",
+    "arrivalTime": "2025-12-20T19:08",
+    "price": 10000,
+    "seats": {
+      "economy": 55,
+      "business": 11,
+      "executive": 5
+    },
+    "TotalSeats": 71,
+    "BookedSeats": {
+      "economy": 0,
+      "business": -8,
+      "executive": 0
+    },
     "FlightStatus": "Active"
   }
 ]

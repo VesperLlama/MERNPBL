@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import AdminNavBar from "../adminNavBar/adminNavBar.jsx";
 import "./updateFlight.css";
+import Popup from "../pop-up/pop-up.jsx";
 
+const carrierOptions = [];
   const places = [
     "DEL (Delhi)",
     "BOM (Mumbai)",
@@ -31,6 +33,34 @@ export default function UpdateFlight() {
   const [submitted, setSubmitted] = useState(false);
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
+  const dataFetched = useRef(false);
+  const [loaded, setLoaded] = useState(false);
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastType, setToastType] = useState("");
+
+  useEffect(() => {
+      async function getCarrierNames() {
+        const carriers = await fetch("http://localhost:4000/api/carriers/list", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+  
+        const data = await carriers.json();
+        if (carriers.ok) {
+          data.data.forEach((c) => {
+            carrierOptions.push(c.CarrierName);
+          });
+          setLoaded(true);
+        }
+      }
+  
+      if (!dataFetched.current) {
+        getCarrierNames();
+        dataFetched.current = true;
+      }
+    }, []);
 
   function handleBlur(k) {
     setTouched((s) => ({ ...s, [k]: true }));
@@ -58,6 +88,8 @@ export default function UpdateFlight() {
     setStatus("");
     if (!flightId) {
       setStatus("Please enter Flight ID to load.");
+      setToastType("error");
+      setToastOpen(true);
       return;
     }
     setLoading(true);
@@ -77,17 +109,25 @@ export default function UpdateFlight() {
           seatCapacityExecutiveClass: f.seats.executive,
         });
         setStatus("Loaded flight details. Edit fields and click Update.");
+        setToastType("success");
+        setToastOpen(true);
         setTouched({});
         setSubmitted(false);
         setOrigin(f.source);
       } else if (res.status === 404) {
         setStatus("Flight not found.");
+        setToastType("error");
+        setToastOpen(true);
       } else {
         const text = await res.text();
         setStatus(`Load failed: ${res.status} ${text}`);
+        setToastType("error");
+        setToastOpen(true);
       }
     } catch (err) {
       setStatus("Failed to load flight.");
+      setToastType("error");
+      setToastOpen(true);
     } finally {
       setLoading(false);
     }
@@ -98,6 +138,8 @@ export default function UpdateFlight() {
     setStatus("");
     if (!flightId) {
       setStatus("Please enter Flight ID to update.");
+      setToastType("error");
+      setToastOpen(true);
       return;
     }
     setSubmitted(true);
@@ -136,12 +178,18 @@ export default function UpdateFlight() {
         const data = await res.json();
         const msg = data && (data.message || data.status || JSON.stringify(data));
         setStatus(`Update successful: ${msg}`);
+        setToastType("success");
+        setToastOpen(true);
       } else {
         const text = await res.text();
         setStatus(`Update failed: ${res.status} ${text}`);
+        setToastType("error");
+      setToastOpen(true);
       }
     } catch (err) {
       setStatus(`Failed to send update request. ${err.message}`);
+      setToastType("error");
+      setToastOpen(true);
     } finally {
       setLoading(false);
     }
@@ -163,6 +211,7 @@ export default function UpdateFlight() {
   return (
     <div className="uf-root">
       <AdminNavBar />
+      <Popup open={toastOpen} message={status} type={toastType} onClose={() => { setToastOpen(false); setStatus(''); }} />
       <div className="uf-card">
         <h2>Update Flight</h2>
         <form className="uf-form" onSubmit={handleUpdate}>
@@ -193,15 +242,28 @@ export default function UpdateFlight() {
               onChange={(e) => onChange("carrierName", e.target.value)}
               onBlur={() => handleBlur("carrierName")}
             >
-              <option value="">-- Select Carrier --</option>
+              {/* <option value="">-- Select Carrier --</option>
               <option>IndiGo</option>
               <option>Air India</option>
               <option>SpiceJet</option>
               <option>Vistara</option>
               <option>Air India Express</option>
               <option>Akasa Air</option>
-              <option>Alliance Air</option>
+              <option>Alliance Air</option> */}
+              {!loaded ? (
+                  <option value="Loading">Loading...</option>
+                ) : (
+                  <>
+                    <option value="">Select carrier</option>
+                    {carrierOptions.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </>
+                )}
             </select>
+            
             <div className="uf-err">
               {(touched.carrierName || submitted) && errors.carrierName}
             </div>
@@ -401,8 +463,6 @@ export default function UpdateFlight() {
               Clear
             </button>
           </div>
-
-          {status && <div className="uf-status">{status}</div>}
         </form>
       </div>
     </div>

@@ -20,6 +20,9 @@ import Profile from "./components/profile/profile.jsx";
 import Bookings from "./components/bookings/bookings.jsx";  
 import Payment from "./components/payment/payment.jsx";
 import ViewBookings from "./components/viewBookings/viewBookings.jsx";
+import ForgotPassword from "./components/ForgotPassword.jsx";
+import ResetPassword from "./components/ResetPassword.jsx"
+
 function App() {
   return (
     <BrowserRouter>
@@ -45,6 +48,8 @@ function App() {
         <Route path="/viewflights" element={<ViewFlights />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/admin/viewbookings" element={<ViewBookings />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </BrowserRouter>
   );

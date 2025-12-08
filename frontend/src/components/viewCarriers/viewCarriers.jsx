@@ -67,7 +67,7 @@ export default function ViewCarriers() {
       <div
         style={{
           width: "100%",
-          maxWidth: 1100,
+          maxWidth: 1300,
           margin: "24px auto",
           background: "#fff",
           padding: 18,
@@ -110,12 +110,13 @@ export default function ViewCarriers() {
                   <th>Discount 60 Days (%)</th>
                   <th>Discount 90 Days (%)</th>
                   <th>Bulk Booking (%)</th>
-                  <th>Silver (%)</th>
-                  <th>Gold (%)</th>
-                  <th>Platinum (%)</th>
+                  <th>Silver Member Discount (%)</th>
+                  <th>Gold Member Discount (%)</th>
+                  <th>Platinum Member Discount (%)</th>
                   <th>Refund 2 Days (%)</th>
                   <th>Refund 10 Days (%)</th>
                   <th>Refund 20+ Days (%)</th>
+                  <th>Number of Flights</th>
                   {/* <th>Actions</th> */}
                 </tr>
               </thead>
@@ -170,6 +171,9 @@ export default function ViewCarriers() {
                         {refunds["20DaysOrMoreBeforeTravelDate"] ??
                           refunds["20Plus"] ??
                           "-"}
+                      </td>
+                      <td>
+                        {c.numberOfFlights}
                       </td>
                       {/* <td>
                         <button
