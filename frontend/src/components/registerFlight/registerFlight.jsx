@@ -445,6 +445,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminNavBar from "../adminNavBar/adminNavBar.jsx";
+import Popup from "../pop-up/pop-up.jsx";
 import "./registerFlight.css";
 import { useEffect, useRef ,useMemo} from "react";
 
@@ -476,6 +477,9 @@ export default function RegisterFlight() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const navigate = useNavigate();
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [popupMsg, setPopupMsg] = useState("");
+  const [popupType, setPopupType] = useState("success");
   const dataFetched = useRef(false);
   const [loaded, setLoaded] = useState(false);
 
@@ -676,7 +680,9 @@ export default function RegisterFlight() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
 
-      alert(`Flight registered successfully. Flight ID: ${data.data.flightNumber}`);
+      setPopupMsg(`Flight registered successfully. Flight ID: ${data.data.flightNumber}`);
+      setPopupType("success");
+      setPopupOpen(true);
 
       setForm({
         carrierName: "",
@@ -693,7 +699,9 @@ export default function RegisterFlight() {
       setTouched({});
       setSubmitted(false);
     } catch (err) {
-      alert("Failed to register flight: " + err.message);
+      setPopupMsg("Failed to register flight: " + err.message);
+      setPopupType("error");
+      setPopupOpen(true);
     } finally {
       setSubmitting(false);
     }
@@ -709,6 +717,7 @@ export default function RegisterFlight() {
       }}
     >
       <AdminNavBar />
+      <Popup open={popupOpen} message={popupMsg} type={popupType} onClose={() => setPopupOpen(false)} />
 
       <div
         style={{
