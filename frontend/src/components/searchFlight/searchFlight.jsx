@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import CustomerNavbar from "../customerNavbar/customerNavbar";
 import "./searchFlight.css";
+import Popup from "../pop-up/pop-up.jsx";
 
 export default function SearchingPage() {
   const navigate = useNavigate();
@@ -42,7 +43,18 @@ export default function SearchingPage() {
   // Seat type: ensure it's always a string
   const [seatType, setSeatType] = useState(String(localStorage.getItem("search_seatType") || ""));
 
-  const [error, setError] = useState("");
+  // replaced inline error with popup
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [popupMsg, setPopupMsg] = useState("");
+  const [popupType, setPopupType] = useState("error");
+  const [popupDuration, setPopupDuration] = useState(3500);
+
+  function showAlert(msg, type = "error", ms = 3500) {
+    setPopupMsg(msg);
+    setPopupType(type === "error" ? "error" : "success");
+    setPopupDuration(ms);
+    setPopupOpen(true);
+  }
 
   // ensure if saved date is in past, clear it
   useEffect(() => {
@@ -62,7 +74,7 @@ export default function SearchingPage() {
   const handleSubmit = (e) => {
     try {
       e && e.preventDefault();
-      setError("");
+      // setError("");
 
       // Trim inputs
       const o = origin.trim();
@@ -70,22 +82,22 @@ export default function SearchingPage() {
 
       // Validations (all required except children)
       if (!o) {
-        setError("Origin is required.");
+        showAlert("Please select a departure airport.", "error");
         originRef.current?.focus();
         return;
       }
       if (!d) {
-        setError("Destination is required.");
+        showAlert("Please select a destination airport.", "error");
         destRef.current?.focus();
         return;
       }
       if (o.toLowerCase() === d.toLowerCase()) {
-        setError("Origin and destination cannot be the same.");
+        showAlert("Origin and destination must be different. Choose another destination.", "error");
         destRef.current?.focus();
         return;
       }
       if (!date) {
-        setError("Please select a departure date.");
+        showAlert("Please choose a departure date.", "error");
         dateRef.current?.focus();
         return;
       }
@@ -96,24 +108,24 @@ export default function SearchingPage() {
       selected.setHours(0, 0, 0, 0);
       min.setHours(0, 0, 0, 0);
       if (selected < min) {
-        setError("Selected date is in the past. Choose a valid date.");
+        showAlert("Departure date can't be in the past. Please select a future date.", "error");
         dateRef.current?.focus();
         return;
       }
 
       if (!adults || Number(adults) < 1) {
-        setError("At least one adult is required.");
+        showAlert("Please include at least one adult passenger.", "error");
         adultsRef.current?.focus();
         return;
       }
 
       if (children < 0) {
-        setError("Children count cannot be negative.");
+        showAlert("Children count can't be negative.", "error");
         return;
       }
 
       if (!seatType) {
-        setError("Please select a seat type.");
+        showAlert("Please choose a seat class (Economy, Business, or Executive).", "error");
         seatRef.current?.focus();
         return;
       }
@@ -140,7 +152,7 @@ export default function SearchingPage() {
     } catch (err) {
       // don't let an exception crash the whole app — show and log it
       console.error("Search submit error:", err);
-      setError("An unexpected error occurred. Check console for details.");
+      showAlert("Something went wrong while searching. Please try again in a moment.", "error", 5000);
     }
   };
 
@@ -156,8 +168,8 @@ export default function SearchingPage() {
           <form className="bk-form" onSubmit={handleSubmit} noValidate>
             {/* ORIGIN + DESTINATION */}
             <div className="bk-row">
-              <label className="bk-label">
-                From
+              <label className="bk-label ">
+                <label className="required">From</label>
                 <select
                   ref={originRef}
                   required
@@ -187,7 +199,7 @@ export default function SearchingPage() {
               </label>
 
               <label className="bk-label">
-                To
+                <label className="required">To</label>
                 <select
                   ref={destRef}
                   required
@@ -218,7 +230,8 @@ export default function SearchingPage() {
             {/* DATE + PASSENGERS */}
             <div className="bk-row">
               <label className="bk-label">
-                Departure date
+                <label className="required">Departure date</label>
+                
                 <input
                   ref={dateRef}
                   required
@@ -232,7 +245,7 @@ export default function SearchingPage() {
 
               <div className="bk-row">
                 <label className="bk-label bk-inline">
-                  Passengers
+                <label className="required">Passengers</label>
                   <div className="bk-passenger">
                     <button
                       type="button"
@@ -299,7 +312,7 @@ export default function SearchingPage() {
 
             {/* SEAT TYPE */}
             <label className="bk-label" style={{ marginTop: 10 }}>
-              Seat Type
+                <label className="required">Seat Type</label>
               <select
                 ref={seatRef}
                 required
@@ -323,11 +336,7 @@ export default function SearchingPage() {
               </select>
             </label>
 
-            {error && (
-              <div className="bk-error" role="alert" aria-live="assertive">
-                {error}
-              </div>
-            )}
+            <Popup open={popupOpen} message={popupMsg} type={popupType} duration={popupDuration} onClose={() => setPopupOpen(false)} />
 
             <div style={{ marginTop: 14 }}>
               {/* button is type=submit only — no onClick handlers here */}

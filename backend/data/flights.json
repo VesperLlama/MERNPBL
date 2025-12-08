@@ -36,7 +36,7 @@
     "TotalSeats": 65,
     "BookedSeats": {
       "economy": 0,
-      "business": 0,
+      "business": -3,
       "executive": 0
     },
     "FlightStatus": "Active"
@@ -95,7 +95,7 @@
     "TotalSeats": 71,
     "BookedSeats": {
       "economy": 0,
-      "business": -8,
+      "business": -10,
       "executive": 0
     },
     "FlightStatus": "Active"

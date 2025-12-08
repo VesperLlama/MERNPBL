@@ -160,3 +160,35 @@ input[type="number"] {
   .bk-row > .bk-row { grid-template-columns: 1fr; }
   .bk-input-small { width: 100%; }
 }
+
+/* Required field styling */
+.required-note {
+  margin-top: 6px;
+  color: var(--muted);
+}
+.required-note .req {
+  color: #ef4444;
+  font-weight: bold;
+}
+
+/* Labels */
+label {
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+label.required::after {
+  content: " *";
+  color: #ef4444;
+}
+.tlabel {
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.tlabel.required::after {
+  content: " *";
+  color: #ef4444;
+}
