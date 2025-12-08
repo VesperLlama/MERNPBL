@@ -218,77 +218,67 @@ export default function RegisterCarrier() {
           <div className="grid">
             <div className="col">
               <label className="required">Carrier Name</label>
-              {/* <select name="carrierName" value={form.carrierName} onChange={handleChange} onBlur={handleBlur}>
-                <option value="">Select carrier</option>
-                <option>IndiGo</option>
-                <option>Air India</option>
-                <option>SpiceJet</option>
-                <option>Vistara</option>
-                <option>Air India Express</option>
-                <option>Akasa Air</option>
-                <option>Alliance Air</option>
-              </select> */}
-              <input name="carrierName" value={form.carrierName} onChange={handleChange} onBlur={handleBlur}></input>
+              <input required name="carrierName" value={form.carrierName} onChange={handleChange} onBlur={handleBlur}></input>
               {errors.carrierName && (touched.carrierName || submitted) && <div className="error">{errors.carrierName}</div>}
             </div>
 
             <div className="col">
               <label className="required">30 Days Advance Booking (%)</label>
-              <input name="advance30" value={form.advance30} onChange={handleChange} onBlur={handleBlur} placeholder="2.5 - 5.0" type="number" step="0.1" min="2.5" max="5.0" />
+              <input required name="advance30" value={form.advance30} onChange={handleChange} onBlur={handleBlur} placeholder="2.5 - 5.0" type="number" step="0.1" min="2.5" max="5.0" />
               {errors.advance30 && (touched.advance30 || submitted) && <div className="error">{errors.advance30}</div>}
             </div>
 
             <div className="col">
               <label className="required">60 Days Advance Booking (%)</label>
-              <input name="advance60" value={form.advance60} onChange={handleChange} onBlur={handleBlur} placeholder="5.1 - 7.5" type="number" step="0.1" min="5.1" max="7.5" />
+              <input required name="advance60" value={form.advance60} onChange={handleChange} onBlur={handleBlur} placeholder="5.1 - 7.5" type="number" step="0.1" min="5.1" max="7.5" />
               {errors.advance60 && (touched.advance60 || submitted) && <div className="error">{errors.advance60}</div>}
             </div>
 
             <div className="col">
               <label className="required">90 Days Advance Booking (%)</label>
-              <input name="advance90" value={form.advance90} onChange={handleChange} onBlur={handleBlur} placeholder="7.6 - 12.0" type="number" step="0.1" min="7.6" max="12.0" />
+              <input required name="advance90" value={form.advance90} onChange={handleChange} onBlur={handleBlur} placeholder="7.6 - 12.0" type="number" step="0.1" min="7.6" max="12.0" />
               {errors.advance90 && (touched.advance90 || submitted) && <div className="error">{errors.advance90}</div>}
             </div>
 
             <div className="col">
               <label className="required">Bulk Booking (%)</label>
-              <input name="bulkBooking" value={form.bulkBooking} onChange={handleChange} onBlur={handleBlur} placeholder="3.0 - 5.0" type="number" step="0.1" min="3.0" max="5.0" />
+              <input required name="bulkBooking" value={form.bulkBooking} onChange={handleChange} onBlur={handleBlur} placeholder="3.0 - 5.0" type="number" step="0.1" min="3.0" max="5.0" />
               {errors.bulkBooking && (touched.bulkBooking || submitted) && <div className="error">{errors.bulkBooking}</div>}
             </div>
 
             <div className="col">
               <label className="required">Silver User (%)</label>
-              <input name="silverUser" value={form.silverUser} onChange={handleChange} onBlur={handleBlur} placeholder="2.5 - 5.0" type="number" step="0.1" min="2.5" max="5.0" />
+              <input required name="silverUser" value={form.silverUser} onChange={handleChange} onBlur={handleBlur} placeholder="2.5 - 5.0" type="number" step="0.1" min="2.5" max="5.0" />
               {errors.silverUser && (touched.silverUser || submitted) && <div className="error">{errors.silverUser}</div>}
             </div>
 
             <div className="col">
               <label className="required">Gold User (%)</label>
-              <input name="goldUser" value={form.goldUser} onChange={handleChange} onBlur={handleBlur} placeholder="5.1 - 7.5" type="number" step="0.1" min="5.1" max="7.5" />
+              <input required name="goldUser" value={form.goldUser} onChange={handleChange} onBlur={handleBlur} placeholder="5.1 - 7.5" type="number" step="0.1" min="5.1" max="7.5" />
               {errors.goldUser && (touched.goldUser || submitted) && <div className="error">{errors.goldUser}</div>}
             </div>
 
             <div className="col">
               <label className="required">Platinum User (%)</label>
-              <input name="platinumUser" value={form.platinumUser} onChange={handleChange} onBlur={handleBlur} placeholder="7.6 - 12.0" type="number" step="0.1" min="7.6" max="12.0" />
+              <input required name="platinumUser" value={form.platinumUser} onChange={handleChange} onBlur={handleBlur} placeholder="7.6 - 12.0" type="number" step="0.1" min="7.6" max="12.0" />
               {errors.platinumUser && (touched.platinumUser || submitted) && <div className="error">{errors.platinumUser}</div>}
             </div>
 
             <div className="col">
               <label className="required">Cancel Refund, 2 Days Before Travel (%)</label>
-              <input name="refund2Days" value={form.refund2Days} onChange={handleChange} onBlur={handleBlur} placeholder="0 - 10" type="number" step="0.1" min="0" max="10" />
+              <input required name="refund2Days" value={form.refund2Days} onChange={handleChange} onBlur={handleBlur} placeholder="0 - 10" type="number" step="0.1" min="0" max="10" />
               {errors.refund2Days && (touched.refund2Days || submitted) && <div className="error">{errors.refund2Days}</div>}
             </div>
 
             <div className="col">
               <label className="required">Cancel Refund, 10 Days Before Travel (%)</label>
-              <input name="refund10Days" value={form.refund10Days} onChange={handleChange} onBlur={handleBlur} placeholder="20 - 35" type="number" step="0.1" min="20" max="35" />
+              <input required name="refund10Days" value={form.refund10Days} onChange={handleChange} onBlur={handleBlur} placeholder="20 - 35" type="number" step="0.1" min="20" max="35" />
               {errors.refund10Days && (touched.refund10Days || submitted) && <div className="error">{errors.refund10Days}</div>}
             </div>
 
             <div className="col">
               <label className="required">Cancel Refund, &gt; 20 Days Before Travel (%)</label>
-              <input name="refund20Plus" value={form.refund20Plus} onChange={handleChange} onBlur={handleBlur} placeholder="50 - 70" type="number" step="1" min="50" max="70" />
+              <input required name="refund20Plus" value={form.refund20Plus} onChange={handleChange} onBlur={handleBlur} placeholder="50 - 70" type="number" step="1" min="50" max="70" />
               {errors.refund20Plus && (touched.refund20Plus || submitted) && <div className="error">{errors.refund20Plus}</div>}
             </div>
           </div>
