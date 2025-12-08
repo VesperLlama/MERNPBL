@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import CustomerNavbar from "../customerNavbar/customerNavbar.jsx";
 import "./bookingHistory.css";
 import Popup from "../pop-up/pop-up.jsx";
-import Popup from "../pop-up/pop-up.jsx";
 
 export default function BookingHistory() {
   const [bookings, setBookings] = useState([]);
