@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminNavBar from "../adminNavBar/adminNavBar.jsx";
+import Popup from "../pop-up/pop-up.jsx";
 import "./viewFlights.css";
 
 export default function ViewFlights() {
@@ -10,11 +11,10 @@ export default function ViewFlights() {
   const [destFilter, setDestFilter] = useState("All");
   const [dateFilter, setDateFilter] = useState("");
   const [searchId, setSearchId] = useState("");
-  const [searchError, setSearchError] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [alert, setAlert] = useState("");
-  const [alertType, setAlertType] = useState("success");
+  const [toastType, setToastType] = useState("success");
+  const [toastOpen, setToastOpen] = useState(false);
 
   useEffect(() => {
     fetchFlights();
@@ -35,6 +35,8 @@ export default function ViewFlights() {
       setFlights(list);
     } catch (e) {
       setError("Failed to load flights");
+      setToastType("error");
+      setToastOpen(true);
     } finally {
       setLoading(false);
     }
@@ -83,10 +85,14 @@ export default function ViewFlights() {
     });
     const data = await res.json();
     if (!res.ok) {
-      showAlert(`Failed to cancel flight. ${res.message}`, error);
+      showError(`Failed to cancel flight. ${res.message}`, error);
+      setToastType("error");
+      setToastOpen(true);
       return;
     }
     showAlert("Flight Cancelled Successfully!");
+    setToastType("success");
+    setToastOpen(true);
     fetchFlights();
   }
 
@@ -96,18 +102,11 @@ export default function ViewFlights() {
     
 
   function handleTrOrButtonClick(event, id) {
-    console.log(id);
     if (event.target.matches('button[class="vb-cancel"]')) {
       handleCancel(id);
     } else {
       navigateToDetails(id);
     }
-  }
-
-  function showAlert(msg, type = "success", ms = 3500) {
-    setAlertType(type);
-    setAlert(msg);
-    setTimeout(() => setAlert(""), ms);
   }
 
   const displayed = flights.filter((f) => {
@@ -121,11 +120,15 @@ export default function ViewFlights() {
   return (
     <div className="vf-root">
       <AdminNavBar />
-      {alert && (
-        <div className={`vb-alert ${alertType === "error" ? "vb-alert-error" : "vb-alert-success"}`}>
-          {alert}
-        </div>
-      )}
+      <Popup
+        open={toastOpen}
+        message={error}
+        type={toastType}
+        onClose={() => {
+          setToastOpen(false);
+          setError("");
+        }}
+      />
       <div className="vf-container">
         <h2>Flights</h2>
 
@@ -144,57 +147,99 @@ export default function ViewFlights() {
 
           <label className="vf-filter">
             Origin:
-            <select value={originFilter} onChange={(e) => setOriginFilter(e.target.value)}>
+            <select
+              value={originFilter}
+              onChange={(e) => setOriginFilter(e.target.value)}
+            >
               <option value="All">All</option>
               {origins.map((o) => (
-                <option key={o} value={o}>{o}</option>
+                <option key={o} value={o}>
+                  {o}
+                </option>
               ))}
             </select>
           </label>
 
           <label className="vf-filter">
             Destination:
-            <select value={destFilter} onChange={(e) => setDestFilter(e.target.value)}>
+            <select
+              value={destFilter}
+              onChange={(e) => setDestFilter(e.target.value)}
+            >
               <option value="All">All</option>
               {destinations.map((d) => (
-                <option key={d} value={d}>{d}</option>
+                <option key={d} value={d}>
+                  {d}
+                </option>
               ))}
             </select>
           </label>
 
           <label className="vf-filter">
             Date:
-            <input type="date" value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} />
+            <input
+              type="date"
+              value={dateFilter}
+              onChange={(e) => setDateFilter(e.target.value)}
+            />
           </label>
 
-          <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
             Flight ID:
-            <input placeholder="search by id" value={searchId} onChange={(e) => { setSearchId(e.target.value); setSearchError(""); }} />
-            <button type="button" onClick={() => {
-              const q = (searchId || "").trim();
-              if (!q) return setSearchError('Enter flight ID to search');
-              const found = flights.find(x => {
-                const id = getField(x, ["_id", "flightNumber", "id", "flightId"]);
-                return String(id) === q;
-              });
-              if (found) {
-                const id = getField(found, ["_id", "flightNumber", "id", "flightId"]);
-                navigate(`/admin/flights/${id}`);
-              } else {
-                setSearchError(`Flight with ID "${q}" not found.`);
-              }
-            }}>
+            <input
+              placeholder="search by id"
+              value={searchId}
+              onChange={(e) => {
+                setSearchId(e.target.value);
+                setError("");
+                setToastOpen(false);
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => {
+                const q = (searchId || "").trim();
+                if (!q) {
+                  setError("Enter flight ID to search");
+                  setToastType("error");
+                  return setToastOpen(true);
+                }
+                const found = flights.find((x) => {
+                  const id = getField(x, [
+                    "_id",
+                    "flightNumber",
+                    "id",
+                    "flightId",
+                  ]);
+                  return String(id) === q;
+                });
+                if (found) {
+                  const id = getField(found, [
+                    "_id",
+                    "flightNumber",
+                    "id",
+                    "flightId",
+                  ]);
+                  navigate(`/admin/flights/${id}`);
+                } else {
+                  setError(`Flight with ID "${q}" not found.`);
+                  setToastType("error");
+                  setToastOpen(true);
+                }
+              }}
+            >
               Go
             </button>
           </label>
-          <button className="vf-refresh" onClick={resetFilter} disabled={loading}>
+          <button
+            className="vf-refresh"
+            onClick={resetFilter}
+            disabled={loading}
+          >
             {loading ? "Loading..." : "Reset"}
           </button>
         </div>
 
-        {error && <div className="vf-empty">{error}</div>}
-
-        {!error && (
           <div className="vf-table-wrap">
             <table className="vf-table">
               <thead>
@@ -215,15 +260,20 @@ export default function ViewFlights() {
                   <tr>
                     <td className="vf-empty" colSpan={8}>
                       {loading ? "Loading flights..." : "No flights found."}
-                      {searchError && (
-                        <div style={{ color: 'darkred', marginTop: 8 }}>{searchError}</div>
-                      )}
+                      {/* {searchError && (
+                        <div style={{ color: "darkred", marginTop: 8 }}>
+                          {searchError}
+                        </div>
+                      )} */}
                     </td>
                   </tr>
                 )}
                 {displayed.map((f, idx) => {
                   const id = getField(f, ["_id", "flightNumber", "id"]);
-                  const isCancelled = Boolean(f.cancelled || String(f.FlightStatus).toLowerCase() !== "active");
+                  const isCancelled = Boolean(
+                    f.cancelled ||
+                      String(f.FlightStatus).toLowerCase() !== "active"
+                  );
                   const isCancelling = Boolean(f.cancelling);
                   return (
                     <tr
@@ -231,13 +281,21 @@ export default function ViewFlights() {
                       className="vf-row"
                       tabIndex={0}
                       onClick={() => handleTrOrButtonClick(event, id)}
-                      onKeyDown={(e) => (e.key === "Enter" && id && navigate(`/admin/flights/${id}`))}
+                      onKeyDown={(e) =>
+                        e.key === "Enter" &&
+                        id &&
+                        navigate(`/admin/flights/${id}`)
+                      }
                     >
                       <td>{id}</td>
-                      <td>{getField(f, ["carrierName", "CarrierName", "carrier"])}</td>
+                      <td>
+                        {getField(f, ["carrierName", "CarrierName", "carrier"])}
+                      </td>
                       <td>{getField(f, ["source", "Origin"])}</td>
                       <td>{getField(f, ["destination", "Destination"])}</td>
-                      <td>{getField(f, ["airFare", "airfare", "fare", "price"])}</td>
+                      <td>
+                        {getField(f, ["airFare", "airfare", "fare", "price"])}
+                      </td>
                       <td>{getField(f.seats, ["economy"])}</td>
                       <td>{getField(f.seats, ["business"])}</td>
                       <td>{getField(f.seats, ["executive"])}</td>
@@ -245,9 +303,15 @@ export default function ViewFlights() {
                         <button
                           className="vb-cancel"
                           disabled={isCancelled || isCancelling}
-                          title={isCancelled ? "Already cancelled" : "Cancel booking"}
+                          title={
+                            isCancelled ? "Already cancelled" : "Cancel booking"
+                          }
                         >
-                          {isCancelling ? "Cancelling..." : isCancelled ? "Cancelled" : "Cancel"}
+                          {isCancelling
+                            ? "Cancelling..."
+                            : isCancelled
+                            ? "Cancelled"
+                            : "Cancel"}
                         </button>
                       </td>
                     </tr>
@@ -256,7 +320,6 @@ export default function ViewFlights() {
               </tbody>
             </table>
           </div>
-        )}
       </div>
     </div>
   );
