@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import CustomerNavbar from "../customerNavbar/customerNavbar.jsx";
 import "./bookingHistory.css";
 import Popup from "../pop-up/pop-up.jsx";
+import Popup from "../pop-up/pop-up.jsx";
 
 export default function BookingHistory() {
   const [bookings, setBookings] = useState([]);
@@ -9,12 +10,15 @@ export default function BookingHistory() {
   const [error, setError] = useState("");
 
   // NEW ALERT BOX STATE (kept for legacy usage but shown via Popup)
+  // NEW ALERT BOX STATE (kept for legacy usage but shown via Popup)
   const [alert, setAlert] = useState("");
   const [toastOpen, setToastOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState("");
   const [toastType, setToastType] = useState("success");
   // Confirmation dialog state
   const [confirm, setConfirm] = useState({ open: false, pnr: null, bookingId: null, refund: null });
+  const [downloading, setDownloading] = useState(null);
+  const [selectedBooking, setSelectedBooking] = useState(null);
   const [downloading, setDownloading] = useState(null);
   const [selectedBooking, setSelectedBooking] = useState(null);
 
@@ -26,6 +30,16 @@ export default function BookingHistory() {
   useEffect(() => {
     loadBookings();
   }, []);
+
+  // mirror legacy `alert` into toaster when set from other places
+  useEffect(() => {
+    if (!alert) return;
+    setToastMsg(alert);
+    const low = String(alert || "").toLowerCase();
+    const isError = low.includes('fail') || low.includes('failed') || low.includes('error') || low.includes('cancel failed');
+    setToastType(isError ? 'error' : 'success');
+    setToastOpen(true);
+  }, [alert]);
 
   // mirror legacy `alert` into toaster when set from other places
   useEffect(() => {
@@ -102,8 +116,19 @@ export default function BookingHistory() {
         setToastMsg(msg);
         setToastType('success');
         setToastOpen(true);
+        const refund = data.booking && (data.booking.RefundAmount ?? data.booking.refundAmount ?? data.booking.Refund);
+        const msg = `Booking cancelled successfully! ₹${refund || 0} will be refunded to you in a few business days.`;
+        setAlert(msg);
+        setToastMsg(msg);
+        setToastType('success');
+        setToastOpen(true);
         await loadBookings();
       } else {
+        const msg = data.message || `Cancel failed: ${res.status}`;
+        setAlert(msg);
+        setToastMsg(msg);
+        setToastType('error');
+        setToastOpen(true);
         const msg = data.message || `Cancel failed: ${res.status}`;
         setAlert(msg);
         setToastMsg(msg);
@@ -189,10 +214,78 @@ export default function BookingHistory() {
     }
   }
 
+  // Download boarding pass as PDF (saves file locally)
+  async function downloadBoardingPass(booking) {
+    const id = booking.BookingId || booking.id || booking.bookingId || booking.BookingId;
+    if (!id) {
+      const msg = 'Booking id missing for this record.';
+      setAlert(msg);
+      setToastMsg(msg);
+      setToastType('error');
+      setToastOpen(true);
+      setTimeout(() => setAlert(''), 3000);
+      return;
+    }
+
+    setDownloading(id);
+    try {
+      const res = await fetch(`http://localhost:4000/api/bookings/boardingpass/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      });
+
+      if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        const msg = `Failed to download boarding pass: ${res.status} ${text}`;
+        setAlert(msg);
+        setToastMsg(msg);
+        setToastType('error');
+        setToastOpen(true);
+        setTimeout(() => setAlert(''), 4000);
+        return;
+      }
+
+      const blob = await res.blob();
+      const disposition = res.headers.get('content-disposition') || '';
+      let filename = `boardingpass_${id}.pdf`;
+      const m = disposition.match(/filename\*?=([^;]+)/);
+      if (m) {
+        filename = m[1].replace(/(^\s*"|"\s*$)/g, '');
+      }
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+
+      const msg = 'Boarding pass downloaded.';
+      setAlert(msg);
+      setToastMsg(msg);
+      setToastType('success');
+      setToastOpen(true);
+      setTimeout(() => setAlert(''), 3000);
+    } catch (err) {
+      console.error('download boarding pass error', err);
+      const msg = 'Failed to download boarding pass.';
+      setAlert(msg);
+      setToastMsg(msg);
+      setToastType('error');
+      setToastOpen(true);
+      setTimeout(() => setAlert(''), 3000);
+    } finally {
+      setDownloading(null);
+    }
+  }
+
   return (
     <div className="bh-root">
       <CustomerNavbar />
 
+      {/* ⭐ TOP ALERT TOASTER */}
+      <Popup open={toastOpen} message={toastMsg || alert} type={toastType} onClose={() => { setToastOpen(false); setToastMsg(''); setAlert(''); }} />
       {/* ⭐ TOP ALERT TOASTER */}
       <Popup open={toastOpen} message={toastMsg || alert} type={toastType} onClose={() => { setToastOpen(false); setToastMsg(''); setAlert(''); }} />
 
@@ -220,6 +313,7 @@ export default function BookingHistory() {
                   <th>Amount</th>
                   <th>Status</th>
                   <th>Boarding Pass</th>
+                  <th>Boarding Pass</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -233,7 +327,14 @@ export default function BookingHistory() {
                         onClick={() => setSelectedBooking(b)}
                         style={{ background: 'none', border: 'none', color: '#1a73e8', cursor: 'pointer', textDecoration: 'underline', padding: 0 }}
                       >
+                        
+                      <button
+                        onClick={() => setSelectedBooking(b)}
+                        style={{ background: 'none', border: 'none', color: '#1a73e8', cursor: 'pointer', textDecoration: 'underline', padding: 0 }}
+                      >
                         {b.BookingId || b.id}
+                      </button>
+                    
                       </button>
                     </td>
                     <td>{b.flightNumber}</td>
@@ -309,6 +410,41 @@ export default function BookingHistory() {
                 ))}
               </tbody>
             </table>
+
+              {/* Booking details modal */}
+              {selectedBooking && (
+                <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10001 }}>
+                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)' }} onClick={() => setSelectedBooking(null)} />
+                  <div style={{ background: '#fff', padding: 20, borderRadius: 8, boxShadow: '0 12px 40px rgba(2,6,23,0.2)', width: '90%', maxWidth: 760, zIndex: 10002, maxHeight: '80%', overflowY: 'auto' }}>
+                    <h3 style={{ marginTop: 0 }}>Booking Details</h3>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                      <div><strong>Booking ID</strong><div>{selectedBooking.BookingId || selectedBooking.id || selectedBooking.bookingId}</div></div>
+                      <div><strong>PNR</strong><div>{selectedBooking.PNR || selectedBooking.pnr || '-'}</div></div>
+                      <div><strong>Flight</strong><div>{selectedBooking.flightNumber || selectedBooking.flight || '-'}</div></div>
+                      <div><strong>Passengers</strong><div>{Array.isArray(selectedBooking.passengers) ? selectedBooking.passengers.map(p => p.name || p.fullName || JSON.stringify(p)).join(', ') : (selectedBooking.passengers || selectedBooking.user?.name || '-')}</div></div>
+                      <div><strong>Seat Type</strong><div>{selectedBooking.type || selectedBooking.seatType || '-'}</div></div>
+                      <div><strong>Quantity</strong><div>{selectedBooking.quantity || selectedBooking.Quantity || '-'}</div></div>
+                      <div><strong>Price Paid</strong><div>₹{selectedBooking.PricePaid ?? selectedBooking.price ?? selectedBooking.pricePaid ?? '-'}</div></div>
+                      <div><strong>Refund</strong><div>₹{selectedBooking.RefundAmount ?? selectedBooking.refundAmount ?? selectedBooking.Refund ?? 0}</div></div>
+                      <div><strong>From</strong><div>{selectedBooking.origin || selectedBooking.from || '-'}</div></div>
+                      <div><strong>To</strong><div>{selectedBooking.destination || selectedBooking.to || '-'}</div></div>
+                      <div><strong>Departure</strong><div>{selectedBooking.departure || selectedBooking.travelDate || selectedBooking.date ? new Date(selectedBooking.departure || selectedBooking.travelDate || selectedBooking.date).toLocaleString('en-IN') : '-'}</div></div>
+                      <div><strong>Booked At</strong><div>{selectedBooking.BookedAt || selectedBooking.bookedAt || selectedBooking.createdAt ? new Date(selectedBooking.BookedAt || selectedBooking.bookedAt || selectedBooking.createdAt).toLocaleString('en-IN') : '-'}</div></div>
+                      <div style={{ gridColumn: '1 / -1' }}>
+                        <strong>Status</strong>
+                        <div style={{ marginTop: 6, fontWeight: 700, color: selectedBooking.BookingStatus !== 'Booked' ? 'red' : 'green' }}>{selectedBooking.BookingStatus}</div>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 16 }}>
+                      <button onClick={() => setSelectedBooking(null)} style={{ padding: '8px 12px', borderRadius: 6 }}>Close</button>
+                      {selectedBooking.BookingStatus === 'Booked' && (selectedBooking.BookingId || selectedBooking.id || selectedBooking.bookingId) && (
+                        <button onClick={() => downloadBoardingPass(selectedBooking)} style={{ padding: '8px 12px', borderRadius: 6, background: '#1a73e8', color: '#fff', border: 'none' }}>Download Boarding Pass</button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Booking details modal */}
               {selectedBooking && (
