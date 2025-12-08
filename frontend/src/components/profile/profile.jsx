@@ -464,11 +464,7 @@ export default function Profile({ userId: propUserId }) {
               </div>
             </div>
 
-            {serverMessage && (
-              <div className={`pr-msg`} style={{ color: serverMessage.type === "error" ? "crimson" : "green" }}>
-                {serverMessage.text}
-              </div>
-            )}
+            {/* Messages are shown via the shared Popup component above */}
 
             {loading ? (
               <div>Loading...</div>

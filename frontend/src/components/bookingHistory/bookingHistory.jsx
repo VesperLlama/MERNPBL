@@ -295,11 +295,11 @@ export default function BookingHistory() {
                   <th>Passenger(s)</th>
                   <th>From</th>
                   <th>To</th>
-                  <th>Date</th>
+                  <th>Boarding Date/Time</th>
                   <th>Amount</th>
                   <th>Status</th>
                   <th>Boarding Pass</th>
-                  <th>Boarding Pass</th>
+                  {/* <th>Boarding Pass</th> */}
                   <th>Action</th>
                 </tr>
               </thead>
@@ -379,17 +379,28 @@ export default function BookingHistory() {
                           {`Refund: ₹${b.RefundAmount ?? b.refundAmount ?? b.refund}`}
                         </div>
                       ) : (
-                        <button
-                          className="logout-btn"
-                          disabled={b.cancelled}
-                          onClick={() => handleCancel(b.PNR, b.BookingId, b.RefundAmount)}
-                          style={{
-                            opacity: b.cancelled ? 0.5 : 1,
-                            cursor: b.cancelled ? "not-allowed" : "pointer",
-                          }}
-                        >
-                          Cancel
-                        </button>
+                        (() => {
+                          const raw = b.departure || b.travelDate || b.date || b.Departure || b.TravelDate;
+                          const dep = raw ? new Date(String(raw).replace(' ', 'T')) : null;
+                          const departed = dep && !isNaN(dep.getTime()) && Date.now() > dep.getTime();
+                          if (departed) {
+                            return <div style={{ fontWeight: 600, color: '#6b7280' }}>Flight has already departed</div>;
+                          }
+
+                          return (
+                            <button
+                              className="logout-btn"
+                              disabled={b.cancelled}
+                              onClick={() => handleCancel(b.PNR, b.BookingId, b.RefundAmount)}
+                              style={{
+                                opacity: b.cancelled ? 0.5 : 1,
+                                cursor: b.cancelled ? "not-allowed" : "pointer",
+                              }}
+                            >
+                              Cancel
+                            </button>
+                          );
+                        })()
                       )}
                     </td>
                   </tr>
