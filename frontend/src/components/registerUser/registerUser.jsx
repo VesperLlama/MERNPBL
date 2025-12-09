@@ -42,6 +42,10 @@ export default function RegisterUser() {
   const [popupMsg, setPopupMsg] = useState("");
   const [popupType, setPopupType] = useState("success");
   const [popupDuration, setPopupDuration] = useState(4000);
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [popupMsg, setPopupMsg] = useState("");
+  const [popupType, setPopupType] = useState("success");
+  const [popupDuration, setPopupDuration] = useState(4000);
   const [submitting, setSubmitting] = useState(false);
   const [touched, setTouched] = useState({});
   const [submitted, setSubmitted] = useState(false);
@@ -97,11 +101,15 @@ export default function RegisterUser() {
 
     setErrors(e);
     return Object.keys(e).length === 0;
+
   }
 
   function validateField(name) {
     const local = { ...errors };
+    const local = { ...errors };
     const setErr = (key, msg) => {
+      if (msg) local[key] = msg;
+      else delete local[key];
       if (msg) local[key] = msg;
       else delete local[key];
     };
@@ -155,6 +163,7 @@ export default function RegisterUser() {
         break;
     }
 
+    setErrors(local);
     setErrors(local);
   }
 
@@ -245,6 +254,7 @@ export default function RegisterUser() {
       if (res.ok) {
         const id = resBody?.CustomerId || resBody?.customerId || resBody?.id || resBody?.CustomerID;
         // show popup with clear message to note the ID
+        // show popup with clear message to note the ID
         if (id) {
           // Note: setPopupMsg is a state setter; keep message/state updates below
           setPopupMsg(`Registration successful! Your Customer ID: ${id}. Please note this ID for future reference.`);
@@ -270,6 +280,8 @@ export default function RegisterUser() {
           dob: "",
           estimatedSpend: ""
         });
+        // navigate to login after brief delay so popup is visible
+        setTimeout(() => navigate("/login", { state: { fromAdmin: false } }), 1600);
         // navigate to login after brief delay so popup is visible
         setTimeout(() => navigate("/login", { state: { fromAdmin: false } }), 1600);
       } else {

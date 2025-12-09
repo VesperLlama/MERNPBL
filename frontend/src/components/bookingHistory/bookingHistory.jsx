@@ -399,6 +399,28 @@ export default function BookingHistory() {
                             </button>
                           );
                         })()
+                        (() => {
+                          const raw = b.departure || b.travelDate || b.date || b.Departure || b.TravelDate;
+                          const dep = raw ? new Date(String(raw).replace(' ', 'T')) : null;
+                          const departed = dep && !isNaN(dep.getTime()) && Date.now() > dep.getTime();
+                          if (departed) {
+                            return <div style={{ fontWeight: 600, color: '#6b7280' }}>Flight has already departed</div>;
+                          }
+
+                          return (
+                            <button
+                              className="logout-btn"
+                              disabled={b.cancelled}
+                              onClick={() => handleCancel(b.PNR, b.BookingId, b.RefundAmount)}
+                              style={{
+                                opacity: b.cancelled ? 0.5 : 1,
+                                cursor: b.cancelled ? "not-allowed" : "pointer",
+                              }}
+                            >
+                              Cancel
+                            </button>
+                          );
+                        })()
                       )}
                     </td>
                   </tr>

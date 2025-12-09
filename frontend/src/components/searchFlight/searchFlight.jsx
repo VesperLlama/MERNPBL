@@ -168,8 +168,6 @@ export default function SearchingPage() {
           <form className="bk-form" onSubmit={handleSubmit} noValidate>
             {/* ORIGIN + DESTINATION */}
             <div className="bk-row">
-              <div></div>
-              <div></div>
               <label className="bk-label ">
                 <label className="required">From</label>
                 <select
@@ -314,7 +312,7 @@ export default function SearchingPage() {
 
             {/* SEAT TYPE */}
             <label className="bk-label" style={{ marginTop: 10 }}>
-                <label className="required" >Seat Type</label>
+                <label className="required">Seat Type</label>
               <select
                 ref={seatRef}
                 required
