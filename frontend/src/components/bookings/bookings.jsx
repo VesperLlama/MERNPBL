@@ -611,6 +611,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import CustomerNavbar from "../customerNavbar/customerNavbar";
 import "./bookings.css";
 
+
 export default function Bookings() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -1053,10 +1054,10 @@ export default function Bookings() {
     // compute price and totals (unchanged)
     const basePrice = Number(
       selectedFlight.price ??
-        selectedFlight.fare ??
-        selectedFlight.airFare ??
-        selectedFlight.pricePerSeat ??
-        0
+      selectedFlight.fare ??
+      selectedFlight.airFare ??
+      selectedFlight.pricePerSeat ??
+      0
     );
     const mult = seatMultiplier(seatParam || "Economy");
     const pricePerSeat = Math.round(basePrice * mult);
@@ -1164,15 +1165,15 @@ export default function Bookings() {
           <h2>Available Flights</h2>
 
           <div className="bk-criteria">
-            <div>From: <strong>{originParam || "Any"}</strong></div>
-            <div>To: <strong>{destinationParam || "Any"}</strong></div>
-            <div>Date: <strong>{dateParam || "Any"}</strong></div>
-            <div>Passengers: <strong>{adultsParam + childrenParam} </strong></div>
-            <div>Seat Type: <strong>{seatParam || "Any"}</strong></div>
+            <div><i style={{ "color": "grey", "font-weight": "400" }}>From:</i> <strong style={{ "color": "black", "font-weight": "500" }}>{originParam || "Any"}</strong></div>
+            <div><i style={{ "color": "grey", "font-weight": "400" }}>To: </i><strong style={{ "color": "black", "font-weight": "500" }}>{destinationParam || "Any"}</strong></div>
+            <div><i style={{ "color": "grey", "font-weight": "400" }}>Date: </i><strong style={{ "color": "black", "font-weight": "500" }}>{dateParam || "Any"}</strong></div>
+            <div><i style={{ "color": "grey", "font-weight": "400" }}>Passengers: </i><strong style={{ "color": "black", "font-weight": "500" }}>{adultsParam + childrenParam} </strong></div>
+            <div><i style={{ "color": "grey", "font-weight": "400" }}>Seat Type: </i><strong style={{ "color": "black", "font-weight": "500" }}>{seatParam || "Any"}</strong></div>
           </div>
 
-          <div className="bk-controls">
-            <button className="bk-new-search" onClick={() => navigate("/customer/searchflight")}>New Search</button>
+          <div className="bk-controls" style={{ "marginTop": "2rem" }}>
+            <button className="bk-new-search" onClick={() => navigate("/customer/searchflight")} style={{ "background": "#4E61D3", "color": "whitesmoke" }}><b>New Search</b></button>
           </div>
 
           {error && <div className="bk-error">{error}</div>}
@@ -1200,8 +1201,8 @@ export default function Bookings() {
                   seatInfo.available != null
                     ? `${seatInfo.available} seats`
                     : f.seats && typeof f.seats === "object"
-                    ? "Seats info"
-                    : "Seats info";
+                      ? "Seats info"
+                      : "Seats info";
 
                 // if passenger form is active, hide other flights
                 if (showPassengerForm && selectedFlight && (selectedFlight._id || selectedFlight.flightId || selectedFlight.id || selectedFlight) !== (f._id || f.flightId || f.id || f)) {
@@ -1214,14 +1215,16 @@ export default function Bookings() {
                       <div className="bk-airline">{airline}</div>
                       <div className="bk-route">{origin} → {destination}</div>
                       <div className="bk-times">
-                        <span>Dep: {depart ? new Date(depart).toLocaleString() : "-"}</span>
-                        <span>Arr: {arrive ? new Date(arrive).toLocaleString() : "-"}</span>
+                        <div>Departure Time: <p style={{ "color": "black", "fontWeight": "400" }}> 
+                          {depart ? new Date(depart).toLocaleString("gn-GB", {day:"numeric", month:"long", year:"numeric", hour:"numeric", minute:"2-digit", hour12:true}).toLocaleUpperCase() : "-"}</p></div>
+                        <div>Arrival Time: <p style={{ "color": "black" }}>
+                          {arrive ? new Date(arrive).toLocaleString("gn-GB", {day:"numeric", month:"long", year:"numeric", hour:"numeric", minute:"2-digit", hour12:true}).toLocaleUpperCase() : "-"}</p></div>
                       </div>
                     </div>
 
                     <div className="bk-card-right">
-                      <div className="bk-price">₹{price}<span style={{"fontSize":"13px", "fontWeight":"normal"}}>/seat</span></div>
-                      <div className="bk-seats">{seatsLabel} available</div>
+                      <div className="bk-price">₹{price}<span style={{ "fontSize": "13px", "fontWeight": "bold" }}>/seat</span></div>
+                      <div style={{"color": "seatsLabel" >= "seatsLabel*0.90" ? "red" : "seatsLabel" >= "seatsLabel*0.90" ? "orange" : "blue"}} className="bk-seats">{seatsLabel} available</div>
                       <div className="bk-actions">
                         <button
                           className="bk-book"

@@ -107,9 +107,9 @@ export default function CustomerDashboard() {
                 {!loading && upcoming && (
                   <div className="up-content">
                     <div className="route">
-                      <div style={{"color":"green"}} className="iata">{upcoming.origin || upcoming.from || "-"}</div>
+                      <div style={{"color":"#4E61D3"}} className="iata">{upcoming.origin || upcoming.from || "-"}</div>
                       <div className="arrow">→</div>
-                      <div style={{"color":"green"}} className="iata to">{upcoming.destination || upcoming.to || "-"}</div>
+                      <div style={{"color":"#4E61D3"}} className="iata to">{upcoming.destination || upcoming.to || "-"}</div>
                     </div>
 
                     <div className="meta">
@@ -148,23 +148,23 @@ export default function CustomerDashboard() {
             <aside className="cust-right">
               <div className="small-grid">
                 <div className="action-card" onClick={() => open("/customer/searchFlight")}>
-                  <div className="action-title">✈️ Book</div>
-                  <div className="action-sub">Find and book flights</div>
+                  <div className="action-title">✈️ Flights</div>
+                  <div className="action-sub">Search and book flights</div>
                 </div>
 
-                {/* <div className="action-card" onClick={() => open("/customer/cancelBooking")}>
-                  <div className="action-title">❌ Cancel</div>
-                  <div className="action-sub">Cancel an existing booking</div>
-                </div> */}
-
                 <div className="action-card" onClick={() => open("/customer/allbookings")}>
-                  <div className="action-title">🧾 History</div>
+                  <div className="action-title">🕧 Bookings</div>
                   <div className="action-sub">Your bookings & tickets</div>
                 </div>
 
                 <div className="action-card" onClick={() => open("/customer/profile")}>
                   <div className="action-title">👤 Profile</div>
                   <div className="action-sub">Manage your account</div>
+                </div>
+
+                <div className="action-card" onClick={() => open("/customer/policies")}>
+                  <div className="action-title">📃 Policies</div>
+                  <div className="action-sub">Cancellation, Refunds and Discounts</div>
                 </div>
               </div>
             </aside>

@@ -15,10 +15,10 @@
     "TotalSeats": 63,
     "BookedSeats": {
       "economy": 0,
-      "business": 0,
+      "business": -1,
       "executive": 0
     },
-    "FlightStatus": "Cancelled"
+    "FlightStatus": "Active"
   },
   {
     "flightNumber": "L201",
@@ -26,20 +26,20 @@
     "source": "HYD (Hyderabad)",
     "destination": "LKO (Lucknow)",
     "departureTime": "2025-12-09T00:00",
-    "arrivalTime": "2025-12-09T01:00",
+    "arrivalTime": "2025-12-09T03:00",
     "price": 11000,
     "seats": {
-      "economy": 50,
+      "economy": 1,
       "business": 10,
-      "executive": 3
+      "executive": 5
     },
-    "TotalSeats": 63,
+    "TotalSeats": 65,
     "BookedSeats": {
       "economy": 0,
-      "business": 0,
+      "business": 3,
       "executive": 0
     },
-    "FlightStatus": "Cancelled"
+    "FlightStatus": "Active"
   },
   {
     "flightNumber": "W574",
@@ -60,7 +60,7 @@
       "business": 0,
       "executive": 0
     },
-    "FlightStatus": "Cancelled"
+    "FlightStatus": "Active"
   },
   {
     "flightNumber": "E568",
@@ -76,7 +76,11 @@
       "executive": 8
     },
     "TotalSeats": 68,
-    "BookedSeats": 0,
+    "BookedSeats": {
+      "economy": 5,
+      "business": 0,
+      "executive": 0
+    },
     "FlightStatus": "Active"
   },
   {
@@ -95,7 +99,7 @@
     "TotalSeats": 71,
     "BookedSeats": {
       "economy": 0,
-      "business": -8,
+      "business": -10,
       "executive": 0
     },
     "FlightStatus": "Active"
@@ -111,6 +115,23 @@
     "seats": {
       "economy": 70,
       "business": 10,
+      "executive": 8
+    },
+    "TotalSeats": 88,
+    "BookedSeats": 0,
+    "FlightStatus": "Active"
+  },
+  {
+    "flightNumber": "A822",
+    "carrierName": "IndiGo",
+    "source": "BOM (Mumbai)",
+    "destination": "LKO (Lucknow)",
+    "departureTime": "2025-11-04T15:07",
+    "arrivalTime": "2025-11-05T15:08",
+    "price": 13000,
+    "seats": {
+      "economy": 60,
+      "business": 20,
       "executive": 8
     },
     "TotalSeats": 88,

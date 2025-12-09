@@ -1,5 +1,5 @@
 
-
+@import url('https://fonts.googleapis.com/css2?family=Allura&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
 
 :root {
   --bh-bg: #f5f7fb;
@@ -11,7 +11,10 @@
 .bh-root {
   background: var(--bh-bg);
   min-height: 100vh;
-  font-family: system-ui, Arial, sans-serif;
+  font-family: "Lato", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  color: black;
 }
 
 .bh-alert {

@@ -187,6 +187,28 @@
       "10DaysBeforeTravelDate": 20,
       "20DaysOrMoreBeforeTravelDate": 50
     },
-    "CreatedAt": "2025-12-08T05:51:14.883Z"
+    "CreatedAt": "2025-12-08T05:51:14.883Z",
+    "UpdatedAt": "2025-12-08T16:44:56.434Z"
+  },
+  {
+    "CarrierId": 231,
+    "CarrierName": "Airways",
+    "Discounts": {
+      "30DaysAdvanceBooking": 2.6,
+      "60DaysAdvanceBooking": 5.2,
+      "90DaysAdvanceBooking": 7.6,
+      "BulkBooking": 3
+    },
+    "userDiscounts": {
+      "Silver": 2.5,
+      "Gold": 5.1,
+      "Platinum": 7.6
+    },
+    "Refunds": {
+      "2DaysBeforeTravelDate": 10,
+      "10DaysBeforeTravelDate": 20,
+      "20DaysOrMoreBeforeTravelDate": 50
+    },
+    "CreatedAt": "2025-12-09T09:57:25.863Z"
   }
 ]

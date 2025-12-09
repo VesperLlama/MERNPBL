@@ -6,7 +6,7 @@
   --bg: #b67070;
   --text: #0b1b26;
   --muted: #6b7280;
-  --accent: #0ea5a4;
+  --accent: #4E61D3;
   --border: #dbe1e8;
 }
 
@@ -37,6 +37,11 @@
   border: 1px solid rgba(255, 255, 255, 0.45);
 }
 
+.login-btn{
+  color:"white";
+  background-color: orange;
+  border: none;
+}
 
 /* Headings */
 .register-card h2 {
@@ -97,7 +102,7 @@ label.required::after {
 
 /* Button */
 .primary {
-  background: linear-gradient(90deg, var(--accent), #06c1da);
+  background: #4E61D3;
   border: none;
   padding: 12px 20px;
   font-size: 1.05rem;
@@ -114,7 +119,7 @@ label.required::after {
 
 /* Fetch button style: match primary but with a lighter blue gradient and smaller padding */
 .fetch-zip {
-  background: linear-gradient(90deg, #a8def8, #67c9f2);
+  background: #4E61D3;
   border: none;
   padding: 10px 14px;
   font-size: 0.95rem;

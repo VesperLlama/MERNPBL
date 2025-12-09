@@ -4,11 +4,11 @@
     "CustomerId": 1004,
     "flightNumber": "L281",
     "PNR": "SORJ0J",
-    "BookingStatus": "CancelledByAdmin",
+    "BookingStatus": "CancelledByCustomer",
     "BookedAt": "2025-12-05T15:58:16.767Z",
     "PricePaid": 16087.5,
-    "CancelledAt": "2025-12-05T17:34:33.365Z",
-    "RefundAmount": 16087.5,
+    "CancelledAt": "2025-12-09T09:44:33.966Z",
+    "RefundAmount": 0,
     "type": "business",
     "quantity": 1
   },
@@ -17,7 +17,7 @@
     "CustomerId": 1004,
     "flightNumber": "L201",
     "PNR": "ID5QB5",
-    "BookingStatus": "CancelledByCustomer",
+    "BookingStatus": "Booked",
     "BookedAt": "2025-12-07T17:51:09.545Z",
     "PricePaid": 32175,
     "CancelledAt": "2025-12-08T09:44:16.600Z",
@@ -42,7 +42,7 @@
     "CustomerId": 1004,
     "flightNumber": "L201",
     "PNR": "MQMMNQ",
-    "BookingStatus": "CancelledByCustomer",
+    "BookingStatus": "Booked",
     "BookedAt": "2025-12-07T18:27:31.721Z",
     "PricePaid": 32175,
     "CancelledAt": "2025-12-08T09:49:31.087Z",
@@ -67,7 +67,7 @@
     "CustomerId": 1004,
     "flightNumber": "L201",
     "PNR": "CMQSUA",
-    "BookingStatus": "CancelledByAdmin",
+    "BookingStatus": "Booked",
     "BookedAt": "2025-12-09T03:39:09.296Z",
     "PricePaid": {
       "basePrice": 66000,
@@ -107,7 +107,7 @@
       "bulkDiscount": 0,
       "finalPrice": 48262.5
     },
-    "CancelledAt": "2025-12-08T09:45:48.797Z",
+    "CancelledAt": "2025-12-08T18:23:27.379Z",
     "RefundAmount": 0,
     "type": "business",
     "quantity": 3,
@@ -143,7 +143,7 @@
       "bulkDiscount": 0,
       "finalPrice": 29250
     },
-    "CancelledAt": "2025-12-08T09:47:50.531Z",
+    "CancelledAt": "2025-12-08T18:23:38.424Z",
     "RefundAmount": 5850,
     "type": "business",
     "quantity": 2,
@@ -165,7 +165,7 @@
     "CustomerId": 1004,
     "flightNumber": "C254",
     "PNR": "XXNHDU",
-    "BookingStatus": "CancelledByCustomer",
+    "BookingStatus": "Booked",
     "BookedAt": "2025-12-08T09:52:38.040Z",
     "PricePaid": {
       "basePrice": 10000,
@@ -181,6 +181,136 @@
     "passengers": [
       {
         "name": "aaditya",
+        "age": "22",
+        "gender": "Adult"
+      }
+    ]
+  },
+  {
+    "BookingId": 5053,
+    "CustomerId": 1004,
+    "flightNumber": "E568",
+    "PNR": "Y66BG4",
+    "BookingStatus": "Booked",
+    "BookedAt": "2025-12-09T03:38:19.324Z",
+    "PricePaid": {
+      "basePrice": 2500,
+      "advanceDiscount": 0,
+      "categoryDiscount": 75,
+      "bulkDiscount": 0,
+      "finalPrice": 2425
+    },
+    "CancelledAt": null,
+    "RefundAmount": null,
+    "type": "economy",
+    "quantity": 1,
+    "passengers": [
+      {
+        "name": "sdadada",
+        "age": "11",
+        "gender": "Adult"
+      }
+    ]
+  },
+  {
+    "BookingId": 5054,
+    "CustomerId": 1004,
+    "flightNumber": "E568",
+    "PNR": "S6JRO5",
+    "BookingStatus": "Booked",
+    "BookedAt": "2025-12-09T03:38:34.943Z",
+    "PricePaid": {
+      "basePrice": 2500,
+      "advanceDiscount": 0,
+      "categoryDiscount": 75,
+      "bulkDiscount": 0,
+      "finalPrice": 2425
+    },
+    "CancelledAt": null,
+    "RefundAmount": null,
+    "type": "economy",
+    "quantity": 1,
+    "passengers": [
+      {
+        "name": "sdadada",
+        "age": "11",
+        "gender": "Adult"
+      }
+    ]
+  },
+  {
+    "BookingId": 5055,
+    "CustomerId": 1004,
+    "flightNumber": "E568",
+    "PNR": "VU73QY",
+    "BookingStatus": "Booked",
+    "BookedAt": "2025-12-09T03:41:57.194Z",
+    "PricePaid": {
+      "basePrice": 2500,
+      "advanceDiscount": 0,
+      "categoryDiscount": 75,
+      "bulkDiscount": 0,
+      "finalPrice": 2425
+    },
+    "CancelledAt": null,
+    "RefundAmount": null,
+    "type": "economy",
+    "quantity": 1,
+    "passengers": [
+      {
+        "name": "sdadada",
+        "age": "11",
+        "gender": "Adult"
+      }
+    ]
+  },
+  {
+    "BookingId": 5056,
+    "CustomerId": 1004,
+    "flightNumber": "E568",
+    "PNR": "PEAD9P",
+    "BookingStatus": "Booked",
+    "BookedAt": "2025-12-09T04:04:42.268Z",
+    "PricePaid": {
+      "basePrice": 2500,
+      "advanceDiscount": 0,
+      "categoryDiscount": 75,
+      "bulkDiscount": 0,
+      "finalPrice": 2425
+    },
+    "CancelledAt": null,
+    "RefundAmount": null,
+    "type": "economy",
+    "quantity": 1,
+    "passengers": [
+      {
+        "name": "dcsdf",
+        "age": "22",
+        "gender": "Adult"
+      }
+    ]
+  },
+  {
+    "BookingId": 5057,
+    "CustomerId": 1004,
+    "flightNumber": "E568",
+    "PNR": "3OIGRZ",
+    "BookingStatus": "Booked",
+    "BookedAt": "2025-12-09T04:05:36.619Z",
+    "PricePaid": {
+      "basePrice": 2500,
+      "advanceDiscount": 0,
+      "categoryDiscount": 75,
+      "bulkDiscount": 0,
+      "finalPrice": 2425
+    },
+    "CancelledAt": null,
+    "RefundAmount": null,
+    "type": "economy",
+    "quantity": 1,
+    "passengers": [
+      {
+        "name": "sada",
         "age": "22",
         "gender": "Adult"
       }

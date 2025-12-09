@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import CustomerNavbar from "../customerNavbar/customerNavbar.jsx";
+import Popup from "../pop-up/pop-up.jsx";
 import "./payment.css";
 
 const EMPTY = { type: "", message: "" };
@@ -29,8 +30,6 @@ export default function Payment() {
 
   const [method, setMethod] = useState("card"); // card | upi | netbank
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(null);
-  const [globalError, setGlobalError] = useState("");
   const [priceData, setPriceData] = useState({
     advanceDiscount: 0,
     basePrice: 0,
@@ -39,6 +38,9 @@ export default function Payment() {
     finalPrice: 0
   });
   const [priceLoading, setPriceLoading] = useState(false);
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastType, setToastType] = useState("success");
+  const [toastMsg, setToastMsg] = useState("");
 
   // Card fields
   const [cardNumber, setCardNumber] = useState("");
@@ -169,8 +171,8 @@ export default function Payment() {
     }
 
   function clearErrors() {
-    setErrors({});
-    setGlobalError("");
+    setToastMsg("");
+    setToastOpen(false);
   }
 
   // live validators - called on change
@@ -277,8 +279,8 @@ export default function Payment() {
   async function handlePay(e) {
     e && e.preventDefault();
     clearErrors();
-    setSuccess(null);
-    setGlobalError("");
+    setToastOpen(false);
+    setToastMsg("");
 
     const nextErrors = {};
 
@@ -303,7 +305,9 @@ export default function Payment() {
 
     setErrors((prev) => ({ ...prev, ...nextErrors }));
     if (Object.keys(nextErrors).length > 0) {
-      setGlobalError("Fix the highlighted errors before continuing.");
+      setToastMsg("Fix the highlighted errors before continuing.");
+      setToastType("error");
+      setToastOpen(true);
       return;
     }
 
@@ -324,13 +328,17 @@ export default function Payment() {
 
       if (!res.ok) {
         console.error('booking failed', data);
-        setGlobalError(data && (data.message || data.error) ? (data.message || data.error) : 'Booking failed.');
+        setToastMsg(data && (data.message || data.error) ? (data.message || data.error) : 'Booking failed.');
+        setToastType("error");
+        setToastOpen(true);
         return;
       }
 
       if (!data || !data.booking) {
         console.error('unexpected booking response', data);
-        setGlobalError('Booking failed: invalid server response.');
+        setToastMsg('Booking failed: invalid server response.');
+        setToastType("error");
+        setToastOpen(true);
         return;
       }
 
@@ -340,14 +348,18 @@ export default function Payment() {
         console.warn('booking created but id missing on response', data.booking);
       }
 
-      setSuccess({ bookingId });
+      setToastMsg(`Payment Successful! Booking ID: ${bookingId}`);
+      setToastType("success");
+      setToastOpen(true);
 
       setTimeout(() => {
-        navigate("/customer/allBookings")
+        navigate("/customer/allBookings", { replace: true })
       }, 1000);
     } catch (err) {
       console.error("payment error", err);
-      setGlobalError("Payment failed. Try again.");
+      setToastMsg("Payment failed. Try again.");
+      setToastType("error");
+      setToastOpen(true);
     } finally {
       setLoading(false);
     }
@@ -364,12 +376,14 @@ export default function Payment() {
     setNbUser("");
     setNbPass("");
     clearErrors();
-    setSuccess(null);
+    setToastMsg("");
   }
 
   return (
     <>
       <CustomerNavbar />
+      <Popup open={toastOpen} message={toastMsg} type={toastType} onClose={() => { setToastOpen(false); setToastMsg(''); setAlert(''); }} />
+      
       <div className="pay-root">
         <div className="pay-container">
           <h2>Complete Payment</h2>
@@ -501,8 +515,6 @@ export default function Payment() {
                 </div>
               )}
 
-              {globalError && <div className="pay-global-error">{globalError}</div>}
-
               <div style={{ marginTop: 12, display: "flex", gap: 10 }}>
                 <button className="pay-submit" type="submit" disabled={loading}>
                   {loading ? "Processing..." : "Pay Now"}
@@ -562,16 +574,6 @@ export default function Payment() {
                   <div>TOTAL COST</div>
                   <div>₹{priceData.finalPrice}</div>
                 </div>
-
-                <hr />
-
-                {success && (
-                  <div className="success-box">
-                    <div className="success-title">Payment successful</div>
-                    <div>Booking ID: <strong>{success.bookingId}</strong></div>
-                    {/* <div className="small-note">Saved payment: {JSON.stringify(success.payload)}</div> */}
-                  </div>
-                )}
               </div>
             </aside> )}
           </div>

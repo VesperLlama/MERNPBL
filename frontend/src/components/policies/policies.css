@@ -1,0 +1,364 @@
+
+:root{
+  --bg: #ffffff;
+  --surface: #fbfdff;
+  --muted: #6b7280;
+  --text: #0f1724;
+  --subtext: #55606a;
+  --accent: #4E61D3;
+  --accent-600: #4151ac;
+  --border: #e6eef7;
+  --panel-shadow: 0 6px 18px rgba(20,30,50,0.06);
+  --radius: 10px;
+  --max-width: 1100px;
+  --gap: 14px;
+  --ui-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* Container */
+.policies-container {
+  max-width: var(--max-width);
+  margin: 20px auto;
+  padding: 18px;
+  background: var(--bg);
+  border-radius: 12px;
+  box-shadow: var(--panel-shadow);
+  font-family: var(--ui-font);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Header / Title */
+.policies-title {
+  margin: 0 0 14px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.2px;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+/* Controls placeholder (if used later) */
+.policies-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+/* Inputs/selects (if added) */
+.policies-input,
+.policies-select {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  min-width: 140px;
+  background: #fff;
+  color: var(--text);
+}
+
+/* Airlines list layout */
+.airlines-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gap);
+}
+
+/* Card */
+.airline-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--surface) 0%, #ffffff 100%);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.airline-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(12, 34, 80, 0.06);
+}
+
+/* Header (clickable area in JSX) */
+.airline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  gap: 12px;
+  cursor: default;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+}
+.airline-header:hover {
+  background: linear-gradient(180deg, #fbfdff 0%, #f6fbff 100%);
+}
+
+.airline-header > div:first-child {
+  min-width: 0;
+}
+
+/* Name & meta */
+.airline-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.airline-contact {
+  font-size: 13px;
+  color: var(--subtext);
+  margin-top: 4px;
+}
+
+/* Optional short summary line when present */
+.airline-short {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--subtext);
+}
+
+/* Action area (buttons) */
+.airline-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Generic button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: #4E61D3;
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background .12s ease, transform .08s ease, box-shadow .12s ease;
+  box-shadow: 0 6px 14px rgba(11,109,240,0.12);
+  text-decoration: none;
+}
+.btn:hover,
+.btn:focus {
+  background: var(--accent-600);
+  transform: translateY(-1px);
+  outline: none;
+}
+.btn:active { transform: translateY(0); }
+.btn[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Compact variant used in JSX */
+.btn-compact {
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+/* Legacy toggle button */
+.toggle-btn {
+  padding: 8px 12px;
+  background: var(--accent);
+  color: white;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+/* Small muted text utility classes */
+.muted {
+  color: var(--muted);
+}
+.small {
+  font-size: 13px;
+  color: var(--subtext);
+}
+
+/* Price sample (right side area) */
+.airline-price-sample {
+  font-size: 13px;
+  color: var(--accent);
+  min-width: 180px;
+  text-align: right;
+  font-weight: 600;
+}
+
+/* Body (expanded content) */
+.airline-body {
+  padding: 16px;
+  background: #ffffff;
+  border-top: 1px solid var(--border);
+}
+
+/* Policy sections */
+.policy-section {
+  margin-bottom: 14px;
+}
+.policy-section h4 {
+  margin: 0 0 8px 0;
+  font-size: 15px;
+  color: var(--text);
+  font-weight: 600;
+}
+.policy-section ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--text);
+  font-size: 14px;
+}
+
+/* Fare examples block */
+.fare-examples {
+  background: #f8fbff;
+  border: 1px solid #e8f4ff;
+  padding: 12px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.fare-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+}
+.fare-row.small {
+  font-size: 13px;
+  color: var(--subtext);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.note {
+  font-size: 12px;
+  color: var(--subtext);
+}
+
+/* Discounts & refunds tables */
+.policy-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin-top: 8px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+.policy-table th,
+.policy-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f1f6fb;
+  text-align: left;
+}
+.policy-table thead th {
+  background: linear-gradient(180deg,#fbfdff,#f6fbff);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+.policy-table tbody tr:last-child td {
+  border-bottom: none;
+}
+.policy-table tbody tr:hover td {
+  background: #fcfdff;
+}
+
+/* Discount grid fallback */
+.discounts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+/* Discount example card */
+.discount-example {
+  margin-top: 8px;
+  background: #f8fbff;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e8f4ff;
+  font-size: 13px;
+}
+
+/* Refunds small note */
+.refunds .muted.small {
+  margin-top: 8px;
+  display: block;
+}
+
+/* Raw pre block */
+pre {
+  white-space: pre-wrap;
+  font-size: 12px;
+  background: #f7fafc;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #eef6fb;
+  color: var(--subtext);
+  overflow: auto;
+  max-height: 320px;
+}
+
+/* Utility helpers */
+.text-right { text-align: right; }
+.kv { display: flex; gap: 8px; align-items: center; }
+.center { text-align: center; }
+
+/* Footer note area */
+.policies-footer {
+  margin-top: 14px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* Responsive adjustments */
+@media (min-width: 780px) {
+  .airlines-list { grid-template-columns: 1fr; }
+  .airline-header { padding: 16px 18px; }
+  .airline-body { padding: 18px; }
+}
+
+@media (min-width: 980px) {
+  .airlines-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mobile tweaks */
+@media (max-width: 520px) {
+  .policies-container { padding: 14px; margin: 12px; }
+  .airline-header { flex-direction: column; align-items: flex-start; gap: 10px; padding: 12px; }
+  .airline-actions { width: 100%; justify-content: flex-end; }
+  .fare-row.small { grid-template-columns: 1fr; }
+  .policy-table th, .policy-table td { padding: 8px; font-size: 13px; }
+  pre { font-size: 11px; padding: 10px; max-height: 220px; }
+}
+
+/* Accessibility focus visuals */
+.btn:focus, .toggle-btn:focus, .policies-input:focus, .policies-select:focus {
+  box-shadow: 0 0 0 4px rgba(11,109,240,0.12);
+  outline: none;
+}
+
+/* small adjustments to match JSX class usage */
+.airline-actions .btn { white-space: nowrap; }

@@ -34,7 +34,7 @@
   {
     "CustomerId": 1004,
     "FullName": "Aaditya Singh",
-    "PasswordHash": "$2b$10$uZ/NF9eb.6mrnP.jzkv9/.DthzmxQn8mGBVhffyM5kPqT0a3tK4fm",
+    "PasswordHash": "$2b$10$XylPPKujTHH0e3CuopUe9O0p37VJ4T3cfi/yshrO0p07Z3P4p.kKm",
     "Role": "customer",
     "CustomerCategory": "Silver",
     "Phone": "9876543210",
@@ -46,7 +46,7 @@
     "ZipCode": "226004",
     "DOB": "1998-06-15",
     "CreatedAt": "2025-12-03T05:31:04.580Z",
-    "UpdatedAt": "2025-12-08T09:54:32.983Z"
+    "UpdatedAt": "2025-12-09T11:34:38.138Z"
   },
   {
     "CustomerId": 1005,
@@ -160,5 +160,21 @@
     "ZipCode": "226004",
     "DOB": "2003-09-10",
     "CreatedAt": "2025-12-05T15:15:36.934Z"
+  },
+  {
+    "CustomerId": 1012,
+    "FullName": "Siddhant Singh",
+    "PasswordHash": "$2b$10$ZDhWqEs34mSWVZmeze8RiufP4CU60n65vhqvypseBgVmI9AVQFt/S",
+    "Role": "customer",
+    "CustomerCategory": "Silver",
+    "Phone": "8795431548",
+    "EmailId": "sid123@gmail.com",
+    "AddressLine1": "Lucknow",
+    "AddressLine2": "",
+    "City": "Mumbai",
+    "State": "Maharashtra",
+    "ZipCode": "226004",
+    "DOB": "2003-09-10",
+    "CreatedAt": "2025-12-09T03:54:21.917Z"
   }
 ]

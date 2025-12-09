@@ -216,8 +216,10 @@ export default function UpdateFlight() {
         <h2>Update Flight</h2>
         <form className="uf-form" onSubmit={handleUpdate}>
           <label className="uf-row">
-            <span>Flight ID</span>
+            <span>Flight ID <span className="uf-required">*</span>
+            </span>
             <input
+            required
               value={flightId}
               onChange={(e) => setFlightId(e.target.value)}
               placeholder="Enter flight id"

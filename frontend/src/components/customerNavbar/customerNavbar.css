@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Allura&display=swap');
+
 .customer-navbar {
   display: flex;
   align-items: center;
@@ -10,27 +12,43 @@
 .nav-left {
   display: flex;
   align-items: center;
+  margin-bottom: 0;
   gap: 12px;
   cursor: pointer;
+  font-family: "Allura", cursive;
+  font-weight: 600;
+  font-style: normal;
 }
 
-.brand {
-  font-weight: 800;
-  font-size: 1.3rem;
-  color: #0b1b26;
+.nav-right {
+  
+  display: flex;
+  align-items: center;
+  margin-bottom: 0;
+  gap: 12px;
+  cursor: pointer;
+  font-family: "Lato", sans-serif;
+  font-weight: 600;
+  font-style: normal;
 }
+
 
 .welcome-msg {
-  font-weight: 600;
-  color: #0b1b26;
+  font-weight: 400;
 }
+@import url('https://fonts.googleapis.com/css2?family=Allura&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
 
 .nav-center {
   display: flex;
   gap: 12px;
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin-top: 12px;
+  margin-bottom: 0;
+  font-size: 1.1rem;
+  font-family: "Lato", sans-serif;
+  font-weight: 500;
+  font-style: italic;
 }
 
 
@@ -40,13 +58,13 @@
   border: none;
   padding: 8px 10px;
   border-radius: 8px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   color: #0b1b26;
 }
 
 .nav-link:hover {
-  background: rgba(6, 182, 212, 0.08);
+  background: rgb(255, 248, 235);
 }
 
 .logout-btn {

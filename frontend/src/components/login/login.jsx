@@ -159,8 +159,8 @@ export default function CustomerLogin() {
               <button
                 type="submit"
                 style={{
-                  background: "#0ea5a4",
-                  color: "#fff",
+                  background: "#4E61D3",
+                  color: "white",
                   padding: "10px 20px",
                   borderRadius: 8,
                   border: "none",
@@ -183,12 +183,12 @@ export default function CustomerLogin() {
                   }}
                   style={{
                     marginTop: 8,
-                    color: "#0ea5a4",
+                    color: "#4E61D3",
                     fontSize: "0.85rem",
                     cursor: "pointer",
                   }}
                 >
-                  Forgot Password?
+                  <small><i>&nbsp;&nbsp;Forgot Password?</i></small>
                 </p>
               )}
             </div>
@@ -199,7 +199,7 @@ export default function CustomerLogin() {
                 <a
                   href="/register"
                   style={{
-                    color: "#0ea5a4",
+                    color: "#4E61D3",
                     textDecoration: "none",
                     fontWeight: 500,
                   }}

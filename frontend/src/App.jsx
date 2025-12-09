@@ -22,6 +22,7 @@ import Payment from "./components/payment/payment.jsx";
 import ViewBookings from "./components/viewBookings/viewBookings.jsx";
 import ForgotPassword from "./components/ForgotPassword.jsx";
 import ResetPassword from "./components/ResetPassword.jsx"
+import Policies from "./components/policies/policies.jsx";
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
         <Route path="/admin/viewbookings" element={<ViewBookings />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/customer/policies" element={<Policies />} />
       </Routes>
     </BrowserRouter>
   );

@@ -5,7 +5,7 @@ import "./customerNavbar.css";
 export default function CustomerNavbar() {
   const navigate = useNavigate();
 
-  const fullName = JSON.parse(localStorage.getItem("user")).name.toUpperCase() || "Customer";
+  const fullName = JSON.parse(localStorage.getItem("user")).name || "Customer";
 
   function handleLogout() {
     localStorage.clear();
@@ -15,7 +15,7 @@ export default function CustomerNavbar() {
   return (
     <nav className="customer-navbar">
       {/* LEFT SECTION */}
-      <div className="nav-left" onClick={() => navigate("/dashboard")}>
+      <div className="nav-left">
         <div className="brand"> <p style={{ color: "orange", display: "inline" }}>Go</p> Voyage</div>
       </div>
 
@@ -23,34 +23,36 @@ export default function CustomerNavbar() {
       <ul className="nav-center">
         <li className="nav-item center">
           <button className="nav-link" onClick={() => navigate("/customer/searchflight")}>
-            Search Flights
+             <p style={{ color: "orange", display: "inline" }}>Search</p> Flights
           </button>
         </li>
 
         <li className="nav-item">
           <button className="nav-link" onClick={() => navigate("/customer/allBookings")}>
-            View Bookings
+            <p style={{ color: "orange", display: "inline" }}>View</p> Bookings
           </button>
         </li>
 
-        {/* <li className="nav-item">
-          <button className="nav-link" onClick={() => navigate("/customer/cancelBooking")}>
-            Cancel Booking
+        <li className="nav-item">
+          <button className="nav-link" onClick={() => navigate("/customer/policies")}>
+            Policy
           </button>
-        </li> */}
+        </li>
 
         
 
         <li className="nav-item">
           <button className="nav-link" onClick={() => navigate("/customer/profile")}>
-            Profile
+            <p style={{"color":"orange"}}>Profile</p>
           </button>
         </li>
       </ul>
 
       {/* RIGHT SIDE */}
       <div className="nav-right">
-        <div className="welcome-msg"><p style={{ color: "#f09537", display: "inline" }}>{fullName}</p>&nbsp;&nbsp;</div>
+        <div className="welcome-msg"><p  onClick={() => navigate("/dashboard")} 
+        style={{ color: "#f09537", display: "inline", "background":"rgb(255, 248, 235)", "padding":"10px", "borderRadius": "20px" }}>
+          {fullName}</p></div>
 
         <button className="logout-btn" onClick={handleLogout}>
           Logout

@@ -403,7 +403,7 @@ export default function Profile({ userId: propUserId }) {
           <div className="pr-left">
             <div className="avatar">{initials}</div>
             <div className="pr-basic">
-              <div className="pr-email">Email: {form.email || "--"}</div>
+              <div style={{"color":"orange", "fontWeight":"400", "fontSize":"1rem","fontFamily": "Montserrat"}} className="pr-email">{form.email || "--"}</div>
               <div className="pr-id">ID: {userId || "--"}</div>
             </div>
           </div>
@@ -464,11 +464,7 @@ export default function Profile({ userId: propUserId }) {
               </div>
             </div>
 
-            {serverMessage && (
-              <div className={`pr-msg`} style={{ color: serverMessage.type === "error" ? "crimson" : "green" }}>
-                {serverMessage.text}
-              </div>
-            )}
+            {/* Messages are shown via the shared Popup component above */}
 
             {loading ? (
               <div>Loading...</div>

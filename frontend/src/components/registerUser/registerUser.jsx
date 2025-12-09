@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./registerUser.css";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import Popup from "../pop-up/pop-up.jsx";
 
 const cities = [
   { name: "Mumbai", state: "Maharashtra", zip: "400001" },
@@ -35,9 +36,12 @@ export default function RegisterUser() {
   });
 
   const [errors, setErrors] = useState({});
-  const [serverError, setServerError] = useState("");
   const [role, setRole] = useState("Customer");
   const [customerCategory, setCustomerCategory] = useState("Silver");
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [popupMsg, setPopupMsg] = useState("");
+  const [popupType, setPopupType] = useState("success");
+  const [popupDuration, setPopupDuration] = useState(4000);
   const [submitting, setSubmitting] = useState(false);
   const [touched, setTouched] = useState({});
   const [submitted, setSubmitted] = useState(false);
@@ -96,11 +100,10 @@ export default function RegisterUser() {
   }
 
   function validateField(name) {
-    const e = { ...errors };
-    // helper to set or remove error for a single field
+    const local = { ...errors };
     const setErr = (key, msg) => {
-      if (msg) e[key] = msg;
-      else delete e[key];
+      if (msg) local[key] = msg;
+      else delete local[key];
     };
 
     const v = form[name];
@@ -116,7 +119,6 @@ export default function RegisterUser() {
           "password",
           !passwordRegex.test(v) ? "Password must be 8+ chars and include upper, lower, number & special char" : null
         );
-        // also re-validate confirmPassword when password changes
         if (touched.confirmPassword || submitted) validateField("confirmPassword");
         break;
       case "confirmPassword":
@@ -147,14 +149,13 @@ export default function RegisterUser() {
         }
         break;
       case "zip":
-        // pincode must be 6 digits and first digit 1-9 (no leading zero)
         setErr("zip", !/^[1-9][0-9]{5}$/.test(v) ? "Pincode must be 6 digits and start with 1-9" : null);
         break;
       default:
         break;
     }
 
-    setErrors(e);
+    setErrors(local);
   }
 
   async function handlePincodeLookup(zip) {
@@ -216,7 +217,6 @@ export default function RegisterUser() {
     if (!validate()) return;
 
     setSubmitting(true);
-    setServerError("");
     const { confirmPassword, ...payloadData } = form;
 
     // Map frontend form keys to backend expected keys
@@ -244,12 +244,16 @@ export default function RegisterUser() {
       const resBody = await res.json().catch(() => null);
       if (res.ok) {
         const id = resBody?.CustomerId || resBody?.customerId || resBody?.id || resBody?.CustomerID;
-        // popup with clear message to note the ID
+        // show popup with clear message to note the ID
         if (id) {
-          alert(`Registration successful!\nYour Customer ID: ${id}\nPlease note this ID for future reference.`);
-          navigate("/login", { state: { fromAdmin: false } });
+          // Note: setPopupMsg is a state setter; keep message/state updates below
+          setPopupMsg(`Registration successful! Your Customer ID: ${id}. Please note this ID for future reference.`);
+          setPopupType("success");
+          setPopupOpen(true);
         } else {
-          alert('Registration successful!');
+          setPopupMsg('Registration successful!');
+          setPopupType("success");
+          setPopupOpen(true);
         }
         // optionally reset form
         setForm({
@@ -266,22 +270,34 @@ export default function RegisterUser() {
           dob: "",
           estimatedSpend: ""
         });
+        // navigate to login after brief delay so popup is visible
+        setTimeout(() => navigate("/login", { state: { fromAdmin: false } }), 1600);
       } else {
         // show meaningful server error(s)
         if (resBody) {
           if (Array.isArray(resBody.errors) && resBody.errors.length > 0) {
-            setServerError(resBody.errors.join('; '));
+            setPopupMsg(resBody.errors.join('; '));
+            setPopupType("error");
+            setPopupOpen(true);
           } else if (resBody.message) {
-            setServerError(resBody.message);
+            setPopupMsg(resBody.message);
+            setPopupType("error");
+            setPopupOpen(true);
           } else {
-            setServerError('Registration failed: Server validation error');
+            setPopupMsg('Registration failed: Server validation error');
+            setPopupType("error");
+            setPopupOpen(true);
           }
         } else {
-          setServerError('Registration failed: Server error');
+          setPopupMsg('Registration failed: Server error');
+          setPopupType("error");
+          setPopupOpen(true);
         }
       }
     } catch (err) {
-      setServerError('Registration failed: ' + (err.message || 'Network error'));
+      setPopupMsg('Registration failed: ' + (err.message || 'Network error'));
+      setPopupType("error");
+      setPopupOpen(true);
     } finally {
       setSubmitting(false);
     }
@@ -298,220 +314,246 @@ export default function RegisterUser() {
     .slice(0, 10);
 
   return (
-    <div className="register-page">
-      <div className="register-card">
-        <h2>Create Account</h2>
-        <p className="required-note">
-          Fields marked <span className="req">*</span> are required
-        </p>
+    <>
+      <Popup open={popupOpen} message={popupMsg} type={popupType} duration={popupDuration} onClose={() => setPopupOpen(false)} />
 
-        {serverError && (
-          <div className="server-error" style={{ color: 'red', marginBottom: 12 }}>
-            {serverError}
+      {/* Top bar with Back button (outside the form card) */}
+      <div className="top-bar" style={{ display: "flex", alignItems: "center", padding: "12px 16px" }}>
+        <button
+          type="button"
+          aria-label="Go back"
+          className="back-button"
+          onClick={() => navigate("/")}
+          style={{ marginRight: "12px" }}
+        >
+          ← Back
+        </button>
+      </div>
+
+      <div className="register-page">
+        <div className="register-card">
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <h2>Create Account</h2>
+
+            {/* Login button next to title */}
+            <div className="header-actions">
+              <button
+                type="button"
+                className="btn btn-login"
+                onClick={() => navigate("/login")}
+                aria-label="Go to login"
+              >
+                Login
+              </button>
+            </div>
           </div>
-        )}
 
-        <form onSubmit={handleSubmit} className="mt-3">
-          <div className="row g-3">
-            {/* FULL NAME */}
-            <div className="col-md-6"><br />
-              <label className="required">Full Name</label>
-              <input
-                className="form-control"
-                name="fullName"
-                value={form.fullName}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                placeholder="Enter full name"
-              />
-              {errors.fullName && (touched.fullName || submitted) && <div className="error">{errors.fullName}</div>}
-            </div>
+          <p className="required-note">
+            Fields marked <span className="req">*</span> are required
+          </p>
 
-            {/* EMAIL */}
-            <div className="col-md-6"><br />
-              <label className="required">Email</label>
-              <input
-                className="form-control"
-                name="email"
-                type="email"
-                value={form.email}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                placeholder="you@example.com"
-              />
-              {errors.email && (touched.email || submitted) && <div className="error">{errors.email}</div>}
-            </div>
-
-            {/* PASSWORD */}
-            <div className="col-md-6">
-              <label className="required">Password</label>
-              <input
-                className="form-control"
-                name="password"
-                type="password"
-                value={form.password}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                placeholder="Strong password"
-              />
-              {errors.password && (touched.password || submitted) && <div className="error">{errors.password}</div>}
-            </div>
-
-            {/* CONFIRM PASSWORD */}
-            <div className="col-md-6">
-              <label className="required">Confirm Password</label>
-              <input
-                className="form-control"
-                name="confirmPassword"
-                type="password"
-                value={form.confirmPassword}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                placeholder="Re-enter password"
-              />
-              {errors.confirmPassword && (touched.confirmPassword || submitted) && (
-                <div className="error">{errors.confirmPassword}</div>
-              )}
-            </div>
-
-            {/* PHONE */}
-            <div className="col-md-6">
-              <label className="required">Phone</label>
-              <input
-                className="form-control"
-                name="phone"
-                value={form.phone}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                placeholder="10 digit number"
-              />
-              {errors.phone && (touched.phone || submitted) && <div className="error">{errors.phone}</div>}
-            </div>
-
-            {/* DOB */}
-            <div className="col-md-6">
-              <label className="required">Date of Birth</label>
-              <input
-                className="form-control"
-                name="dob"
-                type="date"
-                value={form.dob}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                min={minDob}
-                max={maxDob}
-              />
-              {errors.dob && (touched.dob || submitted) && <div className="error">{errors.dob}</div>}
-            </div>
-
-            {/* SPEND */}
-            <div className="col-md-6">
-              <label className="required">Estimated Spend on Flights (INR)</label>
-              <input
-                className="form-control"
-                name="estimatedSpend"
-                value={form.estimatedSpend}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                placeholder="e.g. 20000"
-              />
-              <div className="small-text">Category: {customerCategory}</div>
-              {errors.estimatedSpend && (touched.estimatedSpend || submitted) && <div className="error">{errors.estimatedSpend}</div>}
-            </div>
-
-            {/* ADDRESS 1 */}
-            <div className="col-12">
-              <label className="required">Address Line 1</label>
-              <input
-                className="form-control"
-                name="address1"
-                value={form.address1}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-              {errors.address1 && (touched.address1 || submitted) && <div className="error">{errors.address1}</div>}
-            </div>
-
-            {/* ADDRESS 2 */}
-            <div className="col-12">
-              <label>Address Line 2 (optional)</label>
-              <input
-                className="form-control"
-                name="address2"
-                value={form.address2}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-            </div>
-
-            {/* PINCODE (Zip) */}
-            <div className="col-md-4">
-              <label className="required">Pincode</label>
-              <div style={{ display: "flex", gap: 8 }}>
+          <form onSubmit={handleSubmit} className="mt-3">
+            <div className="row g-3">
+              {/* FULL NAME */}
+              <div className="col-md-6"><br />
+                <label className="required">Full Name</label>
                 <input
                   className="form-control"
-                  name="zip"
-                  value={form.zip}
+                  name="fullName"
+                  value={form.fullName}
                   onChange={handleChange}
-                  onBlur={(e) => {
-                    handleBlur(e);
-                    // if valid, lookup
-                    const v = e.target.value || "";
-                    if (/^[1-9][0-9]{5}$/.test(v)) handlePincodeLookup(v);
-                  }}
-                  placeholder="6-digit pincode starting with 1-9"
-                  style={{ flex: 1 }}
+                  onBlur={handleBlur}
+                  placeholder="Enter full name"
                 />
-                <button
-                  type="button"
-                  className="fetch-zip"
-                  onClick={() => {
-                    setTouched((t) => ({ ...t, zip: true }));
-                    validateField("zip");
-                    const v = (form.zip || "").trim();
-                    if (/^[1-9][0-9]{5}$/.test(v)) handlePincodeLookup(v);
-                  }}
-                >
-                  Fetch
-                </button>
+                {errors.fullName && (touched.fullName || submitted) && <div className="error">{errors.fullName}</div>}
               </div>
-              {errors.zip && (touched.zip || submitted) && <div className="error">{errors.zip}</div>}
+
+              {/* EMAIL */}
+              <div className="col-md-6"><br />
+                <label className="required">Email</label>
+                <input
+                  className="form-control"
+                  name="email"
+                  type="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  placeholder="you@example.com"
+                />
+                {errors.email && (touched.email || submitted) && <div className="error">{errors.email}</div>}
+              </div>
+
+              {/* PASSWORD */}
+              <div className="col-md-6">
+                <label className="required">Password</label>
+                <input
+                  className="form-control"
+                  name="password"
+                  type="password"
+                  value={form.password}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  placeholder="Strong password"
+                />
+                {errors.password && (touched.password || submitted) && <div className="error">{errors.password}</div>}
+              </div>
+
+              {/* CONFIRM PASSWORD */}
+              <div className="col-md-6">
+                <label className="required">Confirm Password</label>
+                <input
+                  className="form-control"
+                  name="confirmPassword"
+                  type="password"
+                  value={form.confirmPassword}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  placeholder="Re-enter password"
+                />
+                {errors.confirmPassword && (touched.confirmPassword || submitted) && (
+                  <div className="error">{errors.confirmPassword}</div>
+                )}
+              </div>
+
+              {/* PHONE */}
+              <div className="col-md-6">
+                <label className="required">Phone</label>
+                <input
+                  className="form-control"
+                  name="phone"
+                  value={form.phone}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  placeholder="10 digit number"
+                />
+                {errors.phone && (touched.phone || submitted) && <div className="error">{errors.phone}</div>}
+              </div>
+
+              {/* DOB */}
+              <div className="col-md-6">
+                <label className="required">Date of Birth</label>
+                <input
+                  className="form-control"
+                  name="dob"
+                  type="date"
+                  value={form.dob}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  min={minDob}
+                  max={maxDob}
+                />
+                {errors.dob && (touched.dob || submitted) && <div className="error">{errors.dob}</div>}
+              </div>
+
+              {/* SPEND */}
+              <div className="col-md-6">
+                <label className="required">Estimated Spend on Flights (INR)</label>
+                <input
+                  className="form-control"
+                  name="estimatedSpend"
+                  value={form.estimatedSpend}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  placeholder="e.g. 20000"
+                />
+                <div className="small-text">Category: {customerCategory}</div>
+                {errors.estimatedSpend && (touched.estimatedSpend || submitted) && <div className="error">{errors.estimatedSpend}</div>}
+              </div>
+
+              {/* ADDRESS 1 */}
+              <div className="col-12">
+                <label className="required">Address Line 1</label>
+                <input
+                  className="form-control"
+                  name="address1"
+                  value={form.address1}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+                {errors.address1 && (touched.address1 || submitted) && <div className="error">{errors.address1}</div>}
+              </div>
+
+              {/* ADDRESS 2 */}
+              <div className="col-12">
+                <label>Address Line 2 (optional)</label>
+                <input
+                  className="form-control"
+                  name="address2"
+                  value={form.address2}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+              </div>
+
+              {/* PINCODE (Zip) */}
+              <div className="col-md-4">
+                <label className="required">Pincode</label>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <input
+                    className="form-control"
+                    name="zip"
+                    value={form.zip}
+                    onChange={handleChange}
+                    onBlur={(e) => {
+                      handleBlur(e);
+                      // if valid, lookup
+                      const v = e.target.value || "";
+                      if (/^[1-9][0-9]{5}$/.test(v)) handlePincodeLookup(v);
+                    }}
+                    placeholder="6-digit pincode starting with 1-9"
+                    style={{ flex: 1 }}
+                  />
+                  <button
+                    type="button"
+                    className="fetch-zip"
+                    onClick={() => {
+                      setTouched((t) => ({ ...t, zip: true }));
+                      validateField("zip");
+                      const v = (form.zip || "").trim();
+                      if (/^[1-9][0-9]{5}$/.test(v)) handlePincodeLookup(v);
+                    }}
+                  >
+                    Fetch
+                  </button>
+                </div>
+                {errors.zip && (touched.zip || submitted) && <div className="error">{errors.zip}</div>}
+              </div>
+
+              {/* CITY */}
+              <div className="col-md-4">
+                <label className="required">City</label>
+                <input
+                  className="form-control"
+                  name="city"
+                  value={form.city}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  list="city-list"
+                  placeholder="City"
+                />
+                <datalist id="city-list">
+                  {cities.map((c) => (
+                    <option key={c.name} value={c.name} />
+                  ))}
+                </datalist>
+              </div>
+
+              {/* STATE */}
+              <div className="col-md-4">
+                <label className="required">State</label>
+                <input className="form-control" name="state" value={form.state} onChange={handleChange} onBlur={handleBlur} />
+              </div>
             </div>
 
-            {/* CITY */}
-            <div className="col-md-4">
-              <label className="required">City</label>
-              <input
-                className="form-control"
-                name="city"
-                value={form.city}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                list="city-list"
-                placeholder="City"
-              />
-              <datalist id="city-list">
-                {cities.map((c) => (
-                  <option key={c.name} value={c.name} />
-                ))}
-              </datalist>
+            {/* BUTTON */}
+            <div className="d-flex justify-content-center mt-4" >
+              <button style={{"background":"#4E61D3"}} type="submit" className="primary" disabled={submitting}>
+                {submitting ? "Submitting..." : "Register"}
+              </button>
             </div>
-
-            {/* STATE */}
-            <div className="col-md-4">
-              <label className="required">State</label>
-              <input className="form-control" name="state" value={form.state} onChange={handleChange} onBlur={handleBlur} />
-            </div>
-          </div>
-
-          {/* BUTTON */}
-          <div className="d-flex justify-content-center mt-4" >
-            <button type="submit" className="primary" disabled={submitting}>
-              {submitting ? "Submitting..." : "Register"}
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

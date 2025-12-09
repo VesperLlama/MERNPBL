@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Allura&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Allura&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+
 html,
 body,
 #root {
@@ -21,7 +24,7 @@ body,
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: "Poppins", sans-serif;
+  
 }
 
 /* 🔥 FULLSCREEN BACKGROUND VIDEO */
@@ -55,19 +58,26 @@ body,
   width: 100%;
   max-width: 1100px;
   padding: 0 20px;
+  
+
 }
 
 .title {
-  font-size: 3rem;
-  font-weight: 700;
+  font-size: 2.3rem;
   margin-bottom: 10px;
   letter-spacing: 1px;
+  font-family: "Allura", cursive;
+  font-weight: 600;
+  font-style: normal;
 }
 
 .subtitle {
   font-size: 1.2rem;
   opacity: 0.9;
   margin-bottom: 30px;
+   font-family: "Lato", sans-serif;
+  font-weight: 300;
+  font-style: italic;
 }
 
 /* Buttons */
@@ -81,21 +91,24 @@ body,
 .btn {
   padding: 12px 28px;
   border-radius: 8px;
-  font-size: 1rem;
   border: none;
   cursor: pointer;
   transition: 0.3s ease;
   font-weight: 600;
   flex: 1 1 auto;
   min-width: 160px;
+  font-family: "Lato", sans-serif;
+  font-weight: 300;
+  font-style: normal;
 }
 
 .btn.customer-btn {
+  font-size: 1.2rem;
   background: rgb(234, 223, 223);
   color: orange;
 }
 
-.btn.customer-btn:hover {
+.btn.customer-btn:hover, .btn.customer-btn:focus{
   color: white;
   background: orange;
   border: bold;
@@ -103,6 +116,8 @@ body,
 }
 
 .btn.admin-btn {
+  font-size: 1.2rem;
+
   background: orange;
 }
 
@@ -135,13 +150,14 @@ body,
   letter-spacing: 0.5px;
   border: 1px solid rgba(255, 255, 255, 0.25);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  font-size: 0.9rem;
   transition: all 0.3s ease;
 }
 
 /* Hover animation */
 .customer-menu .menu-item:hover {
   transform: translateY(-3px) scale(1.03);
-  background: rgba(255, 255, 255, 0.25);
+  background: #4E61D3;
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
 }
 

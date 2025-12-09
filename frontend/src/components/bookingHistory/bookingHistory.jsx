@@ -269,14 +269,11 @@ export default function BookingHistory() {
   return (
     <div className="bh-root">
       <CustomerNavbar />
-
-      {/* ⭐ TOP ALERT TOASTER */}
-      <Popup open={toastOpen} message={toastMsg || alert} type={toastType} onClose={() => { setToastOpen(false); setToastMsg(''); setAlert(''); }} />
       {/* ⭐ TOP ALERT TOASTER */}
       <Popup open={toastOpen} message={toastMsg || alert} type={toastType} onClose={() => { setToastOpen(false); setToastMsg(''); setAlert(''); }} />
 
       <div className="bh-container">
-        <h2>Your Booking History</h2>
+        <h2 style={{"color":"orange"}}>Your Booking History</h2>
 
         {loading && <div className="bh-empty">Loading bookings...</div>}
         {error && <div className="bh-error">{error}</div>}
@@ -293,13 +290,13 @@ export default function BookingHistory() {
                   <th>Booking ID</th>
                   <th>Flight</th>
                   <th>Passenger(s)</th>
-                  <th>From</th>
-                  <th>To</th>
-                  <th>Date</th>
+                  <th>Origin</th>
+                  <th>Destination</th>
+                  <th>Boarding Date</th>
                   <th>Amount</th>
                   <th>Status</th>
-                  <th>Boarding Pass</th>
-                  <th>Boarding Pass</th>
+                  <th>Invoice</th>
+                  {/* <th>Boarding Pass</th> */}
                   <th>Action</th>
                 </tr>
               </thead>
@@ -336,13 +333,14 @@ export default function BookingHistory() {
                         ? new Date(b.departure || b.travelDate).toLocaleString(
                             "en-IN",
                             {
-                              year: "numeric",
-                              month: "numeric",
                               day: "numeric",
+                              month: "short",
+                              year: "numeric",
                               hour: "2-digit",
                               minute: "2-digit",
+                              hour12:true
                             }
-                          )
+                          ).toLocaleUpperCase()
                         : "-"}
                     </td>
                     <td>₹{b.PricePaid.finalPrice || b.PricePaid}</td>
@@ -375,21 +373,32 @@ export default function BookingHistory() {
 
                     <td>
                       {b.BookingStatus !== "Booked" ? (
-                        <div style={{ fontWeight: 600, color: b.BookingStatus !== 'Booked' ? 'red' : 'green' }}>
-                          {`Refund: ₹${b.RefundAmount ?? b.refundAmount ?? b.refund}`}
+                        <div style={{ fontWeight: 600, color: 'blue' }}>
+                          {`Refunded: ₹${b.RefundAmount ?? b.refundAmount ?? b.refund}`}
                         </div>
                       ) : (
-                        <button
-                          className="logout-btn"
-                          disabled={b.cancelled}
-                          onClick={() => handleCancel(b.PNR, b.BookingId, b.RefundAmount)}
-                          style={{
-                            opacity: b.cancelled ? 0.5 : 1,
-                            cursor: b.cancelled ? "not-allowed" : "pointer",
-                          }}
-                        >
-                          Cancel
-                        </button>
+                        (() => {
+                          const raw = b.departure || b.travelDate || b.date || b.Departure || b.TravelDate;
+                          const dep = raw ? new Date(String(raw).replace(' ', 'T')) : null;
+                          const departed = dep && !isNaN(dep.getTime()) && Date.now() > dep.getTime();
+                          if (departed) {
+                            return <div style={{ fontWeight: 600, color: '#6b7280' }}>Flight has already departed</div>;
+                          }
+
+                          return (
+                            <button
+                              className="logout-btn"
+                              disabled={b.cancelled}
+                              onClick={() => handleCancel(b.PNR, b.BookingId, b.RefundAmount)}
+                              style={{
+                                opacity: b.cancelled ? 0.5 : 1,
+                                cursor: b.cancelled ? "not-allowed" : "pointer",
+                              }}
+                            >
+                              Cancel
+                            </button>
+                          );
+                        })()
                       )}
                     </td>
                   </tr>
@@ -410,7 +419,7 @@ export default function BookingHistory() {
                       <div><strong>Passengers</strong><div>{Array.isArray(selectedBooking.passengers) ? selectedBooking.passengers.map(p => p.name || p.fullName || JSON.stringify(p)).join(', ') : (selectedBooking.passengers || selectedBooking.user?.name || '-')}</div></div>
                       <div><strong>Seat Type</strong><div>{selectedBooking.type || selectedBooking.seatType || '-'}</div></div>
                       <div><strong>Quantity</strong><div>{selectedBooking.quantity || selectedBooking.Quantity || '-'}</div></div>
-                      <div><strong>Price Paid</strong><div>₹{selectedBooking.PricePaid ?? selectedBooking.price ?? selectedBooking.pricePaid ?? '-'}</div></div>
+                      <div><strong>Price Paid</strong><div>₹{selectedBooking.PricePaid.finalPrice ?? selectedBooking.price ?? selectedBooking.pricePaid ?? '-'}</div></div>
                       <div><strong>Refund</strong><div>₹{selectedBooking.RefundAmount ?? selectedBooking.refundAmount ?? selectedBooking.Refund ?? 0}</div></div>
                       <div><strong>From</strong><div>{selectedBooking.origin || selectedBooking.from || '-'}</div></div>
                       <div><strong>To</strong><div>{selectedBooking.destination || selectedBooking.to || '-'}</div></div>

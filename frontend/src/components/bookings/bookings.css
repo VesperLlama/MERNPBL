@@ -102,7 +102,7 @@
   border: 1px solid}
 
 
-.bk-criteria { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:10px; color:var(--muted); }
+.bk-criteria { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:10px; }
 .bk-controls { display:flex; gap:10px; margin-bottom:12px; }
 .bk-refresh, .bk-new-search {
   padding:8px 12px; border-radius:8px; border:1px solid var(--border); background:#fff; cursor:pointer;
@@ -133,18 +133,18 @@
 }
 
 .bk-card-left { flex: 1 1 auto; min-width: 0; }
-.bk-airline { font-weight:800; margin-bottom:6px; }
-.bk-route { color:var(--muted); margin-bottom:8px; }
+.bk-airline { font-weight:800; margin-bottom:6px; color:blue; }
+.bk-route { color:black; margin-bottom:8px; font-weight:600; font-size: 1.4rem;}
 .bk-times { display:flex; gap:12px; color:var(--muted); font-size:13px; }
 
 .bk-card-right { width:220px; display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
 
-.bk-price { font-size:20px; font-weight:800; color:#0b2a39; }
+.bk-price { font-size:20px; font-weight:800; color:#4E61D3; }
 .bk-seats { color:var(--muted); font-size:13px; }
 
 .bk-actions { display:flex; gap:8px; margin-top:6px; }
 .bk-book {
-  background: var(--accent);
+  background: #4E61D3;
   color: white;
   border: none;
   padding:8px 12px;
@@ -159,6 +159,13 @@
   padding:8px 10px;
   border-radius:8px;
   cursor:pointer;
+}
+
+
+.bk-list-container h2 {
+  margin: 0 0 6px 0;
+  font-size: 22px;
+  color: orange;
 }
 
 /* responsive: two-column on larger screens */
