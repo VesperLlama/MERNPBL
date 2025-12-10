@@ -40,6 +40,28 @@ export default function ResetPassword() {
 
   return (
     <div style={{ maxWidth: 420, margin: "100px auto", padding: 20 }}>
+    <button
+      onClick={() => navigate(-1)}
+      style={{
+        position: "fixed",
+        top: "20px",
+        left: "20px",
+        padding: "6px 14px",
+        border: "2px solid #333",
+        borderRadius: "6px",
+        background: "white",
+        color: "#333",
+        fontSize: "15px",
+        cursor: "pointer",
+        fontWeight: "500",
+        display: "flex",
+        alignItems: "center",
+        gap: "6px",
+        zIndex: 1000
+      }}
+    >
+      ← Back
+    </button>
       <h2>Reset Password</h2>
       <p>Enter your new password below for {email}</p>
 

@@ -1,342 +1,3 @@
-// // Policies.jsx
-// import React, { useEffect, useState } from "react";
-// import CustomerNavbar from "../customerNavbar/customerNavbar";
-// import "./policies.css";
-
-// const CLASS_OVERHEAD = {
-//   economy: 0,
-//   executive: 0.25,
-//   business: 0.5,
-// };
-
-// // --- Helpers (unchanged logic) ---
-// function calculateFare(basePrice, travelClass = "economy") {
-//   const overhead = CLASS_OVERHEAD[travelClass] ?? 0;
-//   return Math.round(basePrice * (1 + overhead));
-// }
-
-// function applyDiscount(fare, discount = null) {
-//   if (!discount) return fare;
-//   const { type = "percent", value = 0, minFare = 0, maxDiscountAmount = Infinity } = discount;
-//   if (fare < minFare) return fare;
-//   let discounted = fare;
-//   if (type === "percent") {
-//     discounted = fare - Math.round((fare * value) / 100);
-//   } else {
-//     discounted = fare - Math.round(value);
-//   }
-//   if (fare - discounted > maxDiscountAmount) {
-//     discounted = fare - Math.round(maxDiscountAmount);
-//   }
-//   return Math.max(discounted, 0);
-// }
-
-// function computeRefundAmount(fare, policyRefund = {}) {
-//   const { refundable = false, penaltyPercent = 100, minPenaltyFlat = 0 } = policyRefund;
-//   if (!refundable) return 0;
-//   const penalty = Math.max(Math.round((fare * penaltyPercent) / 100), Math.round(minPenaltyFlat));
-//   return Math.max(fare - penalty, 0);
-// }
-
-// function normalizeDiscounts(raw) {
-//   if (!raw) return [];
-//   if (Array.isArray(raw)) return raw;
-//   if (typeof raw === "object") {
-//     return Object.entries(raw).map(([k, v]) => {
-//       if (typeof v === "number") {
-//         return { id: k, desc: k, type: "percent", value: v };
-//       } else if (typeof v === "object") {
-//         return { id: k, desc: v.desc ?? k, ...v };
-//       } else {
-//         return { id: k, desc: String(v), type: "percent", value: 0 };
-//       }
-//     });
-//   }
-//   return [];
-// }
-
-// function normalizeRefunds(rawRefunds) {
-//   if (!rawRefunds) return [];
-//   if (Array.isArray(rawRefunds)) return rawRefunds;
-//   if (typeof rawRefunds === "object") {
-//     const rules = [];
-//     Object.entries(rawRefunds).forEach(([k, v]) => {
-//       const numMatch = k.match(/(\d{1,4})/);
-//       let days = numMatch ? parseInt(numMatch[1], 10) : -1;
-//       let penaltyPercent = 100;
-//       if (typeof v === "number") {
-//         if (v > 0 && v <= 1) penaltyPercent = Math.round(v * 100);
-//         else penaltyPercent = Math.round(v);
-//       } else if (typeof v === "object" && v.penaltyPercent != null) {
-//         penaltyPercent = v.penaltyPercent;
-//       }
-//       rules.push({ daysBefore: days, penaltyPercent, rawKey: k, forClass: v?.forClass });
-//     });
-//     rules.sort((a, b) => {
-//       if (a.daysBefore === -1) return 1;
-//       if (b.daysBefore === -1) return -1;
-//       return b.daysBefore - a.daysBefore;
-//     });
-//     return rules;
-//   }
-//   return [];
-// }
-
-// function getPenaltyPercentFromRules(refundRules, daysBefore, travelClass) {
-//   if (!refundRules || refundRules.length === 0) return 100;
-//   for (const r of refundRules) {
-//     if (r.forClass && r.forClass === travelClass && r.penaltyPercent != null) return r.penaltyPercent;
-//   }
-//   for (const r of refundRules) {
-//     if (r.daysBefore === -1) continue;
-//     if (daysBefore >= r.daysBefore) return r.penaltyPercent;
-//   }
-//   const fallback = refundRules.find((x) => x.daysBefore === -1);
-//   if (fallback) return fallback.penaltyPercent;
-//   return 100;
-// }
-
-// // --- Component using explicit URL fetch ---
-// export default function Policies() {
-//   const [carriers, setCarriers] = useState([]);
-//   const [openMap, setOpenMap] = useState({});
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-
-//   // attach Bearer token from localStorage if present
-//   function getAuthHeaders() {
-//     const token = localStorage.getItem("token") || localStorage.getItem("authToken") || null;
-//     if (token) return { Authorization: `Bearer ${token}` };
-//     return {};
-//   }
-
-//   useEffect(() => {
-//     let mounted = true;
-
-//     async function fetchCarriers() {
-//       setLoading(true);
-//       setError(null);
-//       try {
-//         const headers = { "Content-Type": "application/json", ...getAuthHeaders() };
-//         const resp = await fetch("http://localhost:4000/api/carriers/list", { headers });
-//         if (!resp.ok) throw new Error(`API error ${resp.status}`);
-//         const body = await resp.json();
-
-//         // Accept either { data: [...] } or [...] directly
-//         let items = [];
-//         if (Array.isArray(body)) items = body;
-//         else if (Array.isArray(body.data)) items = body.data;
-//         else {
-//           // try to find first array value inside body
-//           const arrVal = Object.values(body).find((v) => Array.isArray(v));
-//           if (arrVal) items = arrVal;
-//           else throw new Error("Unexpected response shape from /api/list");
-//         }
-
-//         if (!mounted) return;
-
-//         const normalized = items.map((c) => {
-//           const id = c.CarrierId ?? c.carrierId ?? c.id ?? Math.random().toString(36).slice(2, 9);
-//           const name = c.CarrierName ?? c.name ?? c.carrierName ?? "Unknown Carrier";
-//           const discounts = normalizeDiscounts(c.Discounts ?? c.discounts ?? c.userDiscounts ?? c.userdiscounts);
-//           const refundRules = normalizeRefunds(c.Refunds ?? c.refunds ?? c.refundPolicy ?? c.Refunds);
-//           const baggage = c.baggage ?? c.Baggage ?? null;
-//           const checkIn = c.checkIn ?? c.CheckIn ?? null;
-//           const changePolicy = c.changePolicy ?? c.ChangePolicy ?? null;
-//           const basePriceExample = c.basePriceExample ?? c.BasePriceExample ?? c.basePrice ?? 5000;
-
-//           return {
-//             raw: c,
-//             id,
-//             name,
-//             discounts,
-//             refundRules,
-//             baggage,
-//             checkIn,
-//             changePolicy,
-//             basePriceExample,
-//           };
-//         });
-
-//         setCarriers(normalized);
-//       } catch (err) {
-//         console.error("Failed to fetch carriers", err);
-//         if (mounted) setError(err.message || "Failed to load carriers");
-//       } finally {
-//         if (mounted) setLoading(false);
-//       }
-//     }
-
-//     fetchCarriers();
-
-//     return () => {
-//       mounted = false;
-//     };
-//   }, []);
-
-//   function toggle(id) {
-//     setOpenMap((p) => ({ ...p, [id]: !p[id] }));
-//   }
-
-//   if (loading) {
-//     return (
-//       <div className="policies-container">
-//         <h3 className="policies-title">Loading carriers…</h3>
-//       </div>
-//     );
-//   }
-
-//   if (error) {
-//     return (
-//       <div className="policies-container">
-//         <h3 className="policies-title">Error loading carriers</h3>
-//         <div className="muted small">{error}</div>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <>
-//     <CustomerNavbar />
-//     <div className="policies-container">
-//       <h2 className="policies-title">Policies</h2>
-
-//       <div className="airlines-list">
-//         {carriers.map((airline) => (
-//           <div key={airline.id} className="airline-card">
-//             <div className="airline-header">
-//               <div>
-//                 <h3 className="airline-name"><strong style={{"color":"#4E61D3"}}>{airline.name}</strong></h3>
-//                 {/* <div className="airline-contact">ID: {airline.id}</div> */}
-//               </div>
-//               <div className="airline-actions">
-//                 <button
-//                   className="btn btn-compact"
-//                   onClick={() => toggle(airline.id)}
-//                   aria-expanded={!!openMap[airline.id]}
-//                 >
-//                   {openMap[airline.id] ? "Hide" : "View"}
-//                 </button>
-//               </div>
-//             </div>
-
-//             {openMap[airline.id] && (
-//               <div className="airline-body">
-//                 <section className="policy-section">
-//                   <h4>General</h4>
-//                   <ul>
-//                     <li>Customer support & carrier data from API (inspect raw object for full details).</li>
-//                     <li>Baggage: {airline.baggage ? JSON.stringify(airline.baggage) : "Standard policy (15 KGs)"}.</li>
-//                     <li>Check-in: {airline.checkIn ? JSON.stringify(airline.checkIn) : "Standard (2 hours before)"}.</li>
-//                   </ul>
-//                 </section>
-
-//                 <section className="policy-section">
-//                   <h4>Fares & Class Overhead</h4>
-//                   <div className="fare-examples">
-//                     <div className="fare-row">
-//                       <span>Base fare:</span>
-//                       <strong>₹{airline.basePriceExample}</strong>
-//                     </div>
-//                     <div className="fare-row small">
-//                       <div>Economy: ₹{calculateFare(airline.basePriceExample, "economy")}</div>
-//                       <div>Executive: ₹{calculateFare(airline.basePriceExample, "executive")}</div>
-//                       <div>Business: ₹{calculateFare(airline.basePriceExample, "business")}</div>
-//                     </div>
-//                     <div className="note">Overheads: economy +0%, executive +25%, business +50% (consistent across carriers).</div>
-//                   </div>
-//                 </section>
-
-//                 <section className="policy-section">
-//                   <h4>Discounts</h4>
-//                   <div className="discounts">
-//                     {airline.discounts && airline.discounts.length ? (
-//                       <table className="policy-table">
-//                         <thead>
-//                           <tr>
-//                             <th>Code / Type</th>
-//                             <th>Description</th>
-//                             <th>Example (economy)</th>
-//                           </tr>
-//                         </thead>
-//                         <tbody>
-//                           {airline.discounts.map((d) => {
-//                             const type = d.type ?? (d.value && d.value <= 100 ? "percent" : "percent");
-//                             const value = d.value ?? (typeof d === "number" ? d : 0);
-//                             const exampleFare = calculateFare(airline.basePriceExample, "economy");
-//                             const exampleDiscounted = applyDiscount(exampleFare, {
-//                               type,
-//                               value,
-//                               minFare: d.minFare,
-//                               maxDiscountAmount: d.maxDiscountAmount,
-//                             });
-//                             return (
-//                               <tr key={d.id ?? d.desc}>
-//                                 <td>{d.id ?? d.desc ?? "—"}</td>
-//                                 <td>{d.desc ?? `${value}${type === "percent" ? "%" : " fixed"}`}</td>
-//                                 <td>₹{exampleDiscounted} (from ₹{exampleFare})</td>
-//                               </tr>
-//                             );
-//                           })}
-//                         </tbody>
-//                       </table>
-//                     ) : (
-//                       <div className="muted">No discount schemes available.</div>
-//                     )}
-//                   </div>
-//                 </section>
-
-//                 <section className="policy-section">
-//                   <h4>Refunds & Cancellations</h4>
-//                   <div className="refunds">
-//                     {airline.refundRules && airline.refundRules.length ? (
-//                       <>
-//                         <table className="policy-table">
-//                           <thead>
-//                             <tr>
-//                               <th>Scenario</th>
-//                               <th>Penalty</th>
-//                               <th>Refund example (economy)</th>
-//                             </tr>
-//                           </thead>
-//                           <tbody>
-//                             {[20, 10, 2].map((daysBefore) => {
-//                               const exampleFare = calculateFare(airline.basePriceExample, "economy");
-//                               const penaltyPercent = getPenaltyPercentFromRules(airline.refundRules, daysBefore, "economy");
-//                               const refund = computeRefundAmount(exampleFare, {
-//                                 refundable: penaltyPercent < 100,
-//                                 penaltyPercent,
-//                                 minPenaltyFlat: airline.raw?.minPenaltyFlat ?? airline.raw?.Refunds?.minPenaltyFlat ?? 0,
-//                               });
-//                               return (
-//                                 <tr key={daysBefore}>
-//                                   <td>Cancel {daysBefore} days before</td>
-//                                   <td>{penaltyPercent}% (approx)</td>
-//                                   <td>₹{refund} / from ₹{exampleFare}</td>
-//                                 </tr>
-//                               );
-//                             })}
-//                           </tbody>
-//                         </table>
-
-//                       </>
-//                     ) : (
-//                       <div className="muted">No refund rules provided by carrier.</div>
-//                     )}
-//                   </div>
-//                 </section>
-
-
-//               </div>
-//             )}
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//     </>
-//   );
-// }
-
 // Policies.jsx
 import React, { useEffect, useState } from "react";
 import CustomerNavbar from "../customerNavbar/customerNavbar";
@@ -351,7 +12,7 @@ const CLASS_OVERHEAD = {
 // --- Helpers (unchanged logic except where noted) ---
 function calculateFare(basePrice, travelClass = "economy") {
   const overhead = CLASS_OVERHEAD[travelClass] ?? 0;
-  return Math.round(basePrice * (1 + overhead));
+  return (basePrice * (1 + overhead));
 }
 
 function applyDiscount(fare, discount = null) {
@@ -360,12 +21,12 @@ function applyDiscount(fare, discount = null) {
   if (fare < minFare) return fare;
   let discounted = fare;
   if (type === "percent") {
-    discounted = fare - Math.round((fare * value) / 100);
+    discounted = fare - ((fare * value) / 100);
   } else {
-    discounted = fare - Math.round(value);
+    discounted = fare - (value);
   }
   if (fare - discounted > maxDiscountAmount) {
-    discounted = fare - Math.round(maxDiscountAmount);
+    discounted = fare - (maxDiscountAmount);
   }
   return Math.max(discounted, 0);
 }
@@ -375,7 +36,7 @@ function computeRefundAmount(fare, policyRefund = {}) {
   // { refundable: boolean, penaltyPercent: <integer percent 0-100>, minPenaltyFlat: number }
   const { refundable = false, penaltyPercent = 100, minPenaltyFlat = 0 } = policyRefund;
   if (!refundable) return 0;
-  const penalty = Math.max(Math.round((fare * penaltyPercent) / 100), Math.round(minPenaltyFlat));
+  const penalty = Math.max(((fare * penaltyPercent) / 100), (minPenaltyFlat));
   return Math.max(fare - penalty, 0);
 }
 
@@ -408,20 +69,20 @@ function normalizeRefunds(rawRefunds) {
 
       if (typeof v === "number") {
         // Accept either 0.01 (fraction) or 1 (percent)
-        if (v > 0 && v <= 1) penaltyPercent = Math.round(v * 100);
-        else penaltyPercent = Math.round(v);
+        if (v > 0 && v <= 1) penaltyPercent = (v * 100);
+        else penaltyPercent = (v);
       } else if (typeof v === "object") {
         // If penaltyPercent exists and is fractional (0 < p <= 1) convert to percent
         if (v.penaltyPercent != null) {
           let pp = v.penaltyPercent;
           if (typeof pp === "number") {
-            if (pp > 0 && pp <= 1) pp = Math.round(pp * 100);
-            else pp = Math.round(pp);
+            if (pp > 0 && pp <= 1) pp = (pp * 100);
+            else pp = (pp);
             penaltyPercent = pp;
           }
         } else {
           // fallback if object numeric value provided differently
-          if (typeof v === "number" && v > 0 && v <= 1) penaltyPercent = Math.round(v * 100);
+          if (typeof v === "number" && v > 0 && v <= 1) penaltyPercent = (v * 100);
         }
       }
 
@@ -620,6 +281,8 @@ export default function Policies() {
                         <li>Customer support & carrier data from API (inspect raw object for full details).</li>
                         <li>Baggage: {airline.baggage ? JSON.stringify(airline.baggage) : "Standard policy (15 KGs)"}.</li>
                         <li>Check-in: {airline.checkIn ? JSON.stringify(airline.checkIn) : "Standard (2 hours before)"}.</li>
+                        <li>base fare, business = base fare * 1.5, executive = 2.25 * base fare </li>
+                        {/* <li>Check-in: {airline.checkIn ? JSON.stringify(airline.checkIn) : "Standard (2 hours before)"}.</li> */}
                       </ul>
                     </section>
 
@@ -627,7 +290,7 @@ export default function Policies() {
                       <h4>Fares & Class Overhead</h4>
                       <div style={{"background":"rgb(255, 248, 235)"}} className="fare-examples">
                         <div className="fare-row" style={{ alignItems: "center", gap: "0.75rem" }}>
-                          <span>Base fare (Example):</span>
+                          <span>Enter Price Paid (Example):</span>
                           <div>
                             <input
                               type="number"
@@ -642,12 +305,12 @@ export default function Policies() {
                           </div>
                         </div>
 
-                        <div className="fare-row small" style={{ marginTop: "0.5rem" }}>
+                        {/* <div className="fare-row small" style={{ marginTop: "0.5rem" }}>
                           <div>Economy: ₹{calculateFare(baseFare, "economy")}</div>
                           <div>Executive: ₹{calculateFare(baseFare, "executive")}</div>
                           <div>Business: ₹{calculateFare(baseFare, "business")}</div>
-                        </div>
-                        <div className="note">Overheads: economy +0%, executive +25%, business +50% (consistent across carriers).</div>
+                        </div> */}
+                        {/* <div className="note">Overheads: economy +0%, executive +25%, business +50% (consistent across carriers).</div> */}
                       </div>
                     </section>
 
@@ -659,9 +322,9 @@ export default function Policies() {
                             <thead>
                               <tr>
                                 <th style={{ "background": "#B3BFFF" }}>Discount Criteria</th>
-                                <th style={{ "background": "#B3BFFF" }}>Example (Economy)</th>
-                                <th style={{ "background": "#B3BFFF" }}>Example (Executive)</th>
-                                <th style={{ "background": "#B3BFFF" }}>Example (Business)</th>
+                                <th style={{ "background": "#B3BFFF" }}>Example</th>
+                                {/* <th style={{ "background": "#B3BFFF" }}>Example (Executive)</th>
+                                <th style={{ "background": "#B3BFFF" }}>Example (Business)</th> */}
                               </tr>
                             </thead>
                             <tbody>
@@ -699,9 +362,9 @@ export default function Policies() {
                                 return (
                                   <tr key={d.id ?? d.desc}>
                                     <td>{d.desc ?? `${value}${type === "percent" ? "%" : " fixed"}`}</td>
-                                    <td>₹{offE} OFF (₹{exampleE})</td>
-                                    <td>₹{offX} OFF (₹{exampleX})</td>
-                                    <td>₹{offB} OFF (₹{exampleB})</td>
+                                    <td>₹{offE.toFixed(2)} OFF{/*     and  (₹{exampleE.toFixed(2)}) Price Paid */}</td>
+                                    {/* <td>₹{offX} OFF (₹{exampleX})</td>
+                                    <td>₹{offB} OFF (₹{exampleB})</td> */}
                                   </tr>
                                 );
                               })}
@@ -722,10 +385,10 @@ export default function Policies() {
                               <thead >
                                 <tr >
                                   <th style={{ "background": "coral" }}>Scenario</th>
-                                  <th style={{ "background": "coral" }}>Penalty</th>
-                                  <th style={{ "background": "coral" }}>Example (Economy)</th>
-                                  <th style={{ "background": "coral" }}>Example (Executive)</th>
-                                  <th style={{ "background": "coral" }}>Example (Business)</th>
+                                  <th style={{ "background": "coral" }}>Refund</th>
+                                  <th style={{ "background": "coral" }}>Example</th>
+                                  {/* <th style={{ "background": "coral" }}>Example (Executive)</th>
+                                  <th style={{ "background": "coral" }}>Example (Business)</th> */}
                                 </tr>
                               </thead>
                               <tbody>
@@ -765,9 +428,9 @@ export default function Policies() {
                                     <tr key={daysBefore}>
                                       <td>Cancel {daysBefore} days before</td>
                                       <td>{penaltySummary}</td>
-                                      <td>₹{fareE - refundE} from ₹{fareE}</td>
-                                      <td>₹{fareX - refundX} from ₹{fareX}</td>
-                                      <td>₹{fareB - refundB} from ₹{fareB}</td>
+                                      <td>₹{(fareE - refundE).toFixed(2)} from ₹{fareE.toFixed(2)}</td>
+                                      {/* <td>₹{fareX - refundX} from ₹{fareX}</td>
+                                      <td>₹{fareB - refundB} from ₹{fareB}</td> */}
                                     </tr>
                                   );
                                 })}

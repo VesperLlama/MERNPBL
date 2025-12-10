@@ -42,10 +42,6 @@ export default function RegisterUser() {
   const [popupMsg, setPopupMsg] = useState("");
   const [popupType, setPopupType] = useState("success");
   const [popupDuration, setPopupDuration] = useState(4000);
-  const [popupOpen, setPopupOpen] = useState(false);
-  const [popupMsg, setPopupMsg] = useState("");
-  const [popupType, setPopupType] = useState("success");
-  const [popupDuration, setPopupDuration] = useState(4000);
   const [submitting, setSubmitting] = useState(false);
   const [touched, setTouched] = useState({});
   const [submitted, setSubmitted] = useState(false);
@@ -101,15 +97,11 @@ export default function RegisterUser() {
 
     setErrors(e);
     return Object.keys(e).length === 0;
-
   }
 
   function validateField(name) {
     const local = { ...errors };
-    const local = { ...errors };
     const setErr = (key, msg) => {
-      if (msg) local[key] = msg;
-      else delete local[key];
       if (msg) local[key] = msg;
       else delete local[key];
     };
@@ -163,7 +155,6 @@ export default function RegisterUser() {
         break;
     }
 
-    setErrors(local);
     setErrors(local);
   }
 
@@ -254,7 +245,6 @@ export default function RegisterUser() {
       if (res.ok) {
         const id = resBody?.CustomerId || resBody?.customerId || resBody?.id || resBody?.CustomerID;
         // show popup with clear message to note the ID
-        // show popup with clear message to note the ID
         if (id) {
           // Note: setPopupMsg is a state setter; keep message/state updates below
           setPopupMsg(`Registration successful! Your Customer ID: ${id}. Please note this ID for future reference.`);
@@ -280,8 +270,6 @@ export default function RegisterUser() {
           dob: "",
           estimatedSpend: ""
         });
-        // navigate to login after brief delay so popup is visible
-        setTimeout(() => navigate("/login", { state: { fromAdmin: false } }), 1600);
         // navigate to login after brief delay so popup is visible
         setTimeout(() => navigate("/login", { state: { fromAdmin: false } }), 1600);
       } else {
@@ -327,24 +315,42 @@ export default function RegisterUser() {
 
   return (
     <>
-      <Popup open={popupOpen} message={popupMsg} type={popupType} duration={popupDuration} onClose={() => setPopupOpen(false)} />
+      <Popup
+        open={popupOpen}
+        message={popupMsg}
+        type={popupType}
+        duration={popupDuration}
+        onClose={() => setPopupOpen(false)}
+      />
 
       {/* Top bar with Back button (outside the form card) */}
-      <div className="top-bar" style={{ display: "flex", alignItems: "center", padding: "12px 16px" }}>
-        <button
-          type="button"
-          aria-label="Go back"
-          className="back-button"
-          onClick={() => navigate("/")}
-          style={{ marginRight: "12px" }}
-        >
-          ← Back
-        </button>
-      </div>
+      <div
+        className="top-bar"
+        style={{ display: "flex", alignItems: "center", padding: "12px 16px" }}
+      ></div>
+      <button
+        style={{
+          margin: "10px 0px 0px 15px",
+          width: "8%",
+          padding: "8px 0px 8px 0px",
+        }}
+        type="button"
+        aria-label="Go back"
+        className="btn btn-login"
+        onClick={() => navigate("/")}
+      >
+        ← Back
+      </button>
 
       <div className="register-page">
         <div className="register-card">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
             <h2>Create Account</h2>
 
             {/* Login button next to title */}
@@ -367,7 +373,8 @@ export default function RegisterUser() {
           <form onSubmit={handleSubmit} className="mt-3">
             <div className="row g-3">
               {/* FULL NAME */}
-              <div className="col-md-6"><br />
+              <div className="col-md-6">
+                <br />
                 <label className="required">Full Name</label>
                 <input
                   className="form-control"
@@ -377,11 +384,14 @@ export default function RegisterUser() {
                   onBlur={handleBlur}
                   placeholder="Enter full name"
                 />
-                {errors.fullName && (touched.fullName || submitted) && <div className="error">{errors.fullName}</div>}
+                {errors.fullName && (touched.fullName || submitted) && (
+                  <div className="error">{errors.fullName}</div>
+                )}
               </div>
 
               {/* EMAIL */}
-              <div className="col-md-6"><br />
+              <div className="col-md-6">
+                <br />
                 <label className="required">Email</label>
                 <input
                   className="form-control"
@@ -392,7 +402,9 @@ export default function RegisterUser() {
                   onBlur={handleBlur}
                   placeholder="you@example.com"
                 />
-                {errors.email && (touched.email || submitted) && <div className="error">{errors.email}</div>}
+                {errors.email && (touched.email || submitted) && (
+                  <div className="error">{errors.email}</div>
+                )}
               </div>
 
               {/* PASSWORD */}
@@ -407,7 +419,9 @@ export default function RegisterUser() {
                   onBlur={handleBlur}
                   placeholder="Strong password"
                 />
-                {errors.password && (touched.password || submitted) && <div className="error">{errors.password}</div>}
+                {errors.password && (touched.password || submitted) && (
+                  <div className="error">{errors.password}</div>
+                )}
               </div>
 
               {/* CONFIRM PASSWORD */}
@@ -422,9 +436,10 @@ export default function RegisterUser() {
                   onBlur={handleBlur}
                   placeholder="Re-enter password"
                 />
-                {errors.confirmPassword && (touched.confirmPassword || submitted) && (
-                  <div className="error">{errors.confirmPassword}</div>
-                )}
+                {errors.confirmPassword &&
+                  (touched.confirmPassword || submitted) && (
+                    <div className="error">{errors.confirmPassword}</div>
+                  )}
               </div>
 
               {/* PHONE */}
@@ -438,7 +453,9 @@ export default function RegisterUser() {
                   onBlur={handleBlur}
                   placeholder="10 digit number"
                 />
-                {errors.phone && (touched.phone || submitted) && <div className="error">{errors.phone}</div>}
+                {errors.phone && (touched.phone || submitted) && (
+                  <div className="error">{errors.phone}</div>
+                )}
               </div>
 
               {/* DOB */}
@@ -454,12 +471,16 @@ export default function RegisterUser() {
                   min={minDob}
                   max={maxDob}
                 />
-                {errors.dob && (touched.dob || submitted) && <div className="error">{errors.dob}</div>}
+                {errors.dob && (touched.dob || submitted) && (
+                  <div className="error">{errors.dob}</div>
+                )}
               </div>
 
               {/* SPEND */}
               <div className="col-md-6">
-                <label className="required">Estimated Spend on Flights (INR)</label>
+                <label className="required">
+                  Estimated Spend on Flights (INR)
+                </label>
                 <input
                   className="form-control"
                   name="estimatedSpend"
@@ -469,7 +490,10 @@ export default function RegisterUser() {
                   placeholder="e.g. 20000"
                 />
                 <div className="small-text">Category: {customerCategory}</div>
-                {errors.estimatedSpend && (touched.estimatedSpend || submitted) && <div className="error">{errors.estimatedSpend}</div>}
+                {errors.estimatedSpend &&
+                  (touched.estimatedSpend || submitted) && (
+                    <div className="error">{errors.estimatedSpend}</div>
+                  )}
               </div>
 
               {/* ADDRESS 1 */}
@@ -482,7 +506,9 @@ export default function RegisterUser() {
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
-                {errors.address1 && (touched.address1 || submitted) && <div className="error">{errors.address1}</div>}
+                {errors.address1 && (touched.address1 || submitted) && (
+                  <div className="error">{errors.address1}</div>
+                )}
               </div>
 
               {/* ADDRESS 2 */}
@@ -528,7 +554,9 @@ export default function RegisterUser() {
                     Fetch
                   </button>
                 </div>
-                {errors.zip && (touched.zip || submitted) && <div className="error">{errors.zip}</div>}
+                {errors.zip && (touched.zip || submitted) && (
+                  <div className="error">{errors.zip}</div>
+                )}
               </div>
 
               {/* CITY */}
@@ -553,13 +581,24 @@ export default function RegisterUser() {
               {/* STATE */}
               <div className="col-md-4">
                 <label className="required">State</label>
-                <input className="form-control" name="state" value={form.state} onChange={handleChange} onBlur={handleBlur} />
+                <input
+                  className="form-control"
+                  name="state"
+                  value={form.state}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
               </div>
             </div>
 
             {/* BUTTON */}
-            <div className="d-flex justify-content-center mt-4" >
-              <button style={{"background":"#4E61D3"}} type="submit" className="primary" disabled={submitting}>
+            <div className="d-flex justify-content-center mt-4">
+              <button
+                style={{ background: "#4E61D3" }}
+                type="submit"
+                className="primary"
+                disabled={submitting}
+              >
                 {submitting ? "Submitting..." : "Register"}
               </button>
             </div>

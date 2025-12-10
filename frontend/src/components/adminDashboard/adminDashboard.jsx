@@ -101,7 +101,7 @@ export default function AdminDashboard() {
 
         {/* UPDATED TEXT */}
         <p style={{ color: "#475569", marginBottom: 4 }}>
-          Welcome, <i><b style={{"color":"orange"}}>{stats.adminName.toLocaleUpperCase()}</b></i>
+          Welcome, <i><b style={{"color":"black"}}>{stats.adminName.toLocaleUpperCase()}</b></i>
         </p>
         {/* <p style={{ color: "#475569", marginTop: 0 }}>
           Admin ID: <b>{stats.adminId}</b>

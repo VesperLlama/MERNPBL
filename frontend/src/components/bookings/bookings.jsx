@@ -1224,7 +1224,7 @@ export default function Bookings() {
 
                     <div className="bk-card-right">
                       <div className="bk-price">₹{price}<span style={{ "fontSize": "13px", "fontWeight": "bold" }}>/seat</span></div>
-                      <div style={{"color": "seatsLabel" >= "seatsLabel*0.90" ? "red" : "seatsLabel" >= "seatsLabel*0.90" ? "orange" : "blue"}} className="bk-seats">{seatsLabel} available</div>
+                      <div style={{"color": "seatsLabel" >= "seatsLabel*0.90" ? "red" : "seatsLabel" >= "seatsLabel*0.90" ? "black" : "blue"}} className="bk-seats">{seatsLabel} available</div>
                       <div className="bk-actions">
                         <button
                           className="bk-book"

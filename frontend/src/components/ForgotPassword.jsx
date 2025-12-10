@@ -27,11 +27,14 @@ export default function ForgotPassword() {
 
     // Check 2: check if email exists in DB
     try {
-      const res = await fetch("http://localhost:4000/api/customers/check-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email })
-      });
+      const res = await fetch(
+        "http://localhost:4000/api/customers/check-email",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        }
+      );
 
       const data = await res.json();
       console.log("Backend Response:", data);
@@ -43,7 +46,6 @@ export default function ForgotPassword() {
 
       console.log("Email verified, navigating to reset-password...");
       navigate("/reset-password", { state: { email } });
-
     } catch (error) {
       console.log("ERROR calling backend:", error);
       setError("Server error. Try again.");
@@ -52,6 +54,28 @@ export default function ForgotPassword() {
 
   return (
     <div style={{ maxWidth: 400, margin: "100px auto", padding: 20 }}>
+      <button
+        onClick={() => navigate(-1)}
+        style={{
+          position: "fixed",
+          top: "20px",
+          left: "20px",
+          padding: "6px 14px",
+          border: "2px solid #333",
+          borderRadius: "6px",
+          background: "white",
+          color: "#333",
+          fontSize: "15px",
+          cursor: "pointer",
+          fontWeight: "500",
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+          zIndex: 1000,
+        }}
+      >
+        ← Back
+      </button>
       <h2>Forgot Password</h2>
       <p>Confirm your email to proceed.</p>
 
@@ -60,19 +84,22 @@ export default function ForgotPassword() {
           type="email"
           required
           value={email}
-          onChange={(e) => { setEmail(e.target.value); setError(""); }}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            setError("");
+          }}
           style={{
             width: "100%",
             padding: 10,
             borderRadius: 6,
             border: "1px solid #ccc",
-            marginBottom: 10
+            marginBottom: 10,
           }}
         />
 
         {error && <p style={{ color: "red" }}>{error}</p>}
 
-        <button 
+        <button
           type="submit"
           style={{
             width: "100%",
@@ -80,7 +107,7 @@ export default function ForgotPassword() {
             background: "#0ea5a4",
             color: "#fff",
             borderRadius: 6,
-            border: "none"
+            border: "none",
           }}
         >
           Verify Email

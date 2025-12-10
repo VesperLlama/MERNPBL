@@ -16,20 +16,20 @@ export default function CustomerNavbar() {
     <nav className="customer-navbar">
       {/* LEFT SECTION */}
       <div className="nav-left">
-        <div className="brand"> <p style={{ color: "orange", display: "inline" }}>Go</p> Voyage</div>
+        <div className="brand"> <p style={{ color: "black", display: "inline" }}>Go</p> Voyage</div>
       </div>
 
       {/* CENTER NAVIGATION BUTTONS */}
       <ul className="nav-center">
         <li className="nav-item center">
           <button className="nav-link" onClick={() => navigate("/customer/searchflight")}>
-             <p style={{ color: "orange", display: "inline" }}>Search</p> Flights
+             <p style={{ color: "black", display: "inline" }}>Search</p> Flights
           </button>
         </li>
 
         <li className="nav-item">
           <button className="nav-link" onClick={() => navigate("/customer/allBookings")}>
-            <p style={{ color: "orange", display: "inline" }}>View</p> Bookings
+            <p style={{ color: "black", display: "inline" }}>View</p> Bookings
           </button>
         </li>
 
@@ -43,7 +43,7 @@ export default function CustomerNavbar() {
 
         <li className="nav-item">
           <button className="nav-link" onClick={() => navigate("/customer/profile")}>
-            <p style={{"color":"orange"}}>Profile</p>
+            <p style={{"color":"black"}}>Profile</p>
           </button>
         </li>
       </ul>

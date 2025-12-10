@@ -271,6 +271,7 @@ exports.cancelBookingByPNR = (req, res, next) => {
           else percent = 0; // within 2 days -> no refund unless carrier specifies otherwise
         }
       }
+      console.log(percent);
 
       const paid = Number(booking.PricePaid.finalPrice) || 0;
       booking.RefundAmount = Math.round((paid * (percent / 100)) * 100) / 100;
@@ -590,7 +591,7 @@ exports.getBoardingPass = (req, res, next) => {
     // doc
     //   .fontSize(36)
     //   .font('Helvetica-Bold')
-    //   .fillColor("orange")
+    //   .fillColor("black")
     //   .text("Go", centerX - 80, 80)
     //   .fillColor("black")
     //   .text("Voyage", centerX - 30, 80)

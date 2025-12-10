@@ -105,12 +105,12 @@ body,
 .btn.customer-btn {
   font-size: 1.2rem;
   background: rgb(234, 223, 223);
-  color: orange;
+  color: black;
 }
 
 .btn.customer-btn:hover, .btn.customer-btn:focus{
   color: white;
-  background: orange;
+  background: black;
   border: bold;
   border-color: white;
 }
@@ -118,11 +118,11 @@ body,
 .btn.admin-btn {
   font-size: 1.2rem;
 
-  background: orange;
+  background: black;
 }
 
 .btn.admin-btn:hover {
-  color: orange;
+  color: black;
   background: rgb(234, 223, 223);
 }
 

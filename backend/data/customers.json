@@ -35,7 +35,6 @@
     "CustomerId": 1004,
     "FullName": "Aaditya Singh",
     "PasswordHash": "$2b$10$XylPPKujTHH0e3CuopUe9O0p37VJ4T3cfi/yshrO0p07Z3P4p.kKm",
-    "PasswordHash": "$2b$10$XylPPKujTHH0e3CuopUe9O0p37VJ4T3cfi/yshrO0p07Z3P4p.kKm",
     "Role": "customer",
     "CustomerCategory": "Silver",
     "Phone": "9876543210",

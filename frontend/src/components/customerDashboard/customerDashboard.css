@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Allura&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
 :root {
   --bg: #f5f7fa;
   --card: #fff;
@@ -8,7 +9,6 @@
   --shadow: 0 10px 30px rgba(8, 25, 35, 0.06);
   
 }
-@import url('https://fonts.googleapis.com/css2?family=Allura&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
 .cust-root {
   background: var(--bg);
   min-height: calc(100vh - 70px);
@@ -60,7 +60,7 @@
 }
 
 /* Left area - upcoming large card */
-.cust-left {}
+/* .cust-left {} */
 
 .upcoming-large {
   background: var(--card);
@@ -169,7 +169,7 @@
 }
 
 /* Right area - small grid of 4 cards */
-.cust-right {}
+/* .cust-right {} */
 
 .small-grid {
   display: grid;
