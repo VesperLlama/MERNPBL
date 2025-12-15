@@ -11,10 +11,10 @@
 }
 
 .bk-list-root {
-  background: var(--bg);
+  background: #397367;
   min-height: calc(100vh - 70px);
   padding: 20px;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  font-family: "Poiret One", "sans-serif";
 }
 
 .bk-list-container {
@@ -122,19 +122,23 @@
 
 /* card */
 .bk-card {
+  font-family: "Lato", "sans-serif";
   display:flex;
   justify-content:space-between;
   align-items:center;
   padding:14px;
   border-radius:10px;
-  border:1px solid var(--border);
-  background: #fff;
+  background: rgb(214, 244, 240);
   gap:12px;
+}
+
+.bk-card:hover {
+  transform:scale(1.05);
 }
 
 .bk-card-left { flex: 1 1 auto; min-width: 0; }
 .bk-airline { font-weight:800; margin-bottom:6px; color:blue; }
-.bk-route { color:black; margin-bottom:8px; font-weight:600; font-size: 1.4rem;}
+.bk-route { color:black; margin-bottom:8px; font-weight:600; font-size: 1.4rem; font-family: "Poiret One", "sans-serif";}
 .bk-times { display:flex; gap:12px; color:var(--muted); font-size:13px; }
 
 .bk-card-right { width:220px; display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
@@ -144,7 +148,7 @@
 
 .bk-actions { display:flex; gap:8px; margin-top:6px; }
 .bk-book {
-  background: #4E61D3;
+  background: #397367;
   color: white;
   border: none;
   padding:8px 12px;
@@ -152,6 +156,14 @@
   cursor:pointer;
   font-weight:700;
 }
+
+.bk-book:hover {
+  transform: scale(1.1);
+  color: #42858c;
+  border: 1.5px dotted #42858c;
+  background: white;
+}
+
 .bk-details {
   background: white;
   color: #0b2a39;

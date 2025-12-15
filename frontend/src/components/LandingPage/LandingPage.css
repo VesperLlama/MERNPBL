@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Allura&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Allura&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Poiret+One&display=swap');
 
 html,
 body,
@@ -63,33 +62,33 @@ body,
 }
 
 .title {
-  font-size: 2.3rem;
+  font-size: 2.1rem;
   margin-bottom: 10px;
   letter-spacing: 1px;
-  font-family: "Allura", cursive;
-  font-weight: 600;
-  font-style: normal;
+  font-family: "Poiret One", sans-serif;
+  font-weight: 400;
+  font-style: oblique;
 }
 
 .subtitle {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   opacity: 0.9;
   margin-bottom: 30px;
    font-family: "Lato", sans-serif;
-  font-weight: 300;
+  font-weight: 400;
   font-style: italic;
 }
 
 /* Buttons */
 .button-group {
   display: flex;
-  gap: 20px;
   justify-content: center;
-  width: 80%;
+  width: 20%;
+  font-family: "Poiret One", sans-serif;
+  font-weight: 400;
 }
 
 .btn {
-  padding: 12px 28px;
   border-radius: 8px;
   border: none;
   cursor: pointer;
@@ -97,12 +96,10 @@ body,
   font-weight: 600;
   flex: 1 1 auto;
   min-width: 160px;
-  font-family: "Lato", sans-serif;
-  font-weight: 300;
-  font-style: normal;
 }
 
 .btn.customer-btn {
+  width: 2rem;
   font-size: 1.2rem;
   background: rgb(234, 223, 223);
   color: black;
@@ -110,20 +107,31 @@ body,
 
 .btn.customer-btn:hover, .btn.customer-btn:focus{
   color: white;
-  background: black;
+  background: #397367;
   border: bold;
   border-color: white;
 }
 
-.btn.admin-btn {
-  font-size: 1.2rem;
 
-  background: black;
+.btn.customer-btn:focus{
+  color: white;
+  background: #397367;
+  border: 1px dotted;
+  border-color: white;
+}
+
+
+.btn.admin-btn {
+  font-size: 1.2rem;  
+  width: 2rem;
+  background: rgb(5, 15, 37);
 }
 
 .btn.admin-btn:hover {
-  color: black;
-  background: rgb(234, 223, 223);
+  color: white;
+  background: #397367;
+  border: 1px dotted;
+  border-color: white;
 }
 
 /* Customer menu */
@@ -133,23 +141,33 @@ body,
   gap: 16px;
   justify-content: center;
   margin-top: 22px;
-  animation: fadeIn 0.3s ease-in-out;
+  animation: fadeIn 0.5s ease-out;
+  font-family: "Poiret One", sans-serif;
+  font-weight: 400;
 }
 
 /* Stylish buttons inside Customer menu */
-.customer-menu .menu-item {
+.customer-menu {
   padding: 12px 26px;
-  background: rgba(255, 255, 255, 0.15);      /* semi-glass */
-  backdrop-filter: blur(8px);                 /* blur effect */
-  color: #ffffff;
+  background:transparent;      
   border-radius: 10px;
   text-decoration: none;
   font-weight: 600;
   min-width: 140px;
   text-align: center;
   letter-spacing: 0.5px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.menu-item {
+  padding: 12px 26px;   
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  min-width: 140px;
+  text-align: center;
+  letter-spacing: 0.5px;
   font-size: 0.9rem;
   transition: all 0.3s ease;
 }
@@ -157,9 +175,14 @@ body,
 /* Hover animation */
 .customer-menu .menu-item:hover {
   transform: translateY(-3px) scale(1.03);
-  background: #4E61D3;
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
 }
+
+.menu-item:hover, .menu-item:focus {
+  background-color: #9D608C;
+  border: 1px dotted white;
+  color: white;
+}
+
 
 /* Mobile responsiveness */
 @media (max-width: 640px) {

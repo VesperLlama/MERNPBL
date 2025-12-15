@@ -209,7 +209,7 @@ export default function UpdateFlight() {
   }
 
   return (
-    <div className="uf-root">
+    <div className="uf-root"  style={{background:"#397367"}}>
       <AdminNavBar />
       <Popup open={toastOpen} message={status} type={toastType} onClose={() => { setToastOpen(false); setStatus(''); }} />
       <div className="uf-card">
@@ -439,8 +439,8 @@ export default function UpdateFlight() {
             </div>
           </label>
 
-          <div className="uf-actions">
-            <button type="submit" className="uf-update" disabled={loading}>
+          <div className="uf-actions" >
+            <button type="submit" style={{background:"#397367"}} className="uf-update" disabled={loading}>
               {" "}
               {loading ? "Updating..." : "Update"}{" "}
             </button>

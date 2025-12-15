@@ -72,7 +72,7 @@ export default function CustomerLogin() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#f7fafc",
+        background: "#5DA399",
       }}
     >
       <div
@@ -82,16 +82,15 @@ export default function CustomerLogin() {
           background: "#fff",
           padding: 28,
           borderRadius: 10,
-          boxShadow: "0 6px 20px rgba(2,6,23,0.08)",
+          boxShadow: "10px 10px 15px #42858c",
         }}
       >
-        <h2 style={{ margin: 0, marginBottom: 12 }}>
+        <h2 style={{ margin: 0, marginBottom: 12, color: "#397367", fontStyle: "bold" }}>
           {isAdmin ? "Admin Login" : "Customer Login"}
         </h2>
-
         <form onSubmit={handleSubmit}>
           {/* Email */}
-          <label style={{ display: "block", marginBottom: 6, color: "#6b7280" }}>
+          <label style={{ display: "block", marginBottom: 6, color: "black" }}>
             Email
           </label>
 
@@ -102,21 +101,23 @@ export default function CustomerLogin() {
               setEmail(e.target.value);
               setServerError("");
             }}
+            placeholder="you@example.com"
             type="email"
             name="email"
             style={{
               width: "100%",
               padding: "10px 8px",
               borderRadius: 6,
-              border: "1px solid #e6e9ee",
+              border: "1px solid #e6e9ee",backgroundColor:"rgb(213, 244, 240)",
               marginBottom: 6,
+              fontSize: 14
             }}
           />
 
           {errors.email && <p className="error-text">{errors.email}</p>}
 
           {/* Password */}
-          <label style={{ display: "block", marginBottom: 6, color: "#6b7280" }}>
+          <label style={{ display: "block", marginBottom: 6,  color: "black"}}>
             Password
           </label>
 
@@ -128,6 +129,16 @@ export default function CustomerLogin() {
                 setPassword(e.target.value);
                 setServerError("");
               }}
+              style={{
+              width: "100%",
+              padding: "10px 8px",
+              borderRadius: 6,
+              border: "1px solid #e6e9ee",
+              marginBottom: 6,
+              backgroundColor: "rgb(213, 244, 240)",
+              fontSize: 14
+            }}
+              placeholder="********"
               type={showPassword ? "text" : "password"}
               name="password"
               className="password-input"
@@ -137,7 +148,6 @@ export default function CustomerLogin() {
               className="toggle-password"
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? "🔒" : "🔓"}
             </span>
           </div>
 
@@ -159,7 +169,7 @@ export default function CustomerLogin() {
               <button
                 type="submit"
                 style={{
-                  background: "#4E61D3",
+                  background: "#397367",
                   color: "white",
                   padding: "10px 20px",
                   borderRadius: 8,
@@ -183,7 +193,7 @@ export default function CustomerLogin() {
                   }}
                   style={{
                     marginTop: 8,
-                    color: "#4E61D3",
+                    color: "#397367",
                     fontSize: "0.85rem",
                     cursor: "pointer",
                   }}
@@ -199,9 +209,10 @@ export default function CustomerLogin() {
                 <a
                   href="/register"
                   style={{
-                    color: "#4E61D3",
+                    color: "#397367",
+                    fontSize: "0.85rem",
                     textDecoration: "none",
-                    fontWeight: 500,
+                    fontWeight: 400,
                   }}
                 >
                   Create an account

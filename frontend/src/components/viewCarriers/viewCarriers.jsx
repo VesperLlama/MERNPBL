@@ -60,7 +60,7 @@ export default function ViewCarriers() {
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
-        background: "#f6f9fc",
+        background: "#5da399",
       }}
     >
       <AdminNavBar />

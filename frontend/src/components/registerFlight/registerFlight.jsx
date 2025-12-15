@@ -713,7 +713,7 @@ export default function RegisterFlight() {
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
-        background: "#f3f7fb",
+        background: "#5da399",
       }}
     >
       <AdminNavBar />
@@ -913,7 +913,7 @@ export default function RegisterFlight() {
           <div
             style={{ display: "flex", justifyContent: "center", marginTop: 18 }}
           >
-            <button className="primary" type="submit" disabled={submitting}>
+            <button style={{background: "#397367"}} className="primary" type="submit" disabled={submitting}>
               {submitting ? "Submitting..." : "Register Flight"}
             </button>
           </div>

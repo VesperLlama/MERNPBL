@@ -571,8 +571,8 @@ export default function Payment() {
                 <hr />
 
                 <div className="summary-row" style={{ fontWeight: 800 }}>
-                  <div>TOTAL COST</div>
-                  <div>₹{priceData.finalPrice}</div>
+                  <div style={{color: "#397367"}}><b>TOTAL COST</b></div>
+                  <div style={{color: "black"}}><b>₹{priceData.finalPrice}</b></div>
                 </div>
               </div>
             </aside> )}

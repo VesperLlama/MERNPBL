@@ -16,34 +16,32 @@ export default function CustomerNavbar() {
     <nav className="customer-navbar">
       {/* LEFT SECTION */}
       <div className="nav-left">
-        <div className="brand"> <p style={{ color: "black", display: "inline" }}>Go</p> Voyage</div>
+        <div className="brand"> <p style={{ color: "#397367", display: "inline" }}>Go</p> Voyage</div>
       </div>
 
       {/* CENTER NAVIGATION BUTTONS */}
       <ul className="nav-center">
         <li className="nav-item center">
           <button className="nav-link" onClick={() => navigate("/customer/searchflight")}>
-             <p style={{ color: "black", display: "inline" }}>Search</p> Flights
+             <p style={{ color: "#397367", display: "inline" }}>Search</p> Flights
           </button>
         </li>
 
-        <li className="nav-item">
+        <li className="nav-item center">
           <button className="nav-link" onClick={() => navigate("/customer/allBookings")}>
-            <p style={{ color: "black", display: "inline" }}>View</p> Bookings
+            <p style={{ color: "#397367", display: "inline" }}>View</p> Bookings
           </button>
         </li>
-
-        <li className="nav-item">
+ 
+        <li className="nav-item center">
           <button className="nav-link" onClick={() => navigate("/customer/policies")}>
             Policy
           </button>
         </li>
 
-        
-
-        <li className="nav-item">
+        <li className="nav-item center">
           <button className="nav-link" onClick={() => navigate("/customer/profile")}>
-            <p style={{"color":"black"}}>Profile</p>
+            Profile
           </button>
         </li>
       </ul>
@@ -51,7 +49,7 @@ export default function CustomerNavbar() {
       {/* RIGHT SIDE */}
       <div className="nav-right">
         <div className="welcome-msg"><p  onClick={() => navigate("/dashboard")} 
-        style={{ color: "#f09537", display: "inline", "background":"rgb(255, 248, 235)", "padding":"10px", "borderRadius": "20px" }}>
+        style={{ color: "#397367", display: "inline", "background":"rgb(214, 244, 240)", "padding":"10px", "borderRadius": "20px" }}>
           {fullName}</p></div>
 
         <button className="logout-btn" onClick={handleLogout}>

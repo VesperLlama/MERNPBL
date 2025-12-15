@@ -675,6 +675,7 @@ export default function Profile({ userId: propUserId }) {
                   ) : (
                     <button
                       type="button"
+                      style={{ background:"#397367"}}
                       className="btn"
                       onClick={() => {
                         setShowChangePwd((s) => !s);
@@ -734,7 +735,8 @@ export default function Profile({ userId: propUserId }) {
                   </div>
 
                   <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 12 }}>
-                    <button className="btn save" type="submit" disabled={pwdSubmitting}>
+                      
+                    <button  style={{background:"#397367"}} className="btn save" type="submit" disabled={pwdSubmitting}>
                       {pwdSubmitting ? "Saving..." : "Change Password"}
                     </button>
                     <button

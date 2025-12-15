@@ -1173,7 +1173,7 @@ export default function Bookings() {
           </div>
 
           <div className="bk-controls" style={{ "marginTop": "2rem" }}>
-            <button className="bk-new-search" onClick={() => navigate("/customer/searchflight")} style={{ "background": "#4E61D3", "color": "whitesmoke" }}><b>New Search</b></button>
+            <button className="bk-new-search" onClick={() => navigate("/customer/searchflight")} style={{ "background": "#397367", "color": "whitesmoke" }}><b>New Search</b></button>
           </div>
 
           {error && <div className="bk-error">{error}</div>}

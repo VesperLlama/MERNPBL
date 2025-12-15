@@ -259,12 +259,13 @@ export default function Policies() {
                 <div className="airline-header">
                   <div>
                     <h3 className="airline-name">
-                      <strong style={{ color: "#CC561E" }}>{airline.name}</strong>
+                      <strong style={{ color: "black" }}>{airline.name}</strong>
                     </h3>
                   </div>
                   <div className="airline-actions">
                     <button
                       className="btn btn-compact"
+                      style={{background: "#397367"}}
                       onClick={() => toggle(airline.id)}
                       aria-expanded={!!openMap[airline.id]}
                     >

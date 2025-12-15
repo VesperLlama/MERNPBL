@@ -118,7 +118,7 @@ export default function ViewFlights() {
   });
 
   return (
-    <div className="vf-root">
+    <div className="vf-root" style={{background: "#5da399", boxShadow: "0px 20px 10px 10px rgb(214, 240,244)"}}>
       <AdminNavBar />
       <Popup
         open={toastOpen}

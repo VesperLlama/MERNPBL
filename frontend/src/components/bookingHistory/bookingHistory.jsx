@@ -349,7 +349,7 @@ export default function BookingHistory() {
                     <td>
                       <div
                         style={{
-                          color: b.BookingStatus !== "Booked" ? "red" : "green",
+                          color: b.BookingStatus !== "BOOKED" ? "red" : "green",
                           fontWeight: 600,
                         }}
                       >
@@ -358,8 +358,8 @@ export default function BookingHistory() {
                     </td>
 
                     <td>
-                      {b.BookingStatus !== "Booked" ? (
-                        <div style={{ fontWeight: 600, color: "#6b7280" }}>The Booking is Cancelled</div>
+                      {b.BookingStatus !== "BOOKED" ? (
+                        <div style={{ fontWeight: 600, color: "#6b7280" }}>Booking Cancelled</div>
                       ) : (
                         <button
                           className="logout-btn"
@@ -372,7 +372,7 @@ export default function BookingHistory() {
                     </td>
 
                     <td>
-                      {b.BookingStatus !== "Booked" ? (
+                      {b.BookingStatus !== "BOOKED" ? (
                         <div style={{ fontWeight: 600, color: 'blue' }}>
                           {`Refunded: ₹${b.RefundAmount ?? b.refundAmount ?? b.refund}`}
                         </div>
@@ -391,6 +391,9 @@ export default function BookingHistory() {
                               disabled={b.cancelled}
                               onClick={() => handleCancel(b.PNR, b.BookingId, b.RefundAmount)}
                               style={{
+                                background: "white",
+                                color: "red",
+                                border: "2px solid red",
                                 opacity: b.cancelled ? 0.5 : 1,
                                 cursor: b.cancelled ? "not-allowed" : "pointer",
                               }}
@@ -427,13 +430,13 @@ export default function BookingHistory() {
                       <div><strong>Booked At</strong><div>{selectedBooking.BookedAt || selectedBooking.bookedAt || selectedBooking.createdAt ? new Date(selectedBooking.BookedAt || selectedBooking.bookedAt || selectedBooking.createdAt).toLocaleString('en-IN') : '-'}</div></div>
                       <div style={{ gridColumn: '1 / -1' }}>
                         <strong>Status</strong>
-                        <div style={{ marginTop: 6, fontWeight: 700, color: selectedBooking.BookingStatus !== 'Booked' ? 'red' : 'green' }}>{selectedBooking.BookingStatus}</div>
+                        <div style={{ marginTop: 6, fontWeight: 700, color: selectedBooking.BookingStatus !== "BOOKED" ? 'red' : 'green' }}>{selectedBooking.BookingStatus}</div>
                       </div>
                     </div>
 
                     <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 16 }}>
                       <button onClick={() => setSelectedBooking(null)} style={{ padding: '8px 12px', borderRadius: 6 }}>Close</button>
-                      {selectedBooking.BookingStatus === 'Booked' && (selectedBooking.BookingId || selectedBooking.id || selectedBooking.bookingId) && (
+                      {selectedBooking.BookingStatus === 'BOOKED' && (selectedBooking.BookingId || selectedBooking.id || selectedBooking.bookingId) && (
                         <button onClick={() => downloadBoardingPass(selectedBooking)} style={{ padding: '8px 12px', borderRadius: 6, background: '#1a73e8', color: '#fff', border: 'none' }}>Download Boarding Pass</button>
                       )}
                     </div>
@@ -441,7 +444,7 @@ export default function BookingHistory() {
                 </div>
               )}
 
-              {/* Booking details modal */}
+              {/* Booking details modal
               {selectedBooking && (
                 <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10001 }}>
                   <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)' }} onClick={() => setSelectedBooking(null)} />
@@ -462,7 +465,7 @@ export default function BookingHistory() {
                       <div><strong>Booked At</strong><div>{selectedBooking.BookedAt || selectedBooking.bookedAt || selectedBooking.createdAt ? new Date(selectedBooking.BookedAt || selectedBooking.bookedAt || selectedBooking.createdAt).toLocaleString('en-IN') : '-'}</div></div>
                       <div style={{ gridColumn: '1 / -1' }}>
                         <strong>Status</strong>
-                        <div style={{ marginTop: 6, fontWeight: 700, color: selectedBooking.BookingStatus !== 'Booked' ? 'red' : 'green' }}>{selectedBooking.BookingStatus}</div>
+                        <div style={{ marginTop: 6, fontWeight: 700, color: selectedBooking.BookingStatus !== ('Booked' || "BOOKED") ? 'red' : 'green' }}>{selectedBooking.BookingStatus}</div>
                       </div>
                     </div>
 
@@ -474,7 +477,7 @@ export default function BookingHistory() {
                     </div>
                   </div>
                 </div>
-              )}
+              )} */}
 
             {/* Confirmation modal */}
             {confirm.open && (
