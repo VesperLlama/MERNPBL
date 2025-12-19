@@ -207,7 +207,7 @@ export default function RegisterCarrier() {
   const navigate = useNavigate();
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "#f3f7fb" }}>
+    <div style={{ background:"#5da399", minHeight: "100vh", display: "flex", flexDirection: "column"}}>
       <AdminNavBar />
       <Popup open={toastOpen} message={toastMsg} type={toastType} onClose={() => { setToastOpen(false); setToastMsg(''); }} />
       <div style={{ width: "100%", maxWidth: 980, margin: "28px auto", background: "#fff", padding: 22, borderRadius: 12, boxShadow: "0 10px 30px rgba(9,30,66,0.06)" }}>
@@ -284,7 +284,7 @@ export default function RegisterCarrier() {
           </div>
 
           <div style={{ display: "flex", justifyContent: "center", marginTop: 18 }}>
-            <button className="primary" type="submit" disabled={submitting}>{submitting ? "Submitting..." : "Register Carrier"}</button>
+            <button style={{background: "#397367"}} className="primary" type="submit" disabled={submitting}>{submitting ? "Submitting..." : "Register Carrier"}</button>
           </div>
         </form>
       </div>

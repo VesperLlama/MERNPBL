@@ -281,7 +281,7 @@ export default function UpdateCarrier() {
   }
 
   return (
-    <div className="uc-root">
+    <div className="uc-root" style={{background: "#397367"}}>
       <AdminNavBar />
       <Popup open={toastOpen} message={status} type={toastType} onClose={() => { setToastOpen(false); setStatus(''); }} />
       <div className="uc-card">
@@ -556,7 +556,7 @@ export default function UpdateCarrier() {
           </fieldset>
 
           <div className="uc-actions">
-            <button type="submit" className="uc-update" disabled={loading}>
+            <button style={{background: "#397367"}} type="submit" className="uc-update" disabled={loading}>
               {loading ? "Updating..." : "Update"}
             </button>
             <button type="button" className="uc-clear" onClick={clearAll}>

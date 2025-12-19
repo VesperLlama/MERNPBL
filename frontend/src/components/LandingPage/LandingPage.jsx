@@ -107,7 +107,7 @@ const LandingPage = () => {
 
       <div className="content">
         <h1 className="title">
-          <p style={{ color: "black", display: "inline" }}>Go</p> Voyage
+          <p style={{ color: "#397367", display: "inline" }}>Go</p>Voyage
         </h1>
         <p className="subtitle">Book Your Next Destination</p>
 

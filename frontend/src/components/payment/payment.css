@@ -1,5 +1,5 @@
 :root {
-  --bg: #f5f7fb;
+  --bg: #5da399;
   --card: #fff;
   --muted: #6b7280;
   --accent: #06b6d4;
@@ -9,10 +9,11 @@
 }
 
 .pay-root {
-  background: var(--bg);
+  background: #5da399;
   min-height: calc(100vh - 70px);
   padding: 20px;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  font-family: "Poiret One", "sans-serif";
+  color: black;
 }
 
 .pay-container {
@@ -64,12 +65,17 @@
   gap:8px;
   cursor:pointer;
 }
+
+input[type="radio"]{
+  accent-color: #397367;
+}
+
 .method input { margin-right:4px; }
-.method.active { border-color: var(--accent); box-shadow: 0 6px 18px rgba(6,182,212,0.08); }
+.method.active { color: #397367; border-color: #397367; box-shadow: 0 6px 18px rgba(214,244,240,0.08); }
 
 /* buttons */
 .pay-submit {
-  background: var(--accent);
+  background: #397367;
   color: #fff;
   border: none;
   padding: 10px 14px;
@@ -82,11 +88,15 @@
 .pay-cancel {
   background: #fff;
   color: #0b1b26;
-  border:1px solid var(--border);
+  border:1px solid #397367;
   padding:10px 12px;
   border-radius:8px;
   font-weight:700;
   cursor:pointer;
+}
+
+.pay-cancel:hover {
+  border: 1px solid white;
 }
 
 /* errors */

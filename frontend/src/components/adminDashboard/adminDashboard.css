@@ -1,0 +1,112 @@
+/* Page Wrapper */
+.admin-dashboard-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #5da399;
+  font-family: "Barlow";
+}
+
+/* Main Card */
+.admin-dashboard-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 28px auto;
+  background: #5da399;
+  padding: 28px;
+  border-radius: 10px;
+}
+
+/* Header */
+.admin-dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.admin-dashboard-header h2 {
+  margin: 0;
+}
+
+/* Welcome Text */
+.admin-welcome {
+  color: black;
+  margin-bottom: 4px;
+}
+
+.admin-name {
+  color: white;
+  font-size: 1.5rem;
+  font-family: "Barlow", sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+/* Grid */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 20px;
+}
+
+/* Cards */
+.dashboard-card {
+  background: rgb(213, 244, 240);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 5px 8px 16px #42858c;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 92px;
+}
+
+.dashboard-card:hover {
+  background: white;
+  transform: scale(1.1);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 92px;
+  .dashboard-card-value {
+  color: #397367;
+  font-family: "Lato";
+}
+}
+
+/* Card Text */
+.dashboard-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+  letter-spacing: 0.6px;
+}
+
+.dashboard-card-value {
+  margin-top: 8px;
+  font-size: 22px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+
+
+/* Optional Logout Button */
+.logout-btn {
+  background: #e53e3e;
+  color: #ffffff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  opacity: 0.9;
+}

@@ -9,12 +9,12 @@
 }
 
 .bh-root {
-  background: var(--bh-bg);
   min-height: 100vh;
   font-family: "Lato", sans-serif;
   font-weight: 300;
   font-style: normal;
   color: black;
+  background: #5da399;
 }
 
 .bh-alert {
@@ -45,9 +45,9 @@
   max-width: 1100px;
   margin: 28px auto;
   padding: 20px;
-  background: var(--bh-card);
+  background: rgb(214, 244, 240);
   border-radius: 10px;
-  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
+  box-shadow: 0 6px 18px rgba(214, 244, 240, 0.06);
 }
 
 .bh-container h2 {
@@ -62,8 +62,8 @@
   text-align: center;
 }
 
-.bh-error {
-  background: #ffe5e5;
+.bh-error {  background: rgb(214, 244, 240);
+
   color: #b91c1c;
   padding: 10px;
   border-radius: 8px;
@@ -81,6 +81,7 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
+  background: rgb(214, 244, 240);
   text-align: center;
 }
 
@@ -88,6 +89,7 @@
 .bh-table td {
   border: 1px solid var(--border);
   padding: 12px;
+  background: rgb(214, 244, 240);
   text-align: center;
 }
 
