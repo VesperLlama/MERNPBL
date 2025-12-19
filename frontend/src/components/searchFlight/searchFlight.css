@@ -31,7 +31,7 @@ input[type="number"] {
 }
 
 .bk-root {
-  font-family: "Poiret One";
+  /* font-family: "Barlow"; */
   background:#5da399;
   min-height: calc(100vh - 70px);
   padding: 28px 18px;

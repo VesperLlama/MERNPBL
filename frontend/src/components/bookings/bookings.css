@@ -14,7 +14,7 @@
   background: #397367;
   min-height: calc(100vh - 70px);
   padding: 20px;
-  font-family: "Poiret One", "sans-serif";
+  /* font-family: "Barlow", "sans-serif"; */
 }
 
 .bk-list-container {
@@ -138,7 +138,7 @@
 
 .bk-card-left { flex: 1 1 auto; min-width: 0; }
 .bk-airline { font-weight:800; margin-bottom:6px; color:blue; }
-.bk-route { color:black; margin-bottom:8px; font-weight:600; font-size: 1.4rem; font-family: "Poiret One", "sans-serif";}
+.bk-route { color:black; margin-bottom:8px; font-weight:600; font-size: 1.4rem; font-family: "Barlow", "sans-serif";}
 .bk-times { display:flex; gap:12px; color:var(--muted); font-size:13px; }
 
 .bk-card-right { width:220px; display:flex; flex-direction:column; align-items:flex-end; gap:8px; }

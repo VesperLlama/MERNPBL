@@ -296,10 +296,23 @@ export default function Policies() {
                             <input
                               type="number"
                               min="0"
+                              max="150000"
                               step="1"
                               className="base-fare-input"
                               value={baseFareMap[airline.id] === "" ? "" : baseFareMap[airline.id]}
-                              onChange={(e) => setBaseFareForCarrier(airline.id, e.target.value)}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                if (Number(val) < 0) {
+                                  alert("Base Fare cannot be less than 0");
+                                  setBaseFareForCarrier(0);
+                                }
+                                else if (val.length <= 7)
+                                  setBaseFareForCarrier(airline.id, val);
+                                else {
+                                  alert("Base Fare cannot exceed 150000");
+                                }
+                              }
+                            }
                               aria-label={`Base fare for ${airline.name}`}
                               style={{ width: "120px", padding: "6px" }}
                             />
@@ -323,6 +336,7 @@ export default function Policies() {
                             <thead>
                               <tr>
                                 <th style={{ "background": "#B3BFFF" }}>Discount Criteria</th>
+                                <th style={{ "background": "#B3BFFF" }}>Refund</th>
                                 <th style={{ "background": "#B3BFFF" }}>Example</th>
                                 {/* <th style={{ "background": "#B3BFFF" }}>Example (Executive)</th>
                                 <th style={{ "background": "#B3BFFF" }}>Example (Business)</th> */}
@@ -361,12 +375,24 @@ export default function Policies() {
                                 const offB = fareB - exampleB;
 
                                 return (
-                                  <tr key={d.id ?? d.desc}>
-                                    <td>{d.desc ?? `${value}${type === "percent" ? "%" : " fixed"}`}</td>
-                                    <td>₹{offE.toFixed(2)} OFF{/*     and  (₹{exampleE.toFixed(2)}) Price Paid */}</td>
-                                    {/* <td>₹{offX} OFF (₹{exampleX})</td>
+                                    <tr key={d.id ?? d.desc}>
+                                        <td>
+                                            {d.desc ??
+                                                `${value}${
+                                                    type === "percent"
+                                                        ? "%"
+                                                        : " fixed"
+                                                }`}
+                                        </td>
+                                        <td>{d.value} %</td>
+                                        {offE > 0 ? (
+                                            <td>₹{offE.toFixed(2)} OFF</td>
+                                        ) : (
+                                            <td>Invalid Base Fare</td>
+                                        )}
+                                        {/* <td>₹{offX} OFF (₹{exampleX})</td>
                                     <td>₹{offB} OFF (₹{exampleB})</td> */}
-                                  </tr>
+                                    </tr>
                                 );
                               })}
                             </tbody>
@@ -426,13 +452,23 @@ export default function Policies() {
                                       : `${penaltyE}% / ${penaltyX}% / ${penaltyB}%`;
 
                                   return (
-                                    <tr key={daysBefore}>
-                                      <td>Cancel {daysBefore} days before</td>
-                                      <td>{penaltySummary}</td>
-                                      <td>₹{(fareE - refundE).toFixed(2)} from ₹{fareE.toFixed(2)}</td>
-                                      {/* <td>₹{fareX - refundX} from ₹{fareX}</td>
+                                      <tr key={daysBefore}>
+                                          <td>
+                                              Cancel {daysBefore} days before
+                                          </td>
+                                          <td>{penaltySummary}</td>
+                                          {fareE - refundE > 0 ? (
+                                              <td>
+                                                  ₹
+                                                  {(fareE - refundE).toFixed(2)}{" "}
+                                                  from ₹{fareE.toFixed(2)}
+                                              </td>
+                                          ) : (
+                                              <td>Invalid Base Fare</td>
+                                          )}
+                                          {/* <td>₹{fareX - refundX} from ₹{fareX}</td>
                                       <td>₹{fareB - refundB} from ₹{fareB}</td> */}
-                                    </tr>
+                                      </tr>
                                   );
                                 })}
                               </tbody>

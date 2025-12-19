@@ -354,7 +354,7 @@ export default function Payment() {
 
       setTimeout(() => {
         navigate("/customer/allBookings", { replace: true })
-      }, 1000);
+      }, 5000);
     } catch (err) {
       console.error("payment error", err);
       setToastMsg("Payment failed. Try again.");
@@ -416,7 +416,7 @@ export default function Payment() {
                   <label className="pay-label">Card Number</label>
                   <input
                     className={`pay-input ${errors.cardNumber ? "err" : ""}`}
-                    placeholder="1234 5678 9012 3456"
+                    placeholder="1234567890123456"
                     value={cardNumber}
                     onChange={(e) => setCardNumberLive(e.target.value)}
                     maxLength={16}
@@ -451,6 +451,7 @@ export default function Payment() {
                       <input
                         className={`pay-input ${errors.cvv ? "err" : ""}`}
                         placeholder="123"
+                        type="password"
                         value={cvv}
                         onChange={(e) => setCvvLive(e.target.value)}
                         maxLength={3}

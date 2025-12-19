@@ -2,13 +2,6 @@ import React, { useEffect, useState } from "react";
 import CustomerNavbar from "../customerNavbar/customerNavbar";
 import "./cancelBooking.css";
 
-/**
- * CancelBooking page:
- * - loads bookings from /api/bookings
- * - filters to current user (by email in localStorage)
- * - shows bookings with status and provides Cancel button
- * - calls backend to cancel (DELETE /api/bookings/:id or POST /api/bookings/:id/cancel)
- */
 export default function CancelBooking() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);

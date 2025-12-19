@@ -10,7 +10,7 @@
 
 .popup {
 	position: fixed;
-	top: 18px;
+	top: 80px;
 	left: 50%;
 	transform: translateX(-50%);
 	z-index: 12000;
@@ -27,6 +27,7 @@
 	justify-content:space-between;
 	gap:12px;
 	padding: 12px 14px;
+	font-weight: bolder;
 }
 
 .popup-success{
@@ -46,6 +47,7 @@
 	font-size: 14px;
 	line-height: 1.2;
 	padding-right: 8px;
+	font-weight: bolder;
 }
 
 .popup-close{

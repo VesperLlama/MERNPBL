@@ -19,5 +19,47 @@
       "20DaysOrMoreBeforeTravelDate": 55
     },
     "CreatedAt": "2025-12-10T05:25:27.814Z"
+  },
+  {
+    "CarrierId": 233,
+    "CarrierName": "Air India",
+    "Discounts": {
+      "30DaysAdvanceBooking": 3.3,
+      "60DaysAdvanceBooking": 6.7,
+      "90DaysAdvanceBooking": 10,
+      "BulkBooking": 4
+    },
+    "userDiscounts": {
+      "Silver": 3.5,
+      "Gold": 6.4,
+      "Platinum": 9
+    },
+    "Refunds": {
+      "2DaysBeforeTravelDate": 8,
+      "10DaysBeforeTravelDate": 33,
+      "20DaysOrMoreBeforeTravelDate": 60
+    },
+    "CreatedAt": "2025-12-19T04:07:02.211Z"
+  },
+  {
+    "CarrierId": 234,
+    "CarrierName": "Akasa Air",
+    "Discounts": {
+      "30DaysAdvanceBooking": 4.3,
+      "60DaysAdvanceBooking": 6.7,
+      "90DaysAdvanceBooking": 9.5,
+      "BulkBooking": 3.4
+    },
+    "userDiscounts": {
+      "Silver": 3,
+      "Gold": 5.6,
+      "Platinum": 8.3
+    },
+    "Refunds": {
+      "2DaysBeforeTravelDate": 0.7,
+      "10DaysBeforeTravelDate": 20.5,
+      "20DaysOrMoreBeforeTravelDate": 64
+    },
+    "CreatedAt": "2025-12-19T04:07:38.976Z"
   }
 ]

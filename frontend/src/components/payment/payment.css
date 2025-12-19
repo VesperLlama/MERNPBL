@@ -12,7 +12,7 @@
   background: #5da399;
   min-height: calc(100vh - 70px);
   padding: 20px;
-  font-family: "Poiret One", "sans-serif";
+  /* font-family: "Barlow", "sans-serif"; */
   color: black;
 }
 

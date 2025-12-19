@@ -349,7 +349,7 @@ export default function BookingHistory() {
                     <td>
                       <div
                         style={{
-                          color: b.BookingStatus !== "BOOKED" ? "red" : "green",
+                          color: b.BookingStatus.toLowerCase() !== "BOOKED".toLowerCase() ? "red" : "green",
                           fontWeight: 600,
                         }}
                       >
@@ -358,7 +358,7 @@ export default function BookingHistory() {
                     </td>
 
                     <td>
-                      {b.BookingStatus !== "BOOKED" ? (
+                      {b.BookingStatus.toLowerCase() !== "BOOKED".toLowerCase() ? (
                         <div style={{ fontWeight: 600, color: "#6b7280" }}>Booking Cancelled</div>
                       ) : (
                         <button
@@ -372,7 +372,7 @@ export default function BookingHistory() {
                     </td>
 
                     <td>
-                      {b.BookingStatus !== "BOOKED" ? (
+                      {b.BookingStatus.toLowerCase() !== "BOOKED".toLowerCase() ? (
                         <div style={{ fontWeight: 600, color: 'blue' }}>
                           {`Refunded: ₹${b.RefundAmount ?? b.refundAmount ?? b.refund}`}
                         </div>
@@ -443,41 +443,6 @@ export default function BookingHistory() {
                   </div>
                 </div>
               )}
-
-              {/* Booking details modal
-              {selectedBooking && (
-                <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10001 }}>
-                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)' }} onClick={() => setSelectedBooking(null)} />
-                  <div style={{ background: '#fff', padding: 20, borderRadius: 8, boxShadow: '0 12px 40px rgba(2,6,23,0.2)', width: '90%', maxWidth: 760, zIndex: 10002, maxHeight: '80%', overflowY: 'auto' }}>
-                    <h3 style={{ marginTop: 0 }}>Booking Details</h3>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                      <div><strong>Booking ID</strong><div>{selectedBooking.BookingId || selectedBooking.id || selectedBooking.bookingId}</div></div>
-                      <div><strong>PNR</strong><div>{selectedBooking.PNR || selectedBooking.pnr || '-'}</div></div>
-                      <div><strong>Flight</strong><div>{selectedBooking.flightNumber || selectedBooking.flight || '-'}</div></div>
-                      <div><strong>Passengers</strong><div>{Array.isArray(selectedBooking.passengers) ? selectedBooking.passengers.map(p => p.name || p.fullName || JSON.stringify(p)).join(', ') : (selectedBooking.passengers || selectedBooking.user?.name || '-')}</div></div>
-                      <div><strong>Seat Type</strong><div>{selectedBooking.type || selectedBooking.seatType || '-'}</div></div>
-                      <div><strong>No. of Passengers</strong><div>{selectedBooking.quantity || selectedBooking.Quantity || '-'}</div></div>
-                      <div><strong>Price Paid</strong><div>₹{selectedBooking.PricePaid.finalPrice ?? selectedBooking.PricePaid ?? selectedBooking.pricePaid ?? '-'}</div></div>
-                      <div><strong>Refund</strong><div>₹{selectedBooking.RefundAmount ?? selectedBooking.refundAmount ?? selectedBooking.Refund ?? 0}</div></div>
-                      <div><strong>From</strong><div>{selectedBooking.origin || selectedBooking.from || '-'}</div></div>
-                      <div><strong>To</strong><div>{selectedBooking.destination || selectedBooking.to || '-'}</div></div>
-                      <div><strong>Departure</strong><div>{selectedBooking.departure || selectedBooking.travelDate || selectedBooking.date ? new Date(selectedBooking.departure || selectedBooking.travelDate || selectedBooking.date).toLocaleString('en-IN') : '-'}</div></div>
-                      <div><strong>Booked At</strong><div>{selectedBooking.BookedAt || selectedBooking.bookedAt || selectedBooking.createdAt ? new Date(selectedBooking.BookedAt || selectedBooking.bookedAt || selectedBooking.createdAt).toLocaleString('en-IN') : '-'}</div></div>
-                      <div style={{ gridColumn: '1 / -1' }}>
-                        <strong>Status</strong>
-                        <div style={{ marginTop: 6, fontWeight: 700, color: selectedBooking.BookingStatus !== ('Booked' || "BOOKED") ? 'red' : 'green' }}>{selectedBooking.BookingStatus}</div>
-                      </div>
-                    </div>
-
-                    <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 16 }}>
-                      <button onClick={() => setSelectedBooking(null)} style={{ padding: '8px 12px', borderRadius: 6 }}>Close</button>
-                      {selectedBooking.BookingStatus === 'Booked' && (selectedBooking.BookingId || selectedBooking.id || selectedBooking.bookingId) && (
-                        <button onClick={() => downloadBoardingPass(selectedBooking)} style={{ padding: '8px 12px', borderRadius: 6, background: '#1a73e8', color: '#fff', border: 'none' }}>Download Boarding Pass</button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )} */}
 
             {/* Confirmation modal */}
             {confirm.open && (

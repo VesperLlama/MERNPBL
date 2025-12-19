@@ -124,7 +124,7 @@ export default function ViewBookings() {
               <tbody>
                 {filtered.map((b) => {
                   const id = b.idKey;
-                  const isCancelled = Boolean(b.cancelled || String(b.BookingStatus).toLowerCase() === "cancelled");
+                  const isCancelled = Boolean(b.cancelled || String(b.BookingStatus).toLowerCase() !== "booked");
                   const isCancelling = Boolean(b.cancelling);
 
                   return (

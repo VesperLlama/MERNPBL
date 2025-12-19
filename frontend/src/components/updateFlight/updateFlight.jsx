@@ -26,6 +26,8 @@ export default function UpdateFlight() {
     seatCapacityBusinessClass: "",
     seatCapacityEconomyClass: "",
     seatCapacityExecutiveClass: "",
+    departureTime: "",
+    arrivalTime: ""
   });
 
   const [errors, setErrors] = useState({});
@@ -107,6 +109,8 @@ export default function UpdateFlight() {
           seatCapacityBusinessClass: f.seats.business,
           seatCapacityEconomyClass: f.seats.economy,
           seatCapacityExecutiveClass: f.seats.executive,
+          departureTime: f.departureTime,
+          arrivalTime: f.arrivalTime
         });
         setStatus("Loaded flight details. Edit fields and click Update.");
         setToastType("success");
@@ -155,7 +159,9 @@ export default function UpdateFlight() {
           economy: Number(flight.seatCapacityEconomyClass),
           business: Number(flight.seatCapacityBusinessClass),
           executive: Number(flight.seatCapacityExecutiveClass),
-        }
+        },
+        departureTime: flight.departureTime,
+        arrivalTime: flight.arrivalTime
       };
 
       // Prefer PUT /api/flights/:id
@@ -209,17 +215,26 @@ export default function UpdateFlight() {
   }
 
   return (
-    <div className="uf-root"  style={{background:"#397367"}}>
+    <div className="uf-root" style={{ background: "#397367" }}>
       <AdminNavBar />
-      <Popup open={toastOpen} message={status} type={toastType} onClose={() => { setToastOpen(false); setStatus(''); }} />
+      <Popup
+        open={toastOpen}
+        message={status}
+        type={toastType}
+        onClose={() => {
+          setToastOpen(false);
+          setStatus("");
+        }}
+      />
       <div className="uf-card">
         <h2>Update Flight</h2>
         <form className="uf-form" onSubmit={handleUpdate}>
           <label className="uf-row">
-            <span>Flight ID <span className="uf-required">*</span>
+            <span>
+              Flight ID <span className="uf-required">*</span>
             </span>
             <input
-            required
+              required
               value={flightId}
               onChange={(e) => setFlightId(e.target.value)}
               placeholder="Enter flight id"
@@ -253,19 +268,19 @@ export default function UpdateFlight() {
               <option>Akasa Air</option>
               <option>Alliance Air</option> */}
               {!loaded ? (
-                  <option value="Loading">Loading...</option>
-                ) : (
-                  <>
-                    <option value="">Select carrier</option>
-                    {carrierOptions.map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))}
-                  </>
-                )}
+                <option value="Loading">Loading...</option>
+              ) : (
+                <>
+                  <option value="">Select carrier</option>
+                  {carrierOptions.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </>
+              )}
             </select>
-            
+
             <div className="uf-err">
               {(touched.carrierName || submitted) && errors.carrierName}
             </div>
@@ -372,6 +387,41 @@ export default function UpdateFlight() {
 
           <label className="uf-row">
             <span>
+              Departure Time <span className="uf-required">*</span>
+            </span>
+            <input
+              required
+              name="departureTime"
+              value={flight.departureTime}
+              onChange={(e) => onChange("departureTime", e.target.value)}
+              onBlur={() => handleBlur("departureTime")}
+              type="datetime-local"
+            />
+            <div className="uf-err">
+              {(touched.departureTime || submitted) && errors.departureTime}
+            </div>
+          </label>
+
+          {/* Arrival */}
+          <label className="uf-row">
+            <span>
+              Arrival Time <span className="uf-required">*</span>
+            </span>
+            <input
+              required
+              name="arrivalTime"
+              value={flight.arrivalTime}
+              onChange={(e) => onChange("arrivalTime", e.target.value)}
+              onBlur={() => handleBlur("arrivalTime")}
+              type="datetime-local"
+            />
+            <div className="uf-err">
+              {(touched.arrivalTime || submitted) && errors.arrivalTime}
+            </div>
+          </label>
+
+          <label className="uf-row">
+            <span>
               Seats (Business) <span className="uf-required">*</span>
             </span>
             <input
@@ -439,8 +489,13 @@ export default function UpdateFlight() {
             </div>
           </label>
 
-          <div className="uf-actions" >
-            <button type="submit" style={{background:"#397367"}} className="uf-update" disabled={loading}>
+          <div className="uf-actions">
+            <button
+              type="submit"
+              style={{ background: "#397367" }}
+              className="uf-update"
+              disabled={loading}
+            >
               {" "}
               {loading ? "Updating..." : "Update"}{" "}
             </button>
@@ -457,6 +512,8 @@ export default function UpdateFlight() {
                   seatCapacityBusinessClass: "",
                   seatCapacityEconomyClass: "",
                   seatCapacityExecutiveClass: "",
+                  arrivalTime: "",
+                  departureTime: ""
                 });
                 setErrors({});
                 setStatus("");

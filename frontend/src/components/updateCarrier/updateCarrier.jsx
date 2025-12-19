@@ -8,7 +8,7 @@ export default function UpdateCarrier() {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("");
   const [carrier, setCarrier] = useState({
-      CarrierName: "SpiceJet",
+      CarrierName: "",
       Discounts: {
         "30DaysAdvanceBooking": 0,
         "60DaysAdvanceBooking": 0,
@@ -40,7 +40,7 @@ export default function UpdateCarrier() {
   function clearAll() {
     setCarrierId("");
     setCarrier({
-      CarrierName: "SpiceJet",
+      CarrierName: "",
       Discounts: {
         "30DaysAdvanceBooking": 0,
         "60DaysAdvanceBooking": 0,
@@ -161,23 +161,11 @@ export default function UpdateCarrier() {
         headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }}
       );
       const data = await res.json();
+      console.log(data);
       if (res.ok) {
         const c = data.data && data.data.carrier ? data.data.carrier : data.data;
         // Map possible backend keys to our fields (accept various casing)
         const map = (k) => c[k] ?? c[k.toLowerCase()] ?? c[k.replace(/\d+/g, (d) => d)];
-        // setCarrier({
-        //   carrierName: c.carrierName || c.CarrierName || "",
-        //   "30DaysAdvanceBooking": c["30DaysAdvanceBooking"] ?? c["30daysAdvanceBooking"] ?? c["30days"] ?? c["30Days"] ?? "",
-        //   "60DaysAdvanceBooking": c["60DaysAdvanceBooking"] ?? c["60daysAdvanceBooking"] ?? c["60Days"] ?? "",
-        //   "90DaysAdvanceBooking": c["90DaysAdvanceBooking"] ?? c["90daysAdvanceBooking"] ?? c["90Days"] ?? "",
-        //   BulkBooking: c.BulkBooking ?? c.bulkBooking ?? c.bulk ?? "",
-        //   SilverUser: c.SilverUser ?? c.silverUser ?? c.silver ?? "",
-        //   GoldUser: c.GoldUser ?? c.goldUser ?? c.gold ?? "",
-        //   PlatinumUser: c.PlatinumUser ?? c.platinumUser ?? c.platinum ?? "",
-        //   "2DaysBeforeTravelDate": c["2DaysBeforeTravelDate"] ?? c["2daysBeforeTravelDate"] ?? "",
-        //   "10DaysBeforeTravelDate": c["10DaysBeforeTravelDate"] ?? c["10daysBeforeTravelDate"] ?? "",
-        //   "20DaysOrMoreBeforeTravelDate": c["20DaysOrMoreBeforeTravelDate"] ?? c["20daysOrMoreBeforeTravelDate"] ?? "",
-        // });
         setCarrier(c);
         setStatus("Loaded carrier details. Edit and click Update.");
         setToastType("success");
@@ -196,6 +184,7 @@ export default function UpdateCarrier() {
       }
     } catch (err) {
       setStatus("Failed to load carrier.");
+      console.log(err);
       setToastType("error");
       setToastOpen(true);
     } finally {

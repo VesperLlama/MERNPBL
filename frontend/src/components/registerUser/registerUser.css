@@ -24,7 +24,8 @@
 .register-card {
   width: 100%;
   max-width: 860px;
-  background: rgba(161, 57, 57, 0.35);  /* transparent glass look */
+  /* background: rgba(129, 18, 18, 0.35);  transparent glass look */
+  background-color: white !important;
   border-radius: 14px;
   padding: 30px 34px;
   box-shadow: 0 12px 40px rgba(8, 25, 35, 0.12);
@@ -76,17 +77,17 @@ label.required::after {
 .register-card select {
   border-radius: 8px;
   background-color: rgb(214, 244, 240);
-  border: 1px solid var(--border);
+  border: 1px solid black;
   padding: 10px 12px;
   font-size: 1rem;
 }
 
-.register-card input:focus,
+/* .register-card input:focus,
 .register-card select:focus {
-  border-color: var(--accent);
-  border: 2px dotted rgb(214, 244, 240);
+  border-color: black !important;
+  border: 2px solid black;
   box-shadow: 0 0 0 0.15rem rgba(213, 244, 240, 0.3);
-}
+} */
 
 /* Small text */
 .small-text {

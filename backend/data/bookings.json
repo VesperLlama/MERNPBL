@@ -24,5 +24,135 @@
         "gender": "Adult"
       }
     ]
+  },
+  {
+    "BookingId": 5059,
+    "CustomerId": 1004,
+    "flightNumber": "Y886",
+    "PNR": "0BIF8D",
+    "BookingStatus": "Booked",
+    "BookedAt": "2025-12-15T07:14:33.621Z",
+    "PricePaid": {
+      "basePrice": 7500,
+      "advanceDiscount": 0,
+      "categoryDiscount": 187.5,
+      "bulkDiscount": 0,
+      "finalPrice": 7312.5
+    },
+    "CancelledAt": null,
+    "RefundAmount": null,
+    "type": "business",
+    "quantity": 1,
+    "passengers": [
+      {
+        "name": "sdaasa",
+        "age": "22",
+        "gender": "Adult"
+      }
+    ]
+  },
+  {
+    "BookingId": 5060,
+    "CustomerId": 1004,
+    "flightNumber": "Y886",
+    "PNR": "U67QDJ",
+    "BookingStatus": "Booked",
+    "BookedAt": "2025-12-15T11:03:17.426Z",
+    "PricePaid": {
+      "basePrice": 7500,
+      "advanceDiscount": 0,
+      "categoryDiscount": 187.5,
+      "bulkDiscount": 0,
+      "finalPrice": 7312.5
+    },
+    "CancelledAt": null,
+    "RefundAmount": null,
+    "type": "business",
+    "quantity": 1,
+    "passengers": [
+      {
+        "name": "Arin",
+        "age": "20",
+        "gender": "Adult"
+      }
+    ]
+  },
+  {
+    "BookingId": 5061,
+    "CustomerId": 1004,
+    "flightNumber": "D192",
+    "PNR": "3XSC0O",
+    "BookingStatus": "Booked",
+    "BookedAt": "2025-12-19T05:23:17.340Z",
+    "PricePaid": {
+      "basePrice": 15000,
+      "advanceDiscount": 0,
+      "categoryDiscount": 525,
+      "bulkDiscount": 0,
+      "finalPrice": 14475
+    },
+    "CancelledAt": null,
+    "RefundAmount": null,
+    "type": "economy",
+    "quantity": 1,
+    "passengers": [
+      {
+        "name": "Shreyansh",
+        "age": "22",
+        "gender": "Adult"
+      }
+    ]
+  },
+  {
+    "BookingId": 5062,
+    "CustomerId": 1004,
+    "flightNumber": "D192",
+    "PNR": "X7V4C3",
+    "BookingStatus": "Booked",
+    "BookedAt": "2025-12-19T05:24:43.040Z",
+    "PricePaid": {
+      "basePrice": 15000,
+      "advanceDiscount": 0,
+      "categoryDiscount": 525,
+      "bulkDiscount": 0,
+      "finalPrice": 14475
+    },
+    "CancelledAt": null,
+    "RefundAmount": null,
+    "type": "economy",
+    "quantity": 1,
+    "passengers": [
+      {
+        "name": "Siddhant",
+        "age": "22",
+        "gender": "Adult"
+      }
+    ]
+  },
+  {
+    "BookingId": 5063,
+    "CustomerId": 1004,
+    "flightNumber": "D192",
+    "PNR": "X39G80",
+    "BookingStatus": "CancelledByCustomer",
+    "BookedAt": "2025-12-19T06:26:59.338Z",
+    "PricePaid": {
+      "basePrice": 22500,
+      "advanceDiscount": 0,
+      "categoryDiscount": 787.5000000000001,
+      "bulkDiscount": 0,
+      "finalPrice": 21712.5
+    },
+    "CancelledAt": "2025-12-19T06:27:23.801Z",
+    "RefundAmount": 0,
+    "type": "business",
+    "quantity": 1,
+    "passengers": [
+      {
+        "name": "Shreyan",
+        "age": "11",
+        "gender": "Adult"
+      }
+    ]
   }
 ]

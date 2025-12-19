@@ -84,7 +84,7 @@ export default function CustomerDashboard() {
         <div className="cust-container">
           <header className="cust-hero">
             <div>
-              <h1>Welcome,&nbsp;<i><b style={{"color":"white", fontFamily: "Poiret One"}}>{fullName}</b></i></h1>
+              <h1>Welcome,&nbsp;<i><b style={{"color":"white", fontFamily: "Barlow"}}>{fullName}</b></i></h1>
               <p className="cust-sub">Manage bookings, travel plans and your profile.</p>
             </div>
           </header>

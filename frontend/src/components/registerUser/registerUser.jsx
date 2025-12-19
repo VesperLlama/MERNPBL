@@ -331,7 +331,7 @@ export default function RegisterUser() {
       </div>
 
       <div className="register-page" style={{ background: "#5da399"}}>
-        <div className="register-card" style={{boxShadow: "10px 10px 15px #42858c"}}>
+        <div className="register-card" >
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <h2>Create Account</h2>
 

@@ -9,7 +9,7 @@
 }
 
 .vf-root {
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  /* font-family: "Barlow"; */
   background: var(--vf-bg);
   min-height: 100vh;
 }
